@@ -1,0 +1,41 @@
+[
+  {
+    "id": "2025-w4-georgia-alabama",
+    "season": 2025,
+    "week": 4,
+    "phase": "REGULAR",
+    "date": "2025-09-27T23:30:00Z",
+    "type": "CONFERENCE",
+    "homeTeamId": "georgia",
+    "awayTeamId": "alabama",
+    "result": "TBD",
+    "homePoints": null,
+    "awayPoints": null
+  },
+  {
+    "id": "2025-w4-oklahoma-notre-dame",
+    "season": 2025,
+    "week": 4,
+    "phase": "REGULAR",
+    "date": "2025-09-27T20:00:00Z",
+    "type": "NON_CONFERENCE",
+    "homeTeamId": "oklahoma",
+    "awayTeamId": "notre-dame",
+    "result": "TBD",
+    "homePoints": null,
+    "awayPoints": null
+  },
+  {
+    "id": "2025-w3-ohio-state-notre-dame",
+    "season": 2025,
+    "week": 3,
+    "phase": "REGULAR",
+    "date": "2025-09-20T23:30:00Z",
+    "type": "NON_CONFERENCE",
+    "homeTeamId": "ohio-state",
+    "awayTeamId": "notre-dame",
+    "result": "TBD",
+    "homePoints": null,
+    "awayPoints": null
+  }
+]
