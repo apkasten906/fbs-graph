@@ -1,32 +1,416 @@
 [
   {
-    "id": "uga",
-    "name": "Georgia",
-    "shortName": "UGA",
-    "conferenceId": "sec"
-  },
-  {
-    "id": "bama",
+    "id": "alabama",
     "name": "Alabama",
-    "shortName": "ALA",
+    "shortName": "A",
     "conferenceId": "sec"
   },
   {
-    "id": "osu",
-    "name": "Ohio State",
-    "shortName": "OSU",
+    "id": "arkansas",
+    "name": "Arkansas",
+    "shortName": "A",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "auburn",
+    "name": "Auburn",
+    "shortName": "A",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "florida",
+    "name": "Florida",
+    "shortName": "F",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "georgia",
+    "name": "Georgia",
+    "shortName": "G",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "kentucky",
+    "name": "Kentucky",
+    "shortName": "K",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "lsu",
+    "name": "LSU",
+    "shortName": "L",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "mississippi-state",
+    "name": "Mississippi State",
+    "shortName": "MS",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "missouri",
+    "name": "Missouri",
+    "shortName": "M",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "ole-miss",
+    "name": "Ole Miss",
+    "shortName": "OM",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "south-carolina",
+    "name": "South Carolina",
+    "shortName": "SC",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "tennessee",
+    "name": "Tennessee",
+    "shortName": "T",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "texas-am",
+    "name": "Texas A&M",
+    "shortName": "TA",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "texas",
+    "name": "Texas",
+    "shortName": "T",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "oklahoma",
+    "name": "Oklahoma",
+    "shortName": "O",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "vanderbilt",
+    "name": "Vanderbilt",
+    "shortName": "VE",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "illinois",
+    "name": "Illinois",
+    "shortName": "I",
     "conferenceId": "b1g"
   },
   {
-    "id": "ou",
-    "name": "Oklahoma",
-    "shortName": "OU",
+    "id": "indiana",
+    "name": "Indiana",
+    "shortName": "I",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "iowa",
+    "name": "Iowa",
+    "shortName": "I",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "maryland",
+    "name": "Maryland",
+    "shortName": "M",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "michigan",
+    "name": "Michigan",
+    "shortName": "M",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "michigan-state",
+    "name": "Michigan State",
+    "shortName": "MS",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "minnesota",
+    "name": "Minnesota",
+    "shortName": "M",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "nebraska",
+    "name": "Nebraska",
+    "shortName": "N",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "northwestern",
+    "name": "Northwestern",
+    "shortName": "N",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "ohio-state",
+    "name": "Ohio State",
+    "shortName": "OS",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "penn-state",
+    "name": "Penn State",
+    "shortName": "PS",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "purdue",
+    "name": "Purdue",
+    "shortName": "P",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "rutgers",
+    "name": "Rutgers",
+    "shortName": "R",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "wisconsin",
+    "name": "Wisconsin",
+    "shortName": "W",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "usc",
+    "name": "USC",
+    "shortName": "U",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "ucla",
+    "name": "UCLA",
+    "shortName": "U",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "oregon",
+    "name": "Oregon",
+    "shortName": "O",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "washington",
+    "name": "Washington",
+    "shortName": "W",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "arizona",
+    "name": "Arizona",
+    "shortName": "A",
     "conferenceId": "b12"
   },
   {
-    "id": "nd",
+    "id": "arizona-state",
+    "name": "Arizona State",
+    "shortName": "AS",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "baylor",
+    "name": "Baylor",
+    "shortName": "B",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "byu",
+    "name": "BYU",
+    "shortName": "B",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "cincinnati",
+    "name": "Cincinnati",
+    "shortName": "C",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "colorado",
+    "name": "Colorado",
+    "shortName": "C",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "houston",
+    "name": "Houston",
+    "shortName": "H",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "iowa-state",
+    "name": "Iowa State",
+    "shortName": "IS",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "kansas",
+    "name": "Kansas",
+    "shortName": "K",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "kansas-state",
+    "name": "Kansas State",
+    "shortName": "KS",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "oklahoma-state",
+    "name": "Oklahoma State",
+    "shortName": "OS",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "tcu",
+    "name": "TCU",
+    "shortName": "T",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "texas-tech",
+    "name": "Texas Tech",
+    "shortName": "TT",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "ucf",
+    "name": "UCF",
+    "shortName": "U",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "utah",
+    "name": "Utah",
+    "shortName": "U",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "west-virginia",
+    "name": "West Virginia",
+    "shortName": "WV",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "boston-college",
+    "name": "Boston College",
+    "shortName": "BC",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "california",
+    "name": "California",
+    "shortName": "C",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "clemson",
+    "name": "Clemson",
+    "shortName": "C",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "duke",
+    "name": "Duke",
+    "shortName": "D",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "florida-state",
+    "name": "Florida State",
+    "shortName": "FS",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "georgia-tech",
+    "name": "Georgia Tech",
+    "shortName": "GT",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "louisville",
+    "name": "Louisville",
+    "shortName": "L",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "miami",
+    "name": "Miami",
+    "shortName": "M",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "north-carolina",
+    "name": "North Carolina",
+    "shortName": "NC",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "nc-state",
+    "name": "NC State",
+    "shortName": "NS",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "pitt",
+    "name": "Pitt",
+    "shortName": "P",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "smu",
+    "name": "SMU",
+    "shortName": "S",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "stanford",
+    "name": "Stanford",
+    "shortName": "S",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "syracuse",
+    "name": "Syracuse",
+    "shortName": "S",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "virginia",
+    "name": "Virginia",
+    "shortName": "V",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "virginia-tech",
+    "name": "Virginia Tech",
+    "shortName": "VT",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "wake-forest",
+    "name": "Wake Forest",
+    "shortName": "WF",
+    "conferenceId": "acc"
+  },
+  {
+    "id": "notre-dame",
     "name": "Notre Dame",
     "shortName": "ND",
+    "conferenceId": "ind"
+  },
+  {
+    "id": "uconn",
+    "name": "UConn",
+    "shortName": "U",
     "conferenceId": "ind"
   }
 ]
