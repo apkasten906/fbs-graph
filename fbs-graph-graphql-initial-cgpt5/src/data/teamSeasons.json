@@ -1,0 +1,77 @@
+[
+  {
+    "id": "uga-2025",
+    "teamId": "uga",
+    "season": 2025,
+    "coach": "Kirby Smart",
+    "spPlus": 27.5,
+    "returningProduction": 0.63,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "bama-2025",
+    "teamId": "bama",
+    "season": 2025,
+    "coach": "Kalen DeBoer",
+    "spPlus": 25.1,
+    "returningProduction": 0.58,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "osu-2025",
+    "teamId": "osu",
+    "season": 2025,
+    "coach": "Ryan Day",
+    "spPlus": 26.3,
+    "returningProduction": 0.59,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "ou-2025",
+    "teamId": "ou",
+    "season": 2025,
+    "coach": "Brent Venables",
+    "spPlus": 21.3,
+    "returningProduction": 0.55,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "nd-2025",
+    "teamId": "nd",
+    "season": 2025,
+    "coach": "Marcus Freeman",
+    "spPlus": 20.5,
+    "returningProduction": 0.57,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  }
+]

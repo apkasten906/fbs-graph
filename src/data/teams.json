@@ -1,0 +1,32 @@
+[
+  {
+    "id": "uga",
+    "name": "Georgia",
+    "shortName": "UGA",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "bama",
+    "name": "Alabama",
+    "shortName": "ALA",
+    "conferenceId": "sec"
+  },
+  {
+    "id": "osu",
+    "name": "Ohio State",
+    "shortName": "OSU",
+    "conferenceId": "b1g"
+  },
+  {
+    "id": "ou",
+    "name": "Oklahoma",
+    "shortName": "OU",
+    "conferenceId": "b12"
+  },
+  {
+    "id": "nd",
+    "name": "Notre Dame",
+    "shortName": "ND",
+    "conferenceId": "ind"
+  }
+]

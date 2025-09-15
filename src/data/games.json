@@ -1,0 +1,41 @@
+[
+  {
+    "id": "2025-w04-uga-bama",
+    "season": 2025,
+    "week": 4,
+    "phase": "REGULAR",
+    "date": "2025-09-27T23:30:00Z",
+    "type": "CONFERENCE",
+    "homeTeamId": "uga",
+    "awayTeamId": "bama",
+    "result": "TBD",
+    "homePoints": null,
+    "awayPoints": null
+  },
+  {
+    "id": "2025-w04-ou-nd",
+    "season": 2025,
+    "week": 4,
+    "phase": "REGULAR",
+    "date": "2025-09-27T20:00:00Z",
+    "type": "NON_CONFERENCE",
+    "homeTeamId": "ou",
+    "awayTeamId": "nd",
+    "result": "TBD",
+    "homePoints": null,
+    "awayPoints": null
+  },
+  {
+    "id": "2025-w03-osu-nd",
+    "season": 2025,
+    "week": 3,
+    "phase": "REGULAR",
+    "date": "2025-09-20T23:30:00Z",
+    "type": "NON_CONFERENCE",
+    "homeTeamId": "osu",
+    "awayTeamId": "nd",
+    "result": "TBD",
+    "homePoints": null,
+    "awayPoints": null
+  }
+]

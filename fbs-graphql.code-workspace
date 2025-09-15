@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../fbs-graphql"
+		},
+		{
+			"name": "fsb-graph",
+			"path": "../fbs-graphql/fsb-graph"
+		}
+	],
+	"settings": {}
+}
