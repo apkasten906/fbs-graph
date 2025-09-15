@@ -1,0 +1,27 @@
+{
+  "name": "fbs-graph-graphql",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc -p tsconfig.json",
+    "score": "tsx scripts/compute-leverage.ts",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@apollo/server": "^4.10.0",
+    "graphql": "^16.9.0",
+    "graphql-tag": "^2.12.6",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "tsx": "^4.16.2",
+    "typescript": "^5.4.5",
+    "@types/node": "^20.11.30",
+    "eslint": "^9.9.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0"
+  }
+}

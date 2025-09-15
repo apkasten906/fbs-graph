@@ -1,0 +1,12 @@
+# Save as example.graphql and run in Apollo Sandbox
+
+query TopEssential {
+  essentialMatchups(season: 2025, limit: 10) {
+    id
+    date
+    type
+    leverage
+    home { id name conference { shortName } }
+    away { id name conference { shortName } }
+  }
+}

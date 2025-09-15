@@ -1,0 +1,70 @@
+name,shortName,conferenceId
+Alabama,A,sec
+Arkansas,A,sec
+Auburn,A,sec
+Florida,F,sec
+Georgia,G,sec
+Kentucky,K,sec
+LSU,L,sec
+Mississippi State,MS,sec
+Missouri,M,sec
+Ole Miss,OM,sec
+South Carolina,SC,sec
+Tennessee,T,sec
+Texas A&M,TA,sec
+Texas,T,sec
+Oklahoma,O,sec
+Vanderbilt,VE,sec
+Illinois,I,b1g
+Indiana,I,b1g
+Iowa,I,b1g
+Maryland,M,b1g
+Michigan,M,b1g
+Michigan State,MS,b1g
+Minnesota,M,b1g
+Nebraska,N,b1g
+Northwestern,N,b1g
+Ohio State,OS,b1g
+Penn State,PS,b1g
+Purdue,P,b1g
+Rutgers,R,b1g
+Wisconsin,W,b1g
+USC,U,b1g
+UCLA,U,b1g
+Oregon,O,b1g
+Washington,W,b1g
+Arizona,A,b12
+Arizona State,AS,b12
+Baylor,B,b12
+BYU,B,b12
+Cincinnati,C,b12
+Colorado,C,b12
+Houston,H,b12
+Iowa State,IS,b12
+Kansas,K,b12
+Kansas State,KS,b12
+Oklahoma State,OS,b12
+TCU,T,b12
+Texas Tech,TT,b12
+UCF,U,b12
+Utah,U,b12
+West Virginia,WV,b12
+Boston College,BC,acc
+California,C,acc
+Clemson,C,acc
+Duke,D,acc
+Florida State,FS,acc
+Georgia Tech,GT,acc
+Louisville,L,acc
+Miami,M,acc
+North Carolina,NC,acc
+NC State,NS,acc
+Pitt,P,acc
+SMU,S,acc
+Stanford,S,acc
+Syracuse,S,acc
+Virginia,V,acc
+Virginia Tech,VT,acc
+Wake Forest,WF,acc
+Notre Dame,ND,ind
+UConn,U,ind
