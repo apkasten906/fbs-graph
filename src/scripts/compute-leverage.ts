@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { buildLatestAPRankMap, computeLeverageForGame } from '../src/lib/score.js';
-import type { Game, TeamSeason, PollSnapshot } from '../src/types/index.js';
+import { buildLatestAPRankMap, computeLeverageForGame } from '../lib/score.js';
+import type { Game, TeamSeason, PollSnapshot } from '../types/index.js';
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 

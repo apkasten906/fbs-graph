@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parse } from 'csv-parse/sync';
-import type { Game, Team, TeamSeason, PollSnapshot } from '../src/types/index.js';
+import type { Game, Team, TeamSeason, PollSnapshot } from '../types/index.js';
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 const CSV_DIR = path.join(process.cwd(), 'csv');
