@@ -1,70 +1,137 @@
 name,shortName,conferenceId
-Alabama,A,sec
-Arkansas,A,sec
-Auburn,A,sec
-Florida,F,sec
-Georgia,G,sec
-Kentucky,K,sec
-LSU,L,sec
-Mississippi State,MS,sec
-Missouri,M,sec
-Ole Miss,OM,sec
-South Carolina,SC,sec
-Tennessee,T,sec
-Texas A&M,TA,sec
-Texas,T,sec
-Oklahoma,O,sec
-Vanderbilt,VE,sec
-Illinois,I,b1g
-Indiana,I,b1g
-Iowa,I,b1g
-Maryland,M,b1g
-Michigan,M,b1g
-Michigan State,MS,b1g
-Minnesota,M,b1g
-Nebraska,N,b1g
-Northwestern,N,b1g
-Ohio State,OS,b1g
-Penn State,PS,b1g
-Purdue,P,b1g
-Rutgers,R,b1g
-Wisconsin,W,b1g
-USC,U,b1g
-UCLA,U,b1g
-Oregon,O,b1g
-Washington,W,b1g
-Arizona,A,b12
-Arizona State,AS,b12
-Baylor,B,b12
-BYU,B,b12
-Cincinnati,C,b12
-Colorado,C,b12
-Houston,H,b12
-Iowa State,IS,b12
-Kansas,K,b12
-Kansas State,KS,b12
-Oklahoma State,OS,b12
-TCU,T,b12
-Texas Tech,TT,b12
-UCF,U,b12
-Utah,U,b12
-West Virginia,WV,b12
+Air Force,AF,mwc
+Akron,AKR,mac
+Alabama,ALA,sec
+App State,APP,sbc
+Arizona,ARIZ,b12
+Arizona State,ASU,b12
+Arkansas,ARK,sec
+Arkansas State,ARST,sbc
+Army,ARMY,aac
+Auburn,AUB,sec
+Ball State,BALL,mac
+Baylor,BAY,b12
+Boise State,BOIS,mwc
 Boston College,BC,acc
-California,C,acc
-Clemson,C,acc
-Duke,D,acc
-Florida State,FS,acc
+Bowling Green,BGSU,mac
+Buffalo,BUF,mac
+BYU,BYU,b12
+California,CAL,acc
+Central Michigan,CMU,mac
+Charlotte,CLT,aac
+Cincinnati,CIN,b12
+Clemson,CLEM,acc
+Coastal Carolina,CCU,sbc
+Colorado,COLO,b12
+Colorado State,CSU,mwc
+Delaware,DEL,cusa
+Duke,DUKE,acc
+East Carolina,ECU,aac
+Eastern Michigan,EMU,mac
+Florida,FLA,sec
+Florida Atlantic,FAU,aac
+Florida International,FIU,cusa
+Florida State,FSU,acc
+Fresno State,FRES,mwc
+Georgia,UGA,sec
+Georgia Southern,GASO,sbc
+Georgia State,GAST,sbc
 Georgia Tech,GT,acc
-Louisville,L,acc
-Miami,M,acc
-North Carolina,NC,acc
-NC State,NS,acc
-Pitt,P,acc
-SMU,S,acc
-Stanford,S,acc
-Syracuse,S,acc
-Virginia,V,acc
-Virginia Tech,VT,acc
-Wake Forest,WF,acc
+Hawai'i,HAW,mwc
+Houston,HOU,b12
+Illinois,ILL,b1g
+Indiana,IU,b1g
+Iowa,IOWA,b1g
+Iowa State,ISU,b12
+Jacksonville State,JXST,cusa
+James Madison,JMU,sbc
+Kansas,KU,b12
+Kansas State,KSU,b12
+Kennesaw State,KENN,cusa
+Kent State,KENT,mac
+Kentucky,UK,sec
+Liberty,LIB,cusa
+Louisiana,UL,sbc
+Louisiana Tech,LT,cusa
+Louisville,LOU,acc
+LSU,LSU,sec
+Marshall,MRSH,sbc
+Maryland,MD,b1g
+Massachusetts,MASS,mac
+Memphis,MEM,aac
+Miami,MIA,acc
+Miami (OH),M-OH,mac
+Michigan,MICH,b1g
+Michigan State,MSU,b1g
+Middle Tennessee,MTSU,cusa
+Minnesota,MINN,b1g
+Mississippi State,MSST,sec
+Missouri,MIZ,sec
+Missouri State,MOST,cusa
+Navy,NAVY,aac
+NC State,NCSU,acc
+Nebraska,NEB,b1g
+Nevada,NEV,mwc
+New Mexico,UNM,mwc
+New Mexico State,NMSU,cusa
+North Carolina,UNC,acc
+Northern Illinois,NIU,mac
+North Texas,UNT,aac
+Northwestern,NU,b1g
 Notre Dame,ND,ind
-UConn,U,ind
+Ohio,OHIO,mac
+Ohio State,OSU,b1g
+Oklahoma,OU,sec
+Oklahoma State,OKST,b12
+Old Dominion,ODU,sbc
+Ole Miss,MISS,sec
+Oregon,ORE,b1g
+Oregon State,ORST,pac12
+Penn State,PSU,b1g
+Pittsburgh,PITT,acc
+Purdue,PUR,b1g
+Rice,RICE,aac
+Rutgers,RUTG,b1g
+Sam Houston,SHSU,cusa
+San Diego State,SDSU,mwc
+San José State,SJSU,mwc
+SMU,SMU,acc
+South Alabama,USA,sbc
+South Carolina,SC,sec
+Southern Miss,USM,sbc
+South Florida,USF,aac
+Stanford,STAN,acc
+Syracuse,SYR,acc
+TCU,TCU,b12
+Temple,TEM,aac
+Tennessee,TENN,sec
+Texas,TEX,sec
+Texas A&M,TA&M,sec
+Texas State,TXST,sbc
+Texas Tech,TTU,b12
+Toledo,TOL,mac
+Troy,TROY,sbc
+Tulane,TULN,aac
+Tulsa,TLSA,aac
+UAB,UAB,aac
+UCF,UCF,b12
+UCLA,UCLA,b1g
+UConn,CONN,ind
+UL Monroe,ULM,sbc
+UNLV,UNLV,mwc
+USC,USC,b1g
+Utah,UTAH,b12
+Utah State,USU,mwc
+UTEP,UTEP,cusa
+UTSA,UTSA,aac
+Vanderbilt,VAN,sec
+Virginia,UVA,acc
+Virginia Tech,VT,acc
+Wake Forest,WAKE,acc
+Washington,WASH,b1g
+Washington State,WSU,pac12
+Western Kentucky,WKU,cusa
+Western Michigan,WMU,mac
+West Virginia,WVU,b12
+Wisconsin,WIS,b1g
+Wyoming,WYO,mwc

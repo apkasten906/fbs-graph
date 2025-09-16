@@ -1,14 +1,134 @@
 [
   {
+    "id": "mac",
+    "name": "Mid-American",
+    "shortName": "MAC",
+    "division": "FBS"
+  },
+  {
+    "id": "mwc",
+    "name": "Mountain West",
+    "shortName": "MWC",
+    "division": "FBS"
+  },
+  {
+    "id": "pac12",
+    "name": "Pac-12",
+    "shortName": "Pac-12",
+    "division": "FBS"
+  },
+  {
     "id": "sec",
-    "name": "Southeastern Conference",
+    "name": "SEC",
     "shortName": "SEC",
     "division": "FBS"
   },
   {
-    "id": "b1g",
-    "name": "Big Ten",
-    "shortName": "B1G",
+    "id": "pac10",
+    "name": "Pac-10",
+    "shortName": "Pac-10",
+    "division": "FBS"
+  },
+  {
+    "id": "big8",
+    "name": "Big 8",
+    "shortName": "Big 8",
+    "division": "FBS"
+  },
+  {
+    "id": "pac8",
+    "name": "Pac-8",
+    "shortName": "Pac-8",
+    "division": "FBS"
+  },
+  {
+    "id": "mviaa",
+    "name": "Missouri Valley",
+    "shortName": "MVIAA",
+    "division": "FBS"
+  },
+  {
+    "id": "pcc",
+    "name": "Pacific",
+    "shortName": "PCC",
+    "division": "FBS"
+  },
+  {
+    "id": "big6",
+    "name": "Big 6",
+    "shortName": "Big 6",
+    "division": "FBS"
+  },
+  {
+    "id": "msac",
+    "name": "Mountain State",
+    "shortName": "MSAC",
+    "division": "FBS"
+  },
+  {
+    "id": "big7",
+    "name": "Big 7",
+    "shortName": "Big 7",
+    "division": "FBS"
+  },
+  {
+    "id": "aawu",
+    "name": "AAWU",
+    "shortName": "AAWU",
+    "division": "FBS"
+  },
+  {
+    "id": "pcaa",
+    "name": "PCAA",
+    "shortName": "PCAA",
+    "division": "FBS"
+  },
+  {
+    "id": "swac",
+    "name": "SWAC",
+    "shortName": "SWAC",
+    "division": "FBS"
+  },
+  {
+    "id": "western",
+    "name": "Western",
+    "shortName": "Western",
+    "division": "FBS"
+  },
+  {
+    "id": "rmc",
+    "name": "Rocky Mountain",
+    "shortName": "RMC",
+    "division": "FBS"
+  },
+  {
+    "id": "swc",
+    "name": "Southwest",
+    "shortName": "SWC",
+    "division": "FBS"
+  },
+  {
+    "id": "southern",
+    "name": "Southern",
+    "shortName": "Southern",
+    "division": "FBS"
+  },
+  {
+    "id": "mvc",
+    "name": "Missouri Valley",
+    "shortName": "MVC",
+    "division": "FBS"
+  },
+  {
+    "id": "biaa",
+    "name": "Border",
+    "shortName": "BIAA",
+    "division": "FBS"
+  },
+  {
+    "id": "acc",
+    "name": "ACC",
+    "shortName": "ACC",
     "division": "FBS"
   },
   {
@@ -18,15 +138,69 @@
     "division": "FBS"
   },
   {
-    "id": "acc",
-    "name": "Atlantic Coast Conference",
-    "shortName": "ACC",
+    "id": "skyline",
+    "name": "Skyline",
+    "shortName": "Skyline",
+    "division": "FBS"
+  },
+  {
+    "id": "b1g",
+    "name": "Big Ten",
+    "shortName": "B1G",
+    "division": "FBS"
+  },
+  {
+    "id": "cusa",
+    "name": "Conference USA",
+    "shortName": "CUSA",
     "division": "FBS"
   },
   {
     "id": "ind",
-    "name": "Independents",
+    "name": "FBS Independents",
     "shortName": "IND",
+    "division": "FBS"
+  },
+  {
+    "id": "sbc",
+    "name": "Sun Belt",
+    "shortName": "SBC",
+    "division": "FBS"
+  },
+  {
+    "id": "aac",
+    "name": "American Athletic",
+    "shortName": "AAC",
+    "division": "FBS"
+  },
+  {
+    "id": "ivy",
+    "name": "Ivy",
+    "shortName": "Ivy",
+    "division": "FBS"
+  },
+  {
+    "id": "wac",
+    "name": "Western Athletic",
+    "shortName": "WAC",
+    "division": "FBS"
+  },
+  {
+    "id": "southland",
+    "name": "Southland",
+    "shortName": "Southland",
+    "division": "FBS"
+  },
+  {
+    "id": "bw",
+    "name": "Big West",
+    "shortName": "BW",
+    "division": "FBS"
+  },
+  {
+    "id": "be",
+    "name": "Big East",
+    "shortName": "BE",
     "division": "FBS"
   }
 ]
