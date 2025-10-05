@@ -7,29 +7,75 @@ interface Options {
   leverageThreshold?: number;
 }
 
+function printHelp(): void {
+  console.log(`Usage: pnpm preview:playoff -- [options]
+
+Options:
+  --season=<year>              Season to evaluate (default: 2025)
+  --limit=<teams>              Maximum number of contenders to return
+  --gameLimit=<games>          Maximum number of remaining high leverage games
+  --leverageThreshold=<value>  Minimum leverage index required for remaining games
+
+Examples:
+  pnpm preview:playoff -- --season=2025
+  pnpm preview:playoff -- --season=2025 --limit=5 --gameLimit=6
+`);
+}
+
 function parseArgs(argv: string[]): Options {
-  const defaults: Options = { season: 2025 };
+  const options: Options = { season: 2025 };
   for (const arg of argv) {
-    const [key, value] = arg.split('=');
-    if (!value) continue;
+    if (arg === '--help' || arg === '-h') {
+      printHelp();
+      process.exit(0);
+    }
+
+    const [key, rawValue] = arg.split('=');
+    if (!rawValue) continue;
+
     switch (key) {
-      case '--season':
-        defaults.season = Number.parseInt(value, 10);
+      case '--season': {
+        const parsed = Number.parseInt(rawValue, 10);
+        if (Number.isNaN(parsed)) {
+          console.warn(`Ignoring invalid season: "${rawValue}"`);
+        } else {
+          options.season = parsed;
+        }
         break;
-      case '--limit':
-        defaults.limit = Number.parseInt(value, 10);
+      }
+      case '--limit': {
+        const parsed = Number.parseInt(rawValue, 10);
+        if (Number.isNaN(parsed)) {
+          console.warn(`Ignoring invalid limit: "${rawValue}"`);
+        } else {
+          options.limit = parsed;
+        }
         break;
-      case '--gameLimit':
-        defaults.gameLimit = Number.parseInt(value, 10);
+      }
+      case '--gameLimit': {
+        const parsed = Number.parseInt(rawValue, 10);
+        if (Number.isNaN(parsed)) {
+          console.warn(`Ignoring invalid gameLimit: "${rawValue}"`);
+        } else {
+          options.gameLimit = parsed;
+        }
         break;
-      case '--leverageThreshold':
-        defaults.leverageThreshold = Number.parseFloat(value);
+      }
+      case '--leverageThreshold': {
+        const parsed = Number.parseFloat(rawValue);
+        if (Number.isNaN(parsed)) {
+          console.warn(`Ignoring invalid leverageThreshold: "${rawValue}"`);
+        } else {
+          options.leverageThreshold = parsed;
+        }
         break;
+      }
       default:
+        console.warn(`Unrecognized option: "${key}". Run with --help to see supported flags.`);
         break;
     }
   }
-  return defaults;
+  return options;
 }
 
 const options = parseArgs(process.argv.slice(2));

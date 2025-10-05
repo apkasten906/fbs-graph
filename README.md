@@ -61,6 +61,40 @@ Pass optional arguments to tailor the request (remember the extra `--` so `pnpm`
 pnpm preview:playoff -- --season=2025 --gameLimit=6 --limit=8 --leverageThreshold=0.8
 ```
 
+Need a refresher on the available flags? Ask for help straight from the script:
+
+```bash
+pnpm preview:playoff -- --help
+```
+
+The script prints a JSON payload that highlights what the resolver considers the most consequential games and teams. A trimmed sample response looks like this:
+
+```json
+{
+  "generatedAt": "2025-10-05T12:00:00.000Z",
+  "season": 2025,
+  "leverageThreshold": 0.75,
+  "remainingHighLeverageGames": [
+    {
+      "id": "2025-11-22-OSU-MICH",
+      "date": "2025-11-22",
+      "leverage": 0.92,
+      "home": { "name": "Michigan" },
+      "away": { "name": "Ohio State" }
+    }
+  ],
+  "contenders": [
+    {
+      "team": { "name": "Georgia" },
+      "rank": 1,
+      "resumeScore": 92.4,
+      "leverageIndex": 0.88,
+      "nextGame": { "id": "2025-11-29-UGA-ALA", "date": "2025-11-29" }
+    }
+  ]
+}
+```
+
 The script spins up an in-memory Apollo Server instance, executes the query, and prints the JSON response so you can inspect the upcoming high-leverage games and the current contender stack.
 
 ### Why run `pnpm build`?
