@@ -47,6 +47,16 @@ query {
 }
 ```
 
+### Run everything inside Codex
+
+Need a walkthrough that works directly inside the Codex workspace? Follow these steps:
+
+1. **Install dependencies** – `pnpm install`. The Codex image already includes Node 20 and pnpm, so the install should only hydrate the local `node_modules/` directory.
+2. **Compile and type-check** – `pnpm build`. This confirms the data files and resolvers line up with the schema before you start the server.
+3. **Start the GraphQL dev server** – `pnpm dev`. Codex forwards port 4100 automatically; watch the terminal output for the Apollo Sandbox link.
+4. **Explore the API** – open the printed Sandbox URL in the Codex preview panel and run the sample `playoffPreview` query (see below) to inspect the projected bracket.
+5. **Prefer the terminal?** Skip the browser and run `pnpm preview:playoff -- --season=2025 --gameLimit=6 --limit=8` to execute the same query via the CLI helper.
+
 ### Preview the playoff picture from the CLI
 
 If you want to exercise the `playoffPreview` resolver without opening a browser, use the helper script:
