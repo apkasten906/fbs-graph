@@ -1,16 +1,19 @@
 [
-  {
-    "teamSeasonId": "georgia-2025",
-    "poll": "AP",
-    "week": 4,
-    "rank": 4,
-    "date": "2025-09-15T12:00:00Z"
-  },
-  {
-    "teamSeasonId": "alabama-2025",
-    "poll": "AP",
-    "week": 4,
-    "rank": 6,
-    "date": "2025-09-15T12:00:00Z"
-  }
+  { "teamSeasonId": "georgia-2025", "poll": "AP", "week": 9, "rank": 1, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "ohio-state-2025", "poll": "AP", "week": 9, "rank": 2, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "oregon-2025", "poll": "AP", "week": 9, "rank": 3, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "texas-2025", "poll": "AP", "week": 9, "rank": 4, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "michigan-2025", "poll": "AP", "week": 9, "rank": 5, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "florida-state-2025", "poll": "AP", "week": 9, "rank": 6, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "alabama-2025", "poll": "AP", "week": 9, "rank": 7, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "notre-dame-2025", "poll": "AP", "week": 9, "rank": 8, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "ole-miss-2025", "poll": "AP", "week": 9, "rank": 9, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "penn-state-2025", "poll": "AP", "week": 9, "rank": 10, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "washington-2025", "poll": "AP", "week": 9, "rank": 11, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "lsu-2025", "poll": "AP", "week": 9, "rank": 12, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "oklahoma-2025", "poll": "AP", "week": 9, "rank": 13, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "clemson-2025", "poll": "AP", "week": 9, "rank": 14, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "utah-2025", "poll": "AP", "week": 9, "rank": 15, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "usc-2025", "poll": "AP", "week": 9, "rank": 16, "date": "2025-10-20T12:00:00Z" },
+  { "teamSeasonId": "miami-2025", "poll": "AP", "week": 9, "rank": 17, "date": "2025-10-20T12:00:00Z" }
 ]

@@ -8,7 +8,8 @@
     "start": "node dist/index.js",
     "build": "tsc -p tsconfig.json",
     "score": "tsx scripts/compute-leverage.ts",
-    "import:csv": "tsx scripts/import-from-csv.ts"
+    "import:csv": "tsx scripts/import-from-csv.ts",
+    "preview:playoff": "tsx scripts/run-playoff-preview.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.10.0",

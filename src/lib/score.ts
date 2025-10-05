@@ -2,12 +2,20 @@ import { Game, PollSnapshot, TeamSeason } from '../types/index.js';
 
 type RankMap = Map<string, number>; // teamSeasonId -> rank (lower is better)
 
-export function buildLatestAPRankMap(polls: PollSnapshot[], season: number): RankMap {
+export function buildLatestAPRankMap(
+  polls: PollSnapshot[],
+  season: number,
+  teamSeasons: TeamSeason[]
+): RankMap {
+  const relevantTeamSeasonIds = new Set(
+    teamSeasons.filter(ts => ts.season === season).map(ts => ts.id)
+  );
   const map: RankMap = new Map();
   // keep latest by date per teamSeason
   const latestByTeam = new Map<string, PollSnapshot>();
   for (const p of polls) {
     if (p.poll !== 'AP') continue;
+    if (!relevantTeamSeasonIds.has(p.teamSeasonId)) continue;
     const current = latestByTeam.get(p.teamSeasonId);
     if (!current || new Date(p.date) > new Date(current.date)) {
       latestByTeam.set(p.teamSeasonId, p);

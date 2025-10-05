@@ -65,3 +65,21 @@ export interface Game {
   bridgeBoost?: number;
   timingBoost?: number;
 }
+
+export interface PlayoffContender {
+  season: number;
+  teamId: string;
+  rank?: number;
+  resumeScore: number;
+  leverageIndex: number;
+  upcomingGames: Game[];
+  nextGame?: Game;
+}
+
+export interface PlayoffPreview {
+  season: number;
+  generatedAt: string;
+  leverageThreshold: number;
+  remainingHighLeverageGames: Game[];
+  contenders: PlayoffContender[];
+}
