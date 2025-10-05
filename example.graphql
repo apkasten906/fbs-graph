@@ -10,3 +10,27 @@ query TopEssential {
     away { id name conference { shortName } }
   }
 }
+
+query PlayoffPreview {
+  playoffPreview(season: 2025, gameLimit: 8) {
+    generatedAt
+    leverageThreshold
+    remainingHighLeverageGames {
+      id
+      date
+      leverage
+      home { name }
+      away { name }
+    }
+    contenders {
+      team { name conference { shortName } }
+      rank
+      resumeScore
+      leverageIndex
+      nextGame {
+        id
+        date
+      }
+    }
+  }
+}

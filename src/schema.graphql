@@ -85,6 +85,24 @@ type ConferenceConnectivity {
   averageLeverage: Float!
 }
 
+type PlayoffContender {
+  team: Team!
+  rank: Int
+  record: Record
+  resumeScore: Float!
+  leverageIndex: Float!
+  upcomingGames: [Game!]!
+  nextGame: Game
+}
+
+type PlayoffPreview {
+  season: Int!
+  generatedAt: DateTime!
+  leverageThreshold: Float!
+  remainingHighLeverageGames: [Game!]!
+  contenders: [PlayoffContender!]!
+}
+
 type Query {
   conferences: [Conference!]!
   conference(id: ID!): Conference
@@ -93,6 +111,7 @@ type Query {
   games(season: Int!, week: Int, teamId: ID, conferenceId: ID, type: GameType, playedOnly: Boolean): [Game!]!
   essentialMatchups(season: Int!, week: Int, limit: Int = 50, includeConferenceGames: Boolean = true): [Game!]!
   conferenceConnectivity(season: Int!): [ConferenceConnectivity!]!
+  playoffPreview(season: Int!, limit: Int = 12, gameLimit: Int = 12, leverageThreshold: Float = 0.75): PlayoffPreview!
 }
 
 input ConferenceInput {

@@ -6,7 +6,7 @@ This project models FBS teams and schedules as a graph and exposes it via GraphQ
 
 ```bash
 pnpm i   # or npm i / yarn
-pnpm dev # starts GraphQL on http://localhost:4000/graphql
+pnpm dev # starts GraphQL on http://localhost:4100/
 ```
 
 Open Apollo Sandbox in the console output and try:
@@ -23,6 +23,49 @@ query {
   }
 }
 ```
+
+To preview the playoff picture with updated data from the Sandbox:
+
+```graphql
+query {
+  playoffPreview(season: 2025, gameLimit: 8) {
+    generatedAt
+    remainingHighLeverageGames {
+      id
+      date
+      leverage
+      home { name }
+      away { name }
+    }
+    contenders {
+      team { name }
+      rank
+      leverageIndex
+      resumeScore
+    }
+  }
+}
+```
+
+### Preview the playoff picture from the CLI
+
+If you want to exercise the `playoffPreview` resolver without opening a browser, use the helper script:
+
+```bash
+pnpm preview:playoff
+```
+
+Pass optional arguments to tailor the request (remember the extra `--` so `pnpm` forwards them):
+
+```bash
+pnpm preview:playoff -- --season=2025 --gameLimit=6 --limit=8 --leverageThreshold=0.8
+```
+
+The script spins up an in-memory Apollo Server instance, executes the query, and prints the JSON response so you can inspect the upcoming high-leverage games and the current contender stack.
+
+### Why run `pnpm build`?
+
+The build process transpiles the TypeScript server into `dist/` and performs a full type check along the way. That surfaces schema or data inconsistencies immediately instead of at runtime. Now that the `tsconfig` scopes only the server code, `pnpm build` completes cleanly again and provides quick confidence that the GraphQL changes can be deployed safely.
 
 ### Scripts
 - `pnpm score` recomputes leverage scores from polls and ratings.
