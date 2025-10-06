@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sec",
+    "name": "Southeastern Conference",
+    "shortName": "SEC",
+    "division": "FBS"
+  },
+  {
+    "id": "b1g",
+    "name": "Big Ten",
+    "shortName": "B1G",
+    "division": "FBS"
+  },
+  {
+    "id": "b12",
+    "name": "Big 12",
+    "shortName": "Big12",
+    "division": "FBS"
+  },
+  {
+    "id": "acc",
+    "name": "Atlantic Coast Conference",
+    "shortName": "ACC",
+    "division": "FBS"
+  },
+  {
+    "id": "ind",
+    "name": "Independents",
+    "shortName": "IND",
+    "division": "FBS"
+  }
+]
