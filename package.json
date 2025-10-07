@@ -9,7 +9,8 @@
     "build": "tsc -p tsconfig.json",
     "score": "tsx scripts/compute-leverage.ts",
     "import:csv": "tsx scripts/import-from-csv.ts",
-    "preview:playoff": "tsx scripts/run-playoff-preview.ts"
+    "preview:playoff": "tsx scripts/run-playoff-preview.ts",
+    "web:serve": "tsx scripts/serve-web.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.10.0",
