@@ -115,6 +115,15 @@ The build process transpiles the TypeScript server into `dist/` and performs a f
 - `pnpm score` recomputes leverage scores from polls and ratings.
 - Edit JSON in `src/data/` to add all teams/games. A CSV importer stub lives in `scripts/compute-leverage.ts`.
 
+## Tests
+
+Install dependencies and execute the Vitest suite to confirm the dynamic timeline continues to populate matchups when filters change:
+
+```bash
+npm install
+npm test -- --run
+```
+
 ## Data
 Small, illustrative fixtures are included. Replace with full 136-team data when ready:
 - `conferences.json`

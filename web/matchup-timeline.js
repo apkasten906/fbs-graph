@@ -892,5 +892,4 @@ function findShortestPath(adjacency, start, end) {
   return { nodes, edges, distance: dist.get(end) ?? null };
 }
 
-export { createTimelineApp };
 export default createTimelineApp;
