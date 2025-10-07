@@ -30,7 +30,7 @@ export function buildLatestAPRankMap(
 function rankWeightFromRank(rank?: number): number | undefined {
   if (!rank) return undefined;
   // Map rank 1..25 -> ~ (1.0 .. 0.04). You can tune this curve.
-  return 1.2 - (rank / 25); // rank 1 => 1.16, rank 25 => 0.2 (floor later)
+  return 1.2 - rank / 25; // rank 1 => 1.16, rank 25 => 0.2 (floor later)
 }
 
 function percentileFromSP(spPlus?: number): number | undefined {
@@ -62,15 +62,24 @@ export function computeLeverageForGame(g: Game, teamSeasons: TeamSeason[], apRan
   const rankHome = homeTS ? apRanks.get(homeTS.id) : undefined;
   const rankAway = awayTS ? apRanks.get(awayTS.id) : undefined;
 
-  const rwh = rankHome ? Math.max(0.2, rankWeightFromRank(rankHome) ?? 0) :
-              percentileFromSP(homeTS?.spPlus) ?? 0.3;
-  const rwa = rankAway ? Math.max(0.2, rankWeightFromRank(rankAway) ?? 0) :
-              percentileFromSP(awayTS?.spPlus) ?? 0.3;
+  const rwh = rankHome
+    ? Math.max(0.2, rankWeightFromRank(rankHome) ?? 0)
+    : (percentileFromSP(homeTS?.spPlus) ?? 0.3);
+  const rwa = rankAway
+    ? Math.max(0.2, rankWeightFromRank(rankAway) ?? 0)
+    : (percentileFromSP(awayTS?.spPlus) ?? 0.3);
 
   const bb = bridgeBoost(g.type);
   const tb = timingBoost(g.phase, g.week, g.type);
 
   const leverage = Number((rwh * rwa * bb * tb).toFixed(4));
 
-  return { ...g, leverage, rankWeightHome: rwh, rankWeightAway: rwa, bridgeBoost: bb, timingBoost: tb };
+  return {
+    ...g,
+    leverage,
+    rankWeightHome: rwh,
+    rankWeightAway: rwa,
+    bridgeBoost: bb,
+    timingBoost: tb,
+  };
 }

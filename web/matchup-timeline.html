@@ -1,467 +1,468 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>High-Impact Matchup Timeline</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #050816;
-      --panel: rgba(12, 18, 36, 0.82);
-      --panel-solid: #11182f;
-      --ink: #f8fafc;
-      --muted: #a0abc0;
-      --accent: #38bdf8;
-      --border: rgba(56, 189, 248, 0.22);
-      --gold: #facc15;
-      --red: #f87171;
-      --emerald: #34d399;
-      --indigo: #818cf8;
-      --slate: #1e293b;
-      font-family: "Inter", "Segoe UI", sans-serif;
-    }
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 12% 18%, rgba(56,189,248,0.16) 0, transparent 45%),
-        radial-gradient(circle at 82% 8%, rgba(129,140,248,0.18) 0, transparent 42%),
-        var(--bg);
-      color: var(--ink);
-      display: flex;
-      flex-direction: column;
-      padding: clamp(24px, 8vw, 48px) clamp(20px, 10vw, 72px) 60px;
-      gap: 32px;
-    }
-    body.file-mode {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: clamp(24px, 6vw, 48px);
-    }
-    .file-overlay {
-      max-width: 520px;
-      background: rgba(12, 18, 36, 0.88);
-      border: 1px solid rgba(56, 189, 248, 0.32);
-      border-radius: 26px;
-      padding: clamp(24px, 5vw, 42px);
-      box-shadow: 0 22px 64px rgba(2, 6, 23, 0.52);
-      text-align: center;
-      display: grid;
-      gap: 18px;
-    }
-    .file-overlay h2 {
-      margin: 0;
-      font-size: clamp(20px, 3vw, 28px);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-    .file-overlay p {
-      margin: 0;
-      line-height: 1.6;
-      color: rgba(248, 250, 252, 0.72);
-      font-size: clamp(14px, 2vw, 16px);
-    }
-    .file-overlay code {
-      background: rgba(15, 23, 42, 0.72);
-      border-radius: 10px;
-      padding: 4px 8px;
-      font-size: 13px;
-      color: var(--accent);
-    }
-    .file-overlay a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(56, 189, 248, 0.48);
-      background: rgba(56, 189, 248, 0.16);
-      color: var(--ink);
-      padding: 10px 18px;
-      text-decoration: none;
-      font-size: 13px;
-      letter-spacing: 0.04em;
-    }
-    .file-overlay a:hover {
-      border-color: rgba(56, 189, 248, 0.68);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
-    }
-    main {
-      width: min(1040px, 92vw);
-      margin: 0 auto;
-      background: var(--panel);
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      border-radius: 26px;
-      padding: clamp(24px, 5vw, 44px);
-      box-shadow: 0 32px 84px rgba(2,6,23,0.48);
-      backdrop-filter: blur(18px);
-      display: flex;
-      flex-direction: column;
-      gap: clamp(20px, 4vw, 36px);
-    }
-    .page-title {
-      margin: 0;
-      font-size: clamp(24px, 3.2vw, 34px);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      text-align: center;
-    }
-    .page-subtitle {
-      margin: 0;
-      text-align: center;
-      color: var(--muted);
-      font-size: clamp(14px, 1.8vw, 16px);
-      line-height: 1.6;
-    }
-    .intro {
-      display: grid;
-      gap: 10px;
-    }
-    .path-summary {
-      display: grid;
-      gap: 18px;
-    }
-    .path-summary header {
-      text-align: left;
-      padding: 0;
-    }
-    .path-summary h2 {
-      font-size: 17px;
-      letter-spacing: 0.04em;
-      color: var(--accent);
-      margin: 0 0 6px;
-    }
-    .path-summary p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-    .programs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .programs li {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      font-size: 13px;
-      letter-spacing: 0.02em;
-    }
-    .programs li small {
-      color: rgba(248, 250, 252, 0.72);
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .programs li.arrow {
-      background: transparent;
-      border: none;
-      font-size: 16px;
-      color: rgba(148, 163, 184, 0.72);
-    }
-    .summary-metrics {
-      display: grid;
-      gap: 12px;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    }
-    .summary-metrics span {
-      display: grid;
-      gap: 6px;
-      background: rgba(15, 23, 42, 0.62);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      border-radius: 14px;
-      padding: 12px 16px;
-      font-size: 12px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: rgba(148, 163, 184, 0.82);
-    }
-    .summary-metrics span strong {
-      font-size: 18px;
-      letter-spacing: 0.02em;
-      color: var(--ink);
-    }
-    .filters {
-      display: grid;
-      gap: 16px;
-    }
-    .filters h3 {
-      margin: 0;
-      font-size: 13px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(148, 163, 184, 0.72);
-    }
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .chip {
-      border: 1px solid rgba(148, 163, 184, 0.26);
-      background: rgba(15, 23, 42, 0.66);
-      color: var(--muted);
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 12px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .chip[data-active="true"] {
-      border-color: rgba(56, 189, 248, 0.68);
-      color: var(--ink);
-      background: rgba(56, 189, 248, 0.14);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
-    }
-    .chip:hover {
-      border-color: rgba(56, 189, 248, 0.38);
-      color: var(--ink);
-    }
-    .control-grid {
-      display: grid;
-      gap: 16px;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    }
-    .control label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(148, 163, 184, 0.72);
-    }
-    select {
-      width: 100%;
-      border-radius: 14px;
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      background: rgba(8, 14, 31, 0.72);
-      color: var(--ink);
-      padding: 10px 14px;
-      font-size: 14px;
-      letter-spacing: 0.02em;
-    }
-    .legend {
-      display: grid;
-      gap: 10px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(148, 163, 184, 0.14);
-    }
-    .legend-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .legend-swatch {
-      width: 12px;
-      height: 12px;
-      border-radius: 999px;
-      box-shadow: 0 0 0 2px rgba(2, 6, 23, 0.8);
-    }
-    .timeline {
-      position: relative;
-      padding-left: 32px;
-      display: grid;
-      gap: 20px;
-    }
-    .timeline::before {
-      content: "";
-      position: absolute;
-      inset: 0 auto 0 10px;
-      width: 2px;
-      background: linear-gradient(to bottom, rgba(56, 189, 248, 0.12), rgba(129, 140, 248, 0.12));
-    }
-    .timeline-item {
-      position: relative;
-      background: rgba(15, 23, 42, 0.76);
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      border-radius: 18px;
-      padding: 18px 18px 18px 22px;
-      display: grid;
-      gap: 16px;
-      box-shadow: 0 20px 48px rgba(2,6,23,0.45);
-    }
-    .timeline-item::before {
-      content: "";
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      border-radius: 999px;
-      border: 2px solid rgba(56, 189, 248, 0.32);
-      background: rgba(56, 189, 248, 0.48);
-      left: -28px;
-      top: 24px;
-      box-shadow: 0 0 0 4px rgba(8, 14, 31, 0.8);
-    }
-    .timeline-date {
-      margin: 0;
-      font-size: 14px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: rgba(148, 163, 184, 0.72);
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-    }
-    .timeline-date span {
-      font-size: 11px;
-      color: rgba(248, 250, 252, 0.68);
-      letter-spacing: 0.16em;
-    }
-    .matchup-card {
-      border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      background: rgba(5, 10, 28, 0.78);
-      padding: 16px;
-      display: grid;
-      gap: 12px;
-    }
-    .matchup-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .matchup-head strong {
-      font-size: 16px;
-      letter-spacing: 0.02em;
-    }
-    .segment-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid rgba(148, 163, 184, 0.24);
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(248, 250, 252, 0.82);
-    }
-    .segment-tag span {
-      opacity: 0.7;
-    }
-    .timestamp {
-      font-size: 12px;
-      color: rgba(148, 163, 184, 0.72);
-      letter-spacing: 0.04em;
-    }
-    .meta {
-      display: grid;
-      gap: 8px;
-      font-size: 12px;
-      color: rgba(148, 163, 184, 0.82);
-    }
-    .meta span {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-    .meta strong {
-      font-size: 12px;
-      color: rgba(248, 250, 252, 0.82);
-      letter-spacing: 0.08em;
-    }
-    details {
-      border-radius: 12px;
-      border: 1px solid rgba(148,163,184,0.16);
-      background: rgba(15, 23, 42, 0.66);
-      padding: 10px 12px;
-    }
-    details summary {
-      cursor: pointer;
-      list-style: none;
-      font-size: 13px;
-      color: var(--accent);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    details summary::before {
-      content: "➜";
-      font-size: 12px;
-      transition: transform 0.2s ease;
-      color: rgba(148, 163, 184, 0.72);
-    }
-    details[open] summary::before {
-      transform: rotate(90deg);
-    }
-    details summary::-webkit-details-marker {
-      display: none;
-    }
-    details ul {
-      margin: 10px 0 0;
-      padding-left: 20px;
-      font-size: 13px;
-      line-height: 1.6;
-    }
-    .empty-state {
-      text-align: center;
-      padding: 36px 18px;
-      border-radius: 18px;
-      border: 1px dashed rgba(148, 163, 184, 0.22);
-      background: rgba(8, 14, 31, 0.44);
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    @media (max-width: 640px) {
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>High-Impact Matchup Timeline</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #050816;
+        --panel: rgba(12, 18, 36, 0.82);
+        --panel-solid: #11182f;
+        --ink: #f8fafc;
+        --muted: #a0abc0;
+        --accent: #38bdf8;
+        --border: rgba(56, 189, 248, 0.22);
+        --gold: #facc15;
+        --red: #f87171;
+        --emerald: #34d399;
+        --indigo: #818cf8;
+        --slate: #1e293b;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
       body {
-        padding: 24px 16px 48px;
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 12% 18%, rgba(56, 189, 248, 0.16) 0, transparent 45%),
+          radial-gradient(circle at 82% 8%, rgba(129, 140, 248, 0.18) 0, transparent 42%), var(--bg);
+        color: var(--ink);
+        display: flex;
+        flex-direction: column;
+        padding: clamp(24px, 8vw, 48px) clamp(20px, 10vw, 72px) 60px;
+        gap: 32px;
+      }
+      body.file-mode {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(24px, 6vw, 48px);
+      }
+      .file-overlay {
+        max-width: 520px;
+        background: rgba(12, 18, 36, 0.88);
+        border: 1px solid rgba(56, 189, 248, 0.32);
+        border-radius: 26px;
+        padding: clamp(24px, 5vw, 42px);
+        box-shadow: 0 22px 64px rgba(2, 6, 23, 0.52);
+        text-align: center;
+        display: grid;
+        gap: 18px;
+      }
+      .file-overlay h2 {
+        margin: 0;
+        font-size: clamp(20px, 3vw, 28px);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      .file-overlay p {
+        margin: 0;
+        line-height: 1.6;
+        color: rgba(248, 250, 252, 0.72);
+        font-size: clamp(14px, 2vw, 16px);
+      }
+      .file-overlay code {
+        background: rgba(15, 23, 42, 0.72);
+        border-radius: 10px;
+        padding: 4px 8px;
+        font-size: 13px;
+        color: var(--accent);
+      }
+      .file-overlay a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(56, 189, 248, 0.48);
+        background: rgba(56, 189, 248, 0.16);
+        color: var(--ink);
+        padding: 10px 18px;
+        text-decoration: none;
+        font-size: 13px;
+        letter-spacing: 0.04em;
+      }
+      .file-overlay a:hover {
+        border-color: rgba(56, 189, 248, 0.68);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
       }
       main {
-        padding: 20px;
+        width: min(1040px, 92vw);
+        margin: 0 auto;
+        background: var(--panel);
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        border-radius: 26px;
+        padding: clamp(24px, 5vw, 44px);
+        box-shadow: 0 32px 84px rgba(2, 6, 23, 0.48);
+        backdrop-filter: blur(18px);
+        display: flex;
+        flex-direction: column;
+        gap: clamp(20px, 4vw, 36px);
+      }
+      .page-title {
+        margin: 0;
+        font-size: clamp(24px, 3.2vw, 34px);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-align: center;
+      }
+      .page-subtitle {
+        margin: 0;
+        text-align: center;
+        color: var(--muted);
+        font-size: clamp(14px, 1.8vw, 16px);
+        line-height: 1.6;
+      }
+      .intro {
+        display: grid;
+        gap: 10px;
+      }
+      .path-summary {
+        display: grid;
+        gap: 18px;
+      }
+      .path-summary header {
+        text-align: left;
+        padding: 0;
+      }
+      .path-summary h2 {
+        font-size: 17px;
+        letter-spacing: 0.04em;
+        color: var(--accent);
+        margin: 0 0 6px;
+      }
+      .path-summary p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .programs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .programs li {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        font-size: 13px;
+        letter-spacing: 0.02em;
+      }
+      .programs li small {
+        color: rgba(248, 250, 252, 0.72);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .programs li.arrow {
+        background: transparent;
+        border: none;
+        font-size: 16px;
+        color: rgba(148, 163, 184, 0.72);
+      }
+      .summary-metrics {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+      .summary-metrics span {
+        display: grid;
+        gap: 6px;
+        background: rgba(15, 23, 42, 0.62);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 14px;
+        padding: 12px 16px;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: rgba(148, 163, 184, 0.82);
+      }
+      .summary-metrics span strong {
+        font-size: 18px;
+        letter-spacing: 0.02em;
+        color: var(--ink);
+      }
+      .filters {
+        display: grid;
+        gap: 16px;
+      }
+      .filters h3 {
+        margin: 0;
+        font-size: 13px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(148, 163, 184, 0.72);
+      }
+      .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .chip {
+        border: 1px solid rgba(148, 163, 184, 0.26);
+        background: rgba(15, 23, 42, 0.66);
+        color: var(--muted);
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .chip[data-active='true'] {
+        border-color: rgba(56, 189, 248, 0.68);
+        color: var(--ink);
+        background: rgba(56, 189, 248, 0.14);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+      }
+      .chip:hover {
+        border-color: rgba(56, 189, 248, 0.38);
+        color: var(--ink);
+      }
+      .control-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+      .control label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(148, 163, 184, 0.72);
+      }
+      select {
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(8, 14, 31, 0.72);
+        color: var(--ink);
+        padding: 10px 14px;
+        font-size: 14px;
+        letter-spacing: 0.02em;
+      }
+      .legend {
+        display: grid;
+        gap: 10px;
+        padding-top: 6px;
+        border-top: 1px solid rgba(148, 163, 184, 0.14);
+      }
+      .legend-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .legend-swatch {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        box-shadow: 0 0 0 2px rgba(2, 6, 23, 0.8);
       }
       .timeline {
-        padding-left: 24px;
+        position: relative;
+        padding-left: 32px;
+        display: grid;
+        gap: 20px;
+      }
+      .timeline::before {
+        content: '';
+        position: absolute;
+        inset: 0 auto 0 10px;
+        width: 2px;
+        background: linear-gradient(to bottom, rgba(56, 189, 248, 0.12), rgba(129, 140, 248, 0.12));
+      }
+      .timeline-item {
+        position: relative;
+        background: rgba(15, 23, 42, 0.76);
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        border-radius: 18px;
+        padding: 18px 18px 18px 22px;
+        display: grid;
+        gap: 16px;
+        box-shadow: 0 20px 48px rgba(2, 6, 23, 0.45);
       }
       .timeline-item::before {
-        left: -32px;
+        content: '';
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        border: 2px solid rgba(56, 189, 248, 0.32);
+        background: rgba(56, 189, 248, 0.48);
+        left: -28px;
+        top: 24px;
+        box-shadow: 0 0 0 4px rgba(8, 14, 31, 0.8);
+      }
+      .timeline-date {
+        margin: 0;
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(148, 163, 184, 0.72);
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+      }
+      .timeline-date span {
+        font-size: 11px;
+        color: rgba(248, 250, 252, 0.68);
+        letter-spacing: 0.16em;
+      }
+      .matchup-card {
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(5, 10, 28, 0.78);
+        padding: 16px;
+        display: grid;
+        gap: 12px;
       }
       .matchup-head {
-        flex-direction: column;
-        align-items: flex-start;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
       }
-    }
-  </style>
-</head>
-<body>
-  <main>
-    <section class="intro">
-      <h1 class="page-title">High-Impact Matchup Timeline</h1>
-      <p class="page-subtitle">
-        Select any two programs, filter by conference scope, and reveal the shortest chain of remaining 2025
-        matchups that connects them by leverage.
-      </p>
-    </section>
-    <section class="path-summary" id="pathSummary"></section>
-    <section class="filters" id="filters"></section>
-    <section class="timeline" id="timeline"></section>
-  </main>
-  <script type="module">
-    import { createTimelineApp } from './matchup-timeline.js';
-    createTimelineApp();
-  </script>
-</body>
+      .matchup-head strong {
+        font-size: 16px;
+        letter-spacing: 0.02em;
+      }
+      .segment-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(248, 250, 252, 0.82);
+      }
+      .segment-tag span {
+        opacity: 0.7;
+      }
+      .timestamp {
+        font-size: 12px;
+        color: rgba(148, 163, 184, 0.72);
+        letter-spacing: 0.04em;
+      }
+      .meta {
+        display: grid;
+        gap: 8px;
+        font-size: 12px;
+        color: rgba(148, 163, 184, 0.82);
+      }
+      .meta span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .meta strong {
+        font-size: 12px;
+        color: rgba(248, 250, 252, 0.82);
+        letter-spacing: 0.08em;
+      }
+      details {
+        border-radius: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        background: rgba(15, 23, 42, 0.66);
+        padding: 10px 12px;
+      }
+      details summary {
+        cursor: pointer;
+        list-style: none;
+        font-size: 13px;
+        color: var(--accent);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      details summary::before {
+        content: '➜';
+        font-size: 12px;
+        transition: transform 0.2s ease;
+        color: rgba(148, 163, 184, 0.72);
+      }
+      details[open] summary::before {
+        transform: rotate(90deg);
+      }
+      details summary::-webkit-details-marker {
+        display: none;
+      }
+      details ul {
+        margin: 10px 0 0;
+        padding-left: 20px;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 36px 18px;
+        border-radius: 18px;
+        border: 1px dashed rgba(148, 163, 184, 0.22);
+        background: rgba(8, 14, 31, 0.44);
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      @media (max-width: 640px) {
+        body {
+          padding: 24px 16px 48px;
+        }
+        main {
+          padding: 20px;
+        }
+        .timeline {
+          padding-left: 24px;
+        }
+        .timeline-item::before {
+          left: -32px;
+        }
+        .matchup-head {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="intro">
+        <h1 class="page-title">High-Impact Matchup Timeline</h1>
+        <p class="page-subtitle">
+          Select any two programs, filter by conference scope, and reveal the shortest chain of
+          remaining 2025 matchups that connects them by leverage.
+        </p>
+      </section>
+      <section class="path-summary" id="pathSummary"></section>
+      <section class="filters" id="filters"></section>
+      <section class="timeline" id="timeline"></section>
+    </main>
+    <script type="module">
+      import createTimelineApp from './matchup-timeline-refactored.js';
+      createTimelineApp();
+    </script>
+  </body>
 </html>

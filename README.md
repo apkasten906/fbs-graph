@@ -16,8 +16,20 @@ query {
   essentialMatchups(season: 2025, limit: 20) {
     id
     date
-    home { id name conference { shortName } }
-    away { id name conference { shortName } }
+    home {
+      id
+      name
+      conference {
+        shortName
+      }
+    }
+    away {
+      id
+      name
+      conference {
+        shortName
+      }
+    }
     type
     leverage
   }
@@ -34,11 +46,17 @@ query {
       id
       date
       leverage
-      home { name }
-      away { name }
+      home {
+        name
+      }
+      away {
+        name
+      }
     }
     contenders {
-      team { name }
+      team {
+        name
+      }
       rank
       leverageIndex
       resumeScore
@@ -112,6 +130,7 @@ The script spins up an in-memory Apollo Server instance, executes the query, and
 The build process transpiles the TypeScript server into `dist/` and performs a full type check along the way. That surfaces schema or data inconsistencies immediately instead of at runtime. Now that the `tsconfig` scopes only the server code, `pnpm build` completes cleanly again and provides quick confidence that the GraphQL changes can be deployed safely.
 
 ### Scripts
+
 - `pnpm score` recomputes leverage scores from polls and ratings.
 - Edit JSON in `src/data/` to add all teams/games. A CSV importer stub lives in `scripts/compute-leverage.ts`.
 
@@ -125,7 +144,9 @@ npm test -- --run
 ```
 
 ## Data
+
 Small, illustrative fixtures are included. Replace with full 136-team data when ready:
+
 - `conferences.json`
 - `teams.json`
 - `teamSeasons.json`
@@ -147,9 +168,11 @@ Want to explore the projected impact chains without wiring up a frontend framewo
 Opening the file directly from disk will display instructions that remind you to launch the static server—modern browsers block `fetch()` calls from the file system for security reasons, so serving over HTTP is required.
 
 ## Leverage formula (simplified)
+
 ```
 leverage = rankWeight(home) * rankWeight(away) * bridgeBoost * timingBoost
 ```
+
 - `rankWeight(team)`: from AP rank if present (1/rank scaled), else SP+ percentile.
 - `bridgeBoost`: 1.2 for non-conference, 1.1 for inter-division, else 1.0.
 - `timingBoost`: 1.0 early season → 1.15 late season (Week 12+), bowls/playoffs 1.25.

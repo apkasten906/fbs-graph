@@ -6,7 +6,7 @@ const server = createApolloServer();
 const port = Number.parseInt(process.env.PORT ?? '4100', 10);
 
 const { url } = await startStandaloneServer(server, {
-  listen: { port }
+  listen: { port },
 });
 
 console.log(`🚀 GraphQL ready at ${url}`);

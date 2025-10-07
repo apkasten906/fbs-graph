@@ -58,7 +58,9 @@ async function resolvePath(requestPath: string) {
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
-  const filePath = await resolvePath(url.pathname === '/' ? '/web/matchup-timeline.html' : url.pathname);
+  const filePath = await resolvePath(
+    url.pathname === '/' ? '/web/matchup-timeline.html' : url.pathname
+  );
   if (!filePath) {
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Not found');

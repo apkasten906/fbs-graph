@@ -6,8 +6,20 @@ query TopEssential {
     date
     type
     leverage
-    home { id name conference { shortName } }
-    away { id name conference { shortName } }
+    home {
+      id
+      name
+      conference {
+        shortName
+      }
+    }
+    away {
+      id
+      name
+      conference {
+        shortName
+      }
+    }
   }
 }
 
@@ -19,11 +31,20 @@ query PlayoffPreview {
       id
       date
       leverage
-      home { name }
-      away { name }
+      home {
+        name
+      }
+      away {
+        name
+      }
     }
     contenders {
-      team { name conference { shortName } }
+      team {
+        name
+        conference {
+          shortName
+        }
+      }
       rank
       resumeScore
       leverageIndex

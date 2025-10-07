@@ -63,4 +63,5 @@ leverage = rankWeight(home) * rankWeight(away) * bridgeBoost * timingBoost
 MIT License
 
 ---
+
 For more details, see the README and source files.

@@ -11,17 +11,23 @@ import type {
   PollSnapshot,
   PlayoffContender as PlayoffContenderT,
   PlayoffPreview as PlayoffPreviewT,
-  RecordRow
+  RecordRow,
 } from './types/index.js';
 import { computeLeverageForGame, buildLatestAPRankMap } from './lib/score.js';
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 
-const conferences: ConfT[] = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'conferences.json'), 'utf-8'));
+const conferences: ConfT[] = JSON.parse(
+  fs.readFileSync(path.join(DATA_DIR, 'conferences.json'), 'utf-8')
+);
 const teams: TeamT[] = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'teams.json'), 'utf-8'));
-const teamSeasons: TeamSeasonT[] = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'teamSeasons.json'), 'utf-8'));
+const teamSeasons: TeamSeasonT[] = JSON.parse(
+  fs.readFileSync(path.join(DATA_DIR, 'teamSeasons.json'), 'utf-8')
+);
 const gamesRaw: GameT[] = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'games.json'), 'utf-8'));
-const polls: PollSnapshot[] = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'polls.json'), 'utf-8'));
+const polls: PollSnapshot[] = JSON.parse(
+  fs.readFileSync(path.join(DATA_DIR, 'polls.json'), 'utf-8')
+);
 
 const typeDefs = gql(fs.readFileSync(path.join(process.cwd(), 'src', 'schema.graphql'), 'utf-8'));
 
@@ -74,7 +80,7 @@ function computeLeverageIndex(resume: number, upcoming: GameT[]): number {
   }
   const totalLev = upcoming.reduce((acc, g) => acc + (g.leverage ?? 0), 0);
   const avgLev = totalLev / upcoming.length;
-  return Number(((avgLev * 0.6) + (resume * 0.4)).toFixed(3));
+  return Number((avgLev * 0.6 + resume * 0.4).toFixed(3));
 }
 
 function sortByDateAscending(games: GameT[]): GameT[] {
@@ -102,30 +108,47 @@ const resolvers = {
   Query: {
     conferences: () => conferences,
     conference: (_: unknown, { id }: { id: string }) => conferences.find(c => c.id === id),
-    teams: (_: unknown, args: { conferenceId?: string, season?: number }) => {
+    teams: (_: unknown, args: { conferenceId?: string; season?: number }) => {
       let list = teams;
       if (args.conferenceId) list = list.filter(t => t.conferenceId === args.conferenceId);
       if (args.season) {
-        const ids = new Set(teamSeasons.filter(ts => ts.season === args.season).map(ts => ts.teamId));
+        const ids = new Set(
+          teamSeasons.filter(ts => ts.season === args.season).map(ts => ts.teamId)
+        );
         list = list.filter(t => ids.has(t.id));
       }
       return list;
     },
     team: (_: unknown, { id }: { id: string }) => teams.find(t => t.id === id),
-    games: (_: unknown, args: { season: number, week?: number, teamId?: string, conferenceId?: string, type?: string, playedOnly?: boolean }) => {
+    games: (
+      _: unknown,
+      args: {
+        season: number;
+        week?: number;
+        teamId?: string;
+        conferenceId?: string;
+        type?: string;
+        playedOnly?: boolean;
+      }
+    ) => {
       let list = enrichGamesForSeason(args.season);
       if (args.week !== undefined) list = list.filter(g => g.week === args.week);
-      if (args.teamId) list = list.filter(g => g.homeTeamId === args.teamId || g.awayTeamId === args.teamId);
-      if (args.conferenceId) list = list.filter(g => {
-        const hc = teamById(g.homeTeamId).conferenceId;
-        const ac = teamById(g.awayTeamId).conferenceId;
-        return hc === args.conferenceId || ac === args.conferenceId;
-      });
+      if (args.teamId)
+        list = list.filter(g => g.homeTeamId === args.teamId || g.awayTeamId === args.teamId);
+      if (args.conferenceId)
+        list = list.filter(g => {
+          const hc = teamById(g.homeTeamId).conferenceId;
+          const ac = teamById(g.awayTeamId).conferenceId;
+          return hc === args.conferenceId || ac === args.conferenceId;
+        });
       if (args.type) list = list.filter(g => g.type === args.type);
       if (args.playedOnly) list = list.filter(g => g.result !== 'TBD');
       return list;
     },
-    essentialMatchups: (_: unknown, args: { season: number, week?: number, limit?: number, includeConferenceGames?: boolean }) => {
+    essentialMatchups: (
+      _: unknown,
+      args: { season: number; week?: number; limit?: number; includeConferenceGames?: boolean }
+    ) => {
       let list = enrichGamesForSeason(args.season);
       if (args.week !== undefined) list = list.filter(g => g.week === args.week);
       if (!args.includeConferenceGames) list = list.filter(g => !isConferenceGame(g));
@@ -134,8 +157,8 @@ const resolvers = {
     },
     conferenceConnectivity: (_: unknown, { season }: { season: number }) => {
       const list = enrichGamesForSeason(season);
-      const key = (a: string, b: string) => a < b ? `${a}__${b}` : `${b}__${a}`;
-      const acc = new Map<string, { edges: number, totalLev: number, a: string, b: string }>();
+      const key = (a: string, b: string) => (a < b ? `${a}__${b}` : `${b}__${a}`);
+      const acc = new Map<string, { edges: number; totalLev: number; a: string; b: string }>();
       for (const g of list) {
         const hc = teamById(g.homeTeamId).conferenceId;
         const ac = teamById(g.awayTeamId).conferenceId;
@@ -151,12 +174,17 @@ const resolvers = {
         a: conferenceById(e.a),
         b: conferenceById(e.b),
         edges: e.edges,
-        averageLeverage: Number((e.totalLev / e.edges).toFixed(4))
+        averageLeverage: Number((e.totalLev / e.edges).toFixed(4)),
       }));
     },
     playoffPreview: (
       _: unknown,
-      { season, limit = 12, gameLimit = 12, leverageThreshold = 0.75 }: { season: number, limit?: number, gameLimit?: number, leverageThreshold?: number }
+      {
+        season,
+        limit = 12,
+        gameLimit = 12,
+        leverageThreshold = 0.75,
+      }: { season: number; limit?: number; gameLimit?: number; leverageThreshold?: number }
     ) => {
       const games = enrichGamesForSeason(season);
       const upcomingGames = games.filter(g => g.result === 'TBD');
@@ -174,7 +202,9 @@ const resolvers = {
       }
 
       if (selectedGames.length < Math.min(gameLimit, 5)) {
-        const fallbackOrdered = [...upcomingGames].sort((a, b) => (b.leverage ?? 0) - (a.leverage ?? 0));
+        const fallbackOrdered = [...upcomingGames].sort(
+          (a, b) => (b.leverage ?? 0) - (a.leverage ?? 0)
+        );
         for (const g of fallbackOrdered) {
           if (selectedGames.length >= gameLimit) break;
           if (seen.has(g.id)) continue;
@@ -188,9 +218,9 @@ const resolvers = {
       const relevantSeasons = teamSeasons.filter(ts => ts.season === season);
       for (const ts of relevantSeasons) {
         const rank = apMap.get(ts.id);
-        const upcomingForTeam = sortByDateAscending(upcomingGames.filter(
-          g => g.homeTeamId === ts.teamId || g.awayTeamId === ts.teamId
-        ));
+        const upcomingForTeam = sortByDateAscending(
+          upcomingGames.filter(g => g.homeTeamId === ts.teamId || g.awayTeamId === ts.teamId)
+        );
         const resumeScore = computeResumeScore(rank, ts);
         const leverageIndex = computeLeverageIndex(resumeScore, upcomingForTeam);
         if (rank === undefined && !upcomingForTeam.length && resumeScore < 0.55) {
@@ -203,7 +233,7 @@ const resolvers = {
           resumeScore,
           leverageIndex,
           upcomingGames: upcomingForTeam,
-          nextGame: upcomingForTeam[0]
+          nextGame: upcomingForTeam[0],
         });
       }
 
@@ -219,17 +249,17 @@ const resolvers = {
         generatedAt: new Date().toISOString(),
         leverageThreshold,
         remainingHighLeverageGames: selectedGames.slice(0, gameLimit),
-        contenders: contenders.slice(0, limit)
+        contenders: contenders.slice(0, limit),
       };
 
       return preview;
-    }
+    },
   },
   PlayoffContender: {
     team: (pc: PlayoffContenderT) => teamById(pc.teamId),
     record: (pc: PlayoffContenderT) => teamSeasonByTeamId(pc.teamId, pc.season)?.record ?? null,
     upcomingGames: (pc: PlayoffContenderT) => pc.upcomingGames ?? [],
-    nextGame: (pc: PlayoffContenderT) => pc.nextGame ?? null
+    nextGame: (pc: PlayoffContenderT) => pc.nextGame ?? null,
   },
   Conference: {
     teams: (c: ConfT) => teams.filter(t => t.conferenceId === c.id),
@@ -242,18 +272,23 @@ const resolvers = {
       }).length;
     },
     averageSpPlus: (c: ConfT, { season }: { season?: number }) => {
-      const ts = season ? teamSeasons.filter(t => t.season === season && teams.find(tm => tm.id === t.teamId)?.conferenceId === c.id)
-                        : teamSeasons.filter(t => teams.find(tm => tm.id === t.teamId)?.conferenceId === c.id);
+      const ts = season
+        ? teamSeasons.filter(
+            t => t.season === season && teams.find(tm => tm.id === t.teamId)?.conferenceId === c.id
+          )
+        : teamSeasons.filter(t => teams.find(tm => tm.id === t.teamId)?.conferenceId === c.id);
       const vals = ts.map(t => t.spPlus).filter((v): v is number => typeof v === 'number');
       if (!vals.length) return null;
       return Number((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(3));
-    }
+    },
   },
   Team: {
     conference: (t: TeamT) => conferenceById(t.conferenceId),
     seasons: (t: TeamT) => teamSeasons.filter(ts => ts.teamId === t.id),
     neighbors: (t: TeamT, { season }: { season: number }) => {
-      const list = enrichGamesForSeason(season).filter(g => g.homeTeamId === t.id || g.awayTeamId === t.id);
+      const list = enrichGamesForSeason(season).filter(
+        g => g.homeTeamId === t.id || g.awayTeamId === t.id
+      );
       const others = new Set<string>();
       for (const g of list) {
         others.add(g.homeTeamId === t.id ? g.awayTeamId : g.homeTeamId);
@@ -263,20 +298,23 @@ const resolvers = {
     degree: (t: TeamT, { season }: { season: number }) => {
       const list = enrichGamesForSeason(season);
       return list.filter(g => g.homeTeamId === t.id || g.awayTeamId === t.id).length;
-    }
+    },
   },
   TeamSeason: {
     team: (ts: TeamSeasonT) => teamById(ts.teamId),
     polls: (ts: TeamSeasonT) => polls.filter(p => p.teamSeasonId === ts.id),
-    games: (ts: TeamSeasonT) => enrichGamesForSeason(ts.season).filter(g => g.homeTeamId === ts.teamId || g.awayTeamId === ts.teamId)
+    games: (ts: TeamSeasonT) =>
+      enrichGamesForSeason(ts.season).filter(
+        g => g.homeTeamId === ts.teamId || g.awayTeamId === ts.teamId
+      ),
   },
   Game: {
     home: (g: GameT) => teamById(g.homeTeamId),
     away: (g: GameT) => teamById(g.awayTeamId),
     homeConference: (g: GameT) => conferenceById(teamById(g.homeTeamId).conferenceId),
     awayConference: (g: GameT) => conferenceById(teamById(g.awayTeamId).conferenceId),
-    isConferenceGame: (g: GameT) => isConferenceGame(g)
-  }
+    isConferenceGame: (g: GameT) => isConferenceGame(g),
+  },
 };
 
 export function createApolloServer() {

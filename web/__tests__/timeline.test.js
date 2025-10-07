@@ -77,9 +77,7 @@ describe('matchup timeline', () => {
 
     await app.ready;
 
-    const timelineBefore = Array.from(
-      dom.window.document.querySelectorAll('.matchup-card')
-    );
+    const timelineBefore = Array.from(dom.window.document.querySelectorAll('.matchup-card'));
     expect(timelineBefore.length).toBeGreaterThan(0);
 
     const startSelect = dom.window.document.getElementById('startTeam');
@@ -88,15 +86,11 @@ describe('matchup timeline', () => {
 
     await Promise.resolve();
 
-    const pathSummaryText = dom.window.document
-      .getElementById('pathSummary')
-      .textContent;
+    const pathSummaryText = dom.window.document.getElementById('pathSummary').textContent;
     expect(pathSummaryText).toContain('Georgia');
     expect(pathSummaryText).toContain('Clemson');
 
-    const timelineAfter = Array.from(
-      dom.window.document.querySelectorAll('.matchup-card')
-    );
+    const timelineAfter = Array.from(dom.window.document.querySelectorAll('.matchup-card'));
     expect(timelineAfter.length).toBeGreaterThan(0);
   });
 });
