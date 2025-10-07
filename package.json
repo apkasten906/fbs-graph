@@ -10,7 +10,8 @@
     "score": "tsx scripts/compute-leverage.ts",
     "import:csv": "tsx scripts/import-from-csv.ts",
     "preview:playoff": "tsx scripts/run-playoff-preview.ts",
-    "web:serve": "tsx scripts/serve-web.ts"
+    "web:serve": "tsx scripts/serve-web.ts",
+    "test": "vitest"
   },
   "dependencies": {
     "@apollo/server": "^4.10.0",
@@ -22,6 +23,8 @@
   "devDependencies": {
     "tsx": "^4.16.2",
     "typescript": "^5.4.5",
-    "@types/node": "^20.11.30"
+    "@types/node": "^20.11.30",
+    "vitest": "^1.6.0",
+    "jsdom": "^24.0.0"
   }
 }

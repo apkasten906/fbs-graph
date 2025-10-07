@@ -34,25 +34,64 @@
       color: var(--ink);
       display: flex;
       flex-direction: column;
+      padding: clamp(24px, 8vw, 48px) clamp(20px, 10vw, 72px) 60px;
       gap: 32px;
-      padding-bottom: 48px;
     }
-    header {
-      padding: clamp(24px, 8vw, 48px) clamp(20px, 10vw, 72px) 0;
+    body.file-mode {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(24px, 6vw, 48px);
+    }
+    .file-overlay {
+      max-width: 520px;
+      background: rgba(12, 18, 36, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      border-radius: 26px;
+      padding: clamp(24px, 5vw, 42px);
+      box-shadow: 0 22px 64px rgba(2, 6, 23, 0.52);
       text-align: center;
+      display: grid;
+      gap: 18px;
     }
-    header h1 {
+    .file-overlay h2 {
       margin: 0;
-      text-transform: uppercase;
+      font-size: clamp(20px, 3vw, 28px);
       letter-spacing: 0.08em;
-      font-size: clamp(22px, 3.2vw, 32px);
+      text-transform: uppercase;
+      color: var(--accent);
     }
-    header p {
-      margin: 12px auto 0;
-      max-width: 720px;
-      color: var(--muted);
+    .file-overlay p {
+      margin: 0;
       line-height: 1.6;
-      font-size: clamp(14px, 1.8vw, 16px);
+      color: rgba(248, 250, 252, 0.72);
+      font-size: clamp(14px, 2vw, 16px);
+    }
+    .file-overlay code {
+      background: rgba(15, 23, 42, 0.72);
+      border-radius: 10px;
+      padding: 4px 8px;
+      font-size: 13px;
+      color: var(--accent);
+    }
+    .file-overlay a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.48);
+      background: rgba(56, 189, 248, 0.16);
+      color: var(--ink);
+      padding: 10px 18px;
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+    }
+    .file-overlay a:hover {
+      border-color: rgba(56, 189, 248, 0.68);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
     }
     main {
       width: min(1040px, 92vw);
@@ -60,12 +99,30 @@
       background: var(--panel);
       border: 1px solid rgba(148, 163, 184, 0.12);
       border-radius: 26px;
-      padding: clamp(20px, 5vw, 42px) clamp(18px, 5vw, 44px);
+      padding: clamp(24px, 5vw, 44px);
       box-shadow: 0 32px 84px rgba(2,6,23,0.48);
       backdrop-filter: blur(18px);
       display: flex;
       flex-direction: column;
       gap: clamp(20px, 4vw, 36px);
+    }
+    .page-title {
+      margin: 0;
+      font-size: clamp(24px, 3.2vw, 34px);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+    .page-subtitle {
+      margin: 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: clamp(14px, 1.8vw, 16px);
+      line-height: 1.6;
+    }
+    .intro {
+      display: grid;
+      gap: 10px;
     }
     .path-summary {
       display: grid;
@@ -104,199 +161,185 @@
       border: 1px solid var(--border);
       border-radius: 999px;
       font-size: 13px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-    .programs li span {
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      font-size: 12px;
-      color: var(--ink);
+      letter-spacing: 0.02em;
     }
     .programs li small {
-      font-size: 10px;
-      color: var(--muted);
+      color: rgba(248, 250, 252, 0.72);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
     .programs li.arrow {
       background: transparent;
       border: none;
-      padding: 0 2px;
-      color: rgba(148, 163, 184, 0.56);
+      font-size: 16px;
+      color: rgba(148, 163, 184, 0.72);
+    }
+    .summary-metrics {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+    .summary-metrics span {
+      display: grid;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.62);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(148, 163, 184, 0.82);
+    }
+    .summary-metrics span strong {
+      font-size: 18px;
+      letter-spacing: 0.02em;
+      color: var(--ink);
     }
     .filters {
       display: grid;
       gap: 16px;
-      padding: 18px;
-      border-radius: 18px;
-      background: rgba(8, 14, 31, 0.64);
-      border: 1px solid rgba(148, 163, 184, 0.18);
     }
     .filters h3 {
       margin: 0;
-      font-size: 14px;
-      letter-spacing: 0.05em;
+      font-size: 13px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(248, 250, 252, 0.86);
+      color: rgba(148, 163, 184, 0.72);
     }
     .filter-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
     }
     .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.36);
-      background: rgba(15, 23, 42, 0.48);
-      padding: 6px 14px;
-      font-size: 12px;
-      letter-spacing: 0.03em;
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      background: rgba(15, 23, 42, 0.66);
       color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
     }
     .chip[data-active="true"] {
-      border-color: var(--accent);
+      border-color: rgba(56, 189, 248, 0.68);
       color: var(--ink);
-      background: rgba(56,189,248,0.16);
-      box-shadow: 0 0 0 3px rgba(56,189,248,0.12);
+      background: rgba(56, 189, 248, 0.14);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+    }
+    .chip:hover {
+      border-color: rgba(56, 189, 248, 0.38);
+      color: var(--ink);
     }
     .control-grid {
       display: grid;
-      gap: 14px;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    }
-    .control {
-      display: grid;
-      gap: 6px;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     }
     .control label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: rgba(248, 250, 252, 0.72);
-    }
-    .control select {
-      appearance: none;
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(148, 163, 184, 0.28);
-      background: rgba(15, 23, 42, 0.66);
-      color: var(--ink);
-      font-size: 13px;
-      letter-spacing: 0.02em;
-    }
-    .control select:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
-    }
-    .summary-metrics {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 6px;
+      display: block;
+      margin-bottom: 8px;
       font-size: 12px;
-      color: var(--muted);
-    }
-    .summary-metrics span {
-      background: rgba(8, 14, 31, 0.64);
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      border-radius: 12px;
-      padding: 8px 12px;
-      display: inline-flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 140px;
-    }
-    .summary-metrics span strong {
-      color: var(--ink);
-      font-size: 15px;
-      letter-spacing: 0.03em;
-    }
-    .summary-metrics span span {
-      font-size: 10px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: rgba(148, 163, 184, 0.78);
+      color: rgba(148, 163, 184, 0.72);
+    }
+    select {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: rgba(8, 14, 31, 0.72);
+      color: var(--ink);
+      padding: 10px 14px;
+      font-size: 14px;
+      letter-spacing: 0.02em;
     }
     .legend {
       display: grid;
-      gap: 12px;
-      margin-top: 4px;
-      font-size: 12px;
-      color: var(--muted);
+      gap: 10px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
     }
     .legend-row {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
     }
     .legend-swatch {
-      width: 14px;
-      height: 14px;
-      border-radius: 4px;
-      border: 1px solid rgba(255,255,255,0.18);
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      box-shadow: 0 0 0 2px rgba(2, 6, 23, 0.8);
     }
     .timeline {
       position: relative;
-      padding-left: clamp(26px, 6vw, 52px);
-      border-left: 2px dashed rgba(56, 189, 248, 0.28);
+      padding-left: 32px;
       display: grid;
-      gap: 24px;
+      gap: 20px;
     }
     .timeline::before {
       content: "";
       position: absolute;
-      inset: 0;
-      pointer-events: none;
+      inset: 0 auto 0 10px;
+      width: 2px;
+      background: linear-gradient(to bottom, rgba(56, 189, 248, 0.12), rgba(129, 140, 248, 0.12));
     }
     .timeline-item {
       position: relative;
-      padding-left: clamp(12px, 2vw, 20px);
+      background: rgba(15, 23, 42, 0.76);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 18px;
+      padding: 18px 18px 18px 22px;
+      display: grid;
+      gap: 16px;
+      box-shadow: 0 20px 48px rgba(2,6,23,0.45);
     }
     .timeline-item::before {
       content: "";
       position: absolute;
-      left: calc(-1 * clamp(29px, 7vw, 60px));
-      top: 6px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--bg);
-      border: 3px solid var(--accent);
-      box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.18);
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      border: 2px solid rgba(56, 189, 248, 0.32);
+      background: rgba(56, 189, 248, 0.48);
+      left: -28px;
+      top: 24px;
+      box-shadow: 0 0 0 4px rgba(8, 14, 31, 0.8);
     }
     .timeline-date {
-      margin: 0 0 14px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      font-size: 15px;
-      display: inline-flex;
-      align-items: center;
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(148, 163, 184, 0.72);
+      display: flex;
+      align-items: baseline;
       gap: 12px;
     }
     .timeline-date span {
       font-size: 11px;
-      text-transform: uppercase;
-      color: rgba(148, 163, 184, 0.72);
+      color: rgba(248, 250, 252, 0.68);
+      letter-spacing: 0.16em;
     }
     .matchup-card {
-      background: rgba(8, 14, 31, 0.74);
       border-radius: 16px;
-      border: 1px solid rgba(148,163,184,0.18);
-      padding: 16px 18px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(5, 10, 28, 0.78);
+      padding: 16px;
       display: grid;
       gap: 12px;
     }
     .matchup-head {
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
     .matchup-head strong {
       font-size: 16px;
@@ -306,27 +349,39 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      font-size: 11px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 4px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.06);
+      padding: 6px 12px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(248, 250, 252, 0.82);
     }
     .segment-tag span {
-      font-weight: 600;
+      opacity: 0.7;
+    }
+    .timestamp {
+      font-size: 12px;
+      color: rgba(148, 163, 184, 0.72);
+      letter-spacing: 0.04em;
     }
     .meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      display: grid;
+      gap: 8px;
       font-size: 12px;
-      color: var(--muted);
+      color: rgba(148, 163, 184, 0.82);
     }
-    .meta span strong {
-      color: var(--ink);
-      font-weight: 600;
+    .meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .meta strong {
+      font-size: 12px;
+      color: rgba(248, 250, 252, 0.82);
+      letter-spacing: 0.08em;
     }
     details {
       border-radius: 12px;
@@ -371,14 +426,13 @@
       font-size: 14px;
       line-height: 1.6;
     }
-    footer {
-      text-align: center;
-      font-size: 12px;
-      color: rgba(148, 163, 184, 0.68);
-      padding: 0 clamp(20px, 10vw, 72px);
-      line-height: 1.6;
-    }
     @media (max-width: 640px) {
+      body {
+        padding: 24px 16px 48px;
+      }
+      main {
+        padding: 20px;
+      }
       .timeline {
         padding-left: 24px;
       }
@@ -393,358 +447,21 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>High-Impact Matchup Timeline</h1>
-    <p>
-      Explore the Alabama → Clemson connection by surfacing the matchups that carry the most leverage on
-      the path between the two programs for the rest of the 2025 season. Filter by leverage tier to focus
-      on the tipping-point moments that can swing the playoff picture.
-    </p>
-  </header>
   <main>
+    <section class="intro">
+      <h1 class="page-title">High-Impact Matchup Timeline</h1>
+      <p class="page-subtitle">
+        Select any two programs, filter by conference scope, and reveal the shortest chain of remaining 2025
+        matchups that connects them by leverage.
+      </p>
+    </section>
     <section class="path-summary" id="pathSummary"></section>
     <section class="filters" id="filters"></section>
     <section class="timeline" id="timeline"></section>
   </main>
-  <footer>
-    Leverage scores approximate how strongly each matchup can alter the shortest-connection leverage
-    between Alabama and Clemson. Conference tags reflect the primary affiliations feeding each edge.
-  </footer>
-  <script>
-    const tierLabels = {
-      critical: 'Critical leverage',
-      high: 'High leverage',
-      notable: 'Notable leverage',
-      watch: 'Watchlist leverage',
-    };
-
-    const tierColor = {
-      critical: 'var(--red)',
-      high: 'var(--gold)',
-      notable: 'var(--indigo)',
-      watch: 'var(--emerald)',
-    };
-
-    const determineTier = (value) => {
-      if (value >= 1.25) return 'critical';
-      if (value >= 1.05) return 'high';
-      if (value >= 0.85) return 'notable';
-      return 'watch';
-    };
-
-    const formatDate = (iso) => {
-      const date = new Date(`${iso}T00:00:00Z`);
-      return date.toLocaleDateString(undefined, {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      });
-    };
-
-    const pathContext = {
-      title: 'Shortest leverage chain',
-      description:
-        'A leveraged hop-by-hop view that passes from the SEC through Notre Dame into the ACC to reach Clemson.',
-      programs: [
-        { name: 'Alabama', conference: 'SEC' },
-        { name: 'Georgia', conference: 'SEC' },
-        { name: 'Notre Dame', conference: 'IND' },
-        { name: 'Florida State', conference: 'ACC' },
-        { name: 'Clemson', conference: 'ACC' },
-      ],
-      segments: [
-        {
-          id: 'alabama-georgia',
-          label: 'Alabama ↔ Georgia',
-          color: 'var(--gold)',
-          narrative: 'SEC title power pivot anchoring the start of the chain.',
-          games: [
-            {
-              date: '2025-11-30',
-              matchup: 'Alabama vs Georgia',
-              leverage: 1.227,
-              location: 'Bryant-Denny Stadium — Tuscaloosa, AL',
-              conferences: ['Alabama (SEC)', 'Georgia (SEC)'],
-              factors: [
-                'Direct rematch that can set the stage for Atlanta one week later.',
-                'Determines whether Alabama enters the title game with leverage advantage.',
-                'Outcome cascades toward the independent and ACC comparisons the committee will weigh.',
-              ],
-            },
-            {
-              date: '2025-12-06',
-              matchup: 'Georgia vs Alabama (SEC Championship)',
-              leverage: 1.334,
-              location: 'Mercedes-Benz Stadium — Atlanta, GA',
-              conferences: ['Georgia (SEC)', 'Alabama (SEC)'],
-              factors: [
-                'Highest leverage contest on the chain, likely deciding the conference champion.',
-                'Locks in the SEC edge that initiates the whole path toward Clemson.',
-                'Result defines how much downstream pressure rests on Notre Dame and the ACC title picture.',
-              ],
-            },
-          ],
-        },
-        {
-          id: 'georgia-notre-dame',
-          label: 'Georgia ↔ Notre Dame',
-          color: 'var(--accent)',
-          narrative: 'Cross-regional showdown tying SEC power to a national independent.',
-          games: [
-            {
-              date: '2025-09-14',
-              matchup: 'Notre Dame vs Georgia',
-              leverage: 1.225,
-              location: 'Notre Dame Stadium — South Bend, IN',
-              conferences: ['Notre Dame (IND)', 'Georgia (SEC)'],
-              factors: [
-                'Shapes how the committee compares SEC strength to independent resumes in November.',
-                'Gives Georgia a leverage bridge outside the SEC footprint.',
-                'Establishes Notre Dame’s downstream influence on the ACC segment.',
-              ],
-            },
-          ],
-        },
-        {
-          id: 'notre-dame-florida-state',
-          label: 'Notre Dame ↔ Florida State',
-          color: 'var(--indigo)',
-          narrative: 'Independent-to-ACC checkpoint that can reshuffle November leverage.',
-          games: [
-            {
-              date: '2025-11-09',
-              matchup: 'Florida State vs Notre Dame',
-              leverage: 1.115,
-              location: 'Doak Campbell Stadium — Tallahassee, FL',
-              conferences: ['Florida State (ACC)', 'Notre Dame (IND)'],
-              factors: [
-                'Late-season referendum on which résumé feeds the ACC champion résumé boost.',
-                'Winner claims the comparison anchor if Clemson drops a game.',
-                'Result feeds back into how the SEC results are contextualized nationally.',
-              ],
-            },
-          ],
-        },
-        {
-          id: 'florida-state-clemson',
-          label: 'Florida State ↔ Clemson',
-          color: 'var(--emerald)',
-          narrative: 'ACC showdown that completes the Alabama-to-Clemson loop.',
-          games: [
-            {
-              date: '2025-09-21',
-              matchup: 'Florida State vs Clemson',
-              leverage: 0.614,
-              location: 'Doak Campbell Stadium — Tallahassee, FL',
-              conferences: ['Florida State (ACC)', 'Clemson (ACC)'],
-              factors: [
-                'Winner seizes the inside track to the ACC title game and the final edge of the chain.',
-                'Outcome determines whether Notre Dame needs a clean sweep to stay relevant.',
-                'Provides Clemson leverage insurance before the November gauntlet.',
-              ],
-            },
-            {
-              date: '2025-12-05',
-              matchup: 'Projected ACC Championship (Clemson vs TBD)',
-              leverage: 0.872,
-              location: 'Bank of America Stadium — Charlotte, NC',
-              conferences: ['Clemson (ACC)', 'TBD (ACC)'],
-              factors: [
-                'Clemson’s performance here back-propagates leverage to Florida State should the Seminoles reach Charlotte.',
-                'Serves as the final validation node for the Alabama-to-Clemson path.',
-                'Leverage fluctuates with Florida State’s conference trajectory.',
-              ],
-            },
-          ],
-        },
-      ],
-    };
-
-    const flattenTimeline = (segments) =>
-      segments
-        .flatMap((segment) =>
-          segment.games.map((game) => ({
-            ...game,
-            segmentId: segment.id,
-            segmentLabel: segment.label,
-            color: segment.color,
-            narrative: segment.narrative,
-          })),
-        )
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    const pathSummary = document.getElementById('pathSummary');
-    const filters = document.getElementById('filters');
-    const timeline = document.getElementById('timeline');
-
-    const renderSummary = () => {
-      const heading = document.createElement('header');
-      const title = document.createElement('h2');
-      title.textContent = pathContext.title;
-      const copy = document.createElement('p');
-      copy.textContent = pathContext.description;
-      heading.append(title, copy);
-
-      const list = document.createElement('ul');
-      list.className = 'programs';
-      pathContext.programs.forEach((program, index) => {
-        const item = document.createElement('li');
-        item.innerHTML = `<span>${program.name}</span><small>${program.conference}</small>`;
-        list.appendChild(item);
-        if (index < pathContext.programs.length - 1) {
-          const arrow = document.createElement('li');
-          arrow.className = 'arrow';
-          arrow.textContent = '→';
-          list.appendChild(arrow);
-        }
-      });
-
-      pathSummary.append(heading, list);
-    };
-
-    const renderFilters = (activeTier) => {
-      filters.innerHTML = '';
-
-      const tierHeading = document.createElement('h3');
-      tierHeading.textContent = 'Focus by leverage tier';
-      filters.appendChild(tierHeading);
-
-      const row = document.createElement('div');
-      row.className = 'filter-row';
-
-      const tiers = ['all', ...Object.keys(tierLabels)];
-      tiers.forEach((tierKey) => {
-        const button = document.createElement('button');
-        button.className = 'chip';
-        button.type = 'button';
-        button.dataset.tier = tierKey;
-        button.dataset.active = String(activeTier === tierKey);
-        if (tierKey === 'all') {
-          button.textContent = 'Show all';
-        } else {
-          button.innerHTML = `<span style="width:10px;height:10px;border-radius:50%;background:${tierColor[tierKey]};display:inline-block"></span>${tierLabels[tierKey]}`;
-        }
-        button.addEventListener('click', () => {
-          state.activeTier = tierKey;
-          renderFilters(state.activeTier);
-          renderTimeline();
-        });
-        row.appendChild(button);
-      });
-
-      filters.appendChild(row);
-
-      const legend = document.createElement('div');
-      legend.className = 'legend';
-      pathContext.segments.forEach((segment) => {
-        const item = document.createElement('div');
-        item.className = 'legend-row';
-        const swatch = document.createElement('span');
-        swatch.className = 'legend-swatch';
-        swatch.style.background = segment.color;
-        item.appendChild(swatch);
-        const text = document.createElement('span');
-        text.textContent = `${segment.label} — ${segment.narrative}`;
-        item.appendChild(text);
-        legend.appendChild(item);
-      });
-      filters.appendChild(legend);
-    };
-
-    const renderTimeline = () => {
-      timeline.innerHTML = '';
-      const games = flattenTimeline(pathContext.segments);
-      const filtered = games.filter((game) => {
-        if (state.activeTier === 'all') return true;
-        return determineTier(game.leverage) === state.activeTier;
-      });
-
-      if (!filtered.length) {
-        const empty = document.createElement('div');
-        empty.className = 'empty-state';
-        empty.textContent = 'No matchups hit that leverage band on this path. Try broadening the filter.';
-        timeline.appendChild(empty);
-        return;
-      }
-
-      const groups = filtered.reduce((acc, game) => {
-        acc[game.date] = acc[game.date] || [];
-        acc[game.date].push(game);
-        return acc;
-      }, {});
-
-      Object.entries(groups)
-        .sort((a, b) => new Date(a[0]) - new Date(b[0]))
-        .forEach(([date, gamesOnDate]) => {
-          const item = document.createElement('article');
-          item.className = 'timeline-item';
-
-          const dateLabel = document.createElement('h3');
-          dateLabel.className = 'timeline-date';
-          const tierSet = new Set(gamesOnDate.map((game) => tierLabels[determineTier(game.leverage)]));
-          const tierText = Array.from(tierSet).join(' • ');
-          dateLabel.innerHTML = `${formatDate(date)} <span>${tierText}</span>`;
-          item.appendChild(dateLabel);
-
-          gamesOnDate
-            .sort((a, b) => b.leverage - a.leverage)
-            .forEach((game) => {
-              const card = document.createElement('div');
-              card.className = 'matchup-card';
-              card.style.borderColor = `${game.color}33`;
-              card.style.boxShadow = `0 0 0 1px ${game.color}1f`;
-
-              const head = document.createElement('div');
-              head.className = 'matchup-head';
-              head.innerHTML = `<strong>${game.matchup}</strong>`;
-
-              const tag = document.createElement('span');
-              tag.className = 'segment-tag';
-              tag.style.borderColor = `${game.color}66`;
-              tag.style.background = `${game.color}1a`;
-              tag.innerHTML = `<span>${game.segmentLabel}</span>`;
-              head.appendChild(tag);
-              card.appendChild(head);
-
-              const meta = document.createElement('div');
-              meta.className = 'meta';
-              meta.innerHTML = `
-                <span>${game.location}</span>
-                <span>Leverage score: <strong>${game.leverage.toFixed(3)}</strong></span>
-                <span>Tier: <strong>${tierLabels[determineTier(game.leverage)]}</strong></span>
-                <span>Conferences: ${game.conferences.join(' vs ')}</span>
-              `;
-              card.appendChild(meta);
-
-              const details = document.createElement('details');
-              const summary = document.createElement('summary');
-              summary.textContent = 'Edge factors';
-              details.appendChild(summary);
-
-              const list = document.createElement('ul');
-              game.factors.forEach((factor) => {
-                const li = document.createElement('li');
-                li.textContent = factor;
-                list.appendChild(li);
-              });
-              details.appendChild(list);
-
-              card.appendChild(details);
-              item.appendChild(card);
-            });
-
-          timeline.appendChild(item);
-        });
-    };
-
-    const state = {
-      activeTier: 'all',
-    };
-
-    renderSummary();
-    renderFilters(state.activeTier);
-    renderTimeline();
+  <script type="module">
+    import { createTimelineApp } from './matchup-timeline.js';
+    createTimelineApp();
   </script>
 </body>
 </html>
