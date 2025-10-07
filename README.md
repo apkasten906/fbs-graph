@@ -115,6 +115,15 @@ The build process transpiles the TypeScript server into `dist/` and performs a f
 - `pnpm score` recomputes leverage scores from polls and ratings.
 - Edit JSON in `src/data/` to add all teams/games. A CSV importer stub lives in `scripts/compute-leverage.ts`.
 
+## Tests
+
+Install dependencies and execute the Vitest suite to confirm the dynamic timeline continues to populate matchups when filters change:
+
+```bash
+npm install
+npm test -- --run
+```
+
 ## Data
 Small, illustrative fixtures are included. Replace with full 136-team data when ready:
 - `conferences.json`
@@ -122,6 +131,20 @@ Small, illustrative fixtures are included. Replace with full 136-team data when 
 - `teamSeasons.json`
 - `polls.json`
 - `games.json`
+
+## Visualize leverage timelines in the browser
+
+Want to explore the projected impact chains without wiring up a frontend framework? The repo ships a static HTML experience at `web/matchup-timeline.html` that loads the schedule JSON and renders the shortest 1/leverage path between any two programs.
+
+1. Start the static server:
+   ```bash
+   npm run web:serve
+   ```
+   The helper serves the `web/` directory at [http://localhost:4173](http://localhost:4173) with the correct MIME types so the page can request JSON and modules.
+2. Open [http://localhost:4173/web/matchup-timeline.html](http://localhost:4173/web/matchup-timeline.html) in your browser.
+3. Pick a conference scope (individual conference, Power 4, or all FBS) and select any two teams to see the chain of matchups that most influence their playoff odds.
+
+Opening the file directly from disk will display instructions that remind you to launch the static server—modern browsers block `fetch()` calls from the file system for security reasons, so serving over HTTP is required.
 
 ## Leverage formula (simplified)
 ```
