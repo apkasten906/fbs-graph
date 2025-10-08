@@ -14,8 +14,7 @@ function createTimelineApp(options = {}) {
   const pathSummary = options.pathSummary ?? doc.getElementById('pathSummary');
   const filters = options.filters ?? doc.getElementById('filters');
   const timeline = options.timeline ?? doc.getElementById('timeline');
-  const fetchImpl =
-    options.fetch ?? (typeof win.fetch === 'function' ? win.fetch.bind(win) : null);
+  const fetchImpl = options.fetch ?? (typeof win.fetch === 'function' ? win.fetch.bind(win) : null);
   const dataBase = options.dataBase ?? '../src/data';
   const season = options.season ?? 2025;
   const loadData = options.loadData ?? (() => defaultLoadData(fetchImpl, dataBase));
@@ -104,13 +103,13 @@ function createTimelineApp(options = {}) {
       clearPath();
       return;
     }
-    
+
     const result = findShortestPath(state.data.adjacency, state.startTeam, state.endTeam);
     if (!result) {
       clearPath();
       return;
     }
-    
+
     state.path = result;
     const segments = result.edges.map((edge, index) => {
       const entry = state.data.edgesByPair.get(edge.key);
@@ -126,18 +125,16 @@ function createTimelineApp(options = {}) {
         games: entry ? entry.games : [],
       };
     });
-    
+
     state.segments = segments;
-    const programs = result.nodes
-      .map(id => state.data.teamMap.get(id))
-      .filter(Boolean);
+    const programs = result.nodes.map(id => state.data.teamMap.get(id)).filter(Boolean);
     const bestGames = segments.map(seg => seg.games[0]).filter(Boolean);
     const totalLev = bestGames.reduce((acc, game) => acc + (game.leverage ?? 0), 0);
     const avgLev = bestGames.length ? totalLev / bestGames.length : 0;
     const conferences = Array.from(
       new Set(programs.map(p => p.conference?.shortName).filter(Boolean))
     );
-    
+
     state.summary = {
       programs,
       hops: segments.length,

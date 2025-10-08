@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+// New projectRoot: one level up from web/
 const projectRoot = path.resolve(__dirname, '..');
 const defaultPort = Number.parseInt(process.env.PORT ?? '', 10) || 4173;
 
@@ -34,8 +35,14 @@ function isPathInside(base: string, target: string) {
 
 async function resolvePath(requestPath: string) {
   const decoded = decodeURIComponent(requestPath);
-  const candidate = path.normalize(path.join(projectRoot, decoded));
-  if (!isPathInside(projectRoot, candidate)) {
+  // If path starts with /web/, serve from web/; else, serve from project root
+  let baseDir = projectRoot;
+  if (decoded.startsWith('/web/')) {
+    baseDir = path.join(projectRoot, 'web');
+  }
+  const relPath = decoded.startsWith('/web/') ? decoded.slice(5) : decoded;
+  const candidate = path.normalize(path.join(baseDir, relPath));
+  if (!isPathInside(baseDir, candidate)) {
     return null;
   }
   let stats;
@@ -74,5 +81,5 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(defaultPort, () => {
   console.log(`Serving fbs-graph static assets on http://localhost:${defaultPort}`);
-  console.log('Open /web/matchup-timeline.html in your browser to explore the timeline.');
+  console.log('Open /web/index.html in your browser to explore the home page.');
 });

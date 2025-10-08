@@ -45,7 +45,7 @@ export function prepareSeasonModel(raw, season) {
   const upcomingGames = games.filter(game => game.result === 'TBD');
   const edgesByPair = buildEdgeMap(upcomingGames);
   const adjacency = buildAdjacency(edgesByPair);
-  
+
   return {
     conferences: raw.conferences,
     teams,
@@ -63,7 +63,7 @@ export function prepareSeasonModel(raw, season) {
 function buildLatestAPRankMap(polls, season, teamSeasons) {
   const relevantIds = new Set(teamSeasons.map(ts => ts.id));
   const latestByTeam = new Map();
-  
+
   for (const snap of polls) {
     if (snap.poll !== 'AP') continue;
     if (!relevantIds.has(snap.teamSeasonId)) continue;
@@ -72,7 +72,7 @@ function buildLatestAPRankMap(polls, season, teamSeasons) {
       latestByTeam.set(snap.teamSeasonId, snap);
     }
   }
-  
+
   const map = new Map();
   for (const [teamSeasonId, snap] of latestByTeam.entries()) {
     map.set(teamSeasonId, snap.rank);

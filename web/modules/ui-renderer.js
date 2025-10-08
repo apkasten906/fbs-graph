@@ -1,11 +1,17 @@
 /**
  * UI Rendering functions for the FBS Timeline App
  */
-import { tierLabels, tierColor, conferenceScopes, determineTier } from './config.js';
-import { formatLeverage, formatDateTime, formatGameType, formatPhase, formatDateGroup, compareDateKeys } from './formatters.js';
+import { tierLabels, tierColor, conferenceScopes, determineTier, conferenceMap } from './config.js';
+import {
+  formatLeverage,
+  formatDateTime,
+  formatGameType,
+  formatPhase,
+  formatDateGroup,
+  compareDateKeys,
+} from './formatters.js';
 
 export function createUIRenderer(doc) {
-  
   function createEmptyState(message) {
     const div = doc.createElement('div');
     div.className = 'empty-state';
@@ -16,7 +22,7 @@ export function createUIRenderer(doc) {
   function renderSummary(state, pathSummary) {
     if (!pathSummary) return;
     pathSummary.innerHTML = '';
-    
+
     if (state.loading) {
       pathSummary.appendChild(createEmptyState('Loading leverage data…'));
       return;
@@ -29,11 +35,9 @@ export function createUIRenderer(doc) {
 
     const startTeam = state.startTeam ? state.data.teamMap.get(state.startTeam) : null;
     const endTeam = state.endTeam ? state.data.teamMap.get(state.endTeam) : null;
-    
+
     if (!startTeam || !endTeam) {
-      pathSummary.appendChild(
-        createEmptyState('Pick two programs to trace the leverage chain.')
-      );
+      pathSummary.appendChild(createEmptyState('Pick two programs to trace the leverage chain.'));
       return;
     }
 
@@ -42,7 +46,7 @@ export function createUIRenderer(doc) {
     const title = doc.createElement('h2');
     title.textContent = 'Shortest leverage chain';
     heading.appendChild(title);
-    
+
     const copy = doc.createElement('p');
     if (state.path && state.summary) {
       copy.textContent = `A leveraged hop-by-hop view that passes from the ${startTeam.conference?.shortName ?? ''} through ${state.summary.programs
@@ -65,7 +69,7 @@ export function createUIRenderer(doc) {
       state.path && state.summary
         ? state.summary.programs
         : [startTeam, ...(state.startTeam === state.endTeam ? [] : [endTeam])];
-        
+
     programList.forEach((program, index) => {
       const chip = doc.createElement('span');
       chip.className = 'program-chip';
@@ -85,15 +89,28 @@ export function createUIRenderer(doc) {
     if (state.segments && state.segments.length) {
       const legend = doc.createElement('div');
       legend.className = 'legend';
-      state.segments.forEach(segment => {
+      // Group by conference, get full name, sort alphabetically
+      let legendEntries = state.segments.map(segment => {
+        // Try to extract conferenceId from segment label or data
+        let confId = segment.from?.conferenceId || segment.to?.conferenceId || null;
+        let confInfo = confId && conferenceMap[confId] ? conferenceMap[confId] : null;
+        let confLabel = confInfo ? `${confInfo.name} (${confInfo.shortName})` : segment.label;
+        return {
+          color: segment.color,
+          label: confLabel,
+          confName: confInfo ? confInfo.name : segment.label,
+        };
+      });
+      legendEntries = legendEntries.sort((a, b) => a.confName.localeCompare(b.confName));
+      legendEntries.forEach(entry => {
         const item = doc.createElement('div');
         item.className = 'legend-row';
         const swatch = doc.createElement('span');
         swatch.className = 'legend-swatch';
-        swatch.style.background = segment.color;
+        swatch.style.background = entry.color;
         item.appendChild(swatch);
         const text = doc.createElement('span');
-        text.textContent = segment.label;
+        text.textContent = entry.label;
         item.appendChild(text);
         legend.appendChild(item);
       });
@@ -104,7 +121,7 @@ export function createUIRenderer(doc) {
   function renderFilters(state, filters, getTeamsForScope, applyState) {
     if (!filters) return;
     filters.innerHTML = '';
-    
+
     if (state.loading) {
       filters.appendChild(createEmptyState('Loading selections…'));
       return;
@@ -120,7 +137,7 @@ export function createUIRenderer(doc) {
 
     const scopeRow = doc.createElement('div');
     scopeRow.className = 'filter-row';
-    
+
     conferenceScopes.forEach(scope => {
       const button = doc.createElement('button');
       button.type = 'button';
@@ -152,7 +169,12 @@ export function createUIRenderer(doc) {
     const startLabel = doc.createElement('label');
     startLabel.setAttribute('for', 'startTeam');
     startLabel.textContent = 'Origin program';
-    const startSelect = createTeamSelect('startTeam', state.startTeam, getTeamsForScope, applyState);
+    const startSelect = createTeamSelect(
+      'startTeam',
+      state.startTeam,
+      getTeamsForScope,
+      applyState
+    );
     startControl.append(startLabel, startSelect);
 
     const endControl = doc.createElement('div');
@@ -172,7 +194,7 @@ export function createUIRenderer(doc) {
 
     const tierRow = doc.createElement('div');
     tierRow.className = 'filter-row';
-    
+
     ['all', ...Object.keys(tierLabels)].forEach(tierKey => {
       const button = doc.createElement('button');
       button.type = 'button';
@@ -214,12 +236,12 @@ export function createUIRenderer(doc) {
     const select = doc.createElement('select');
     select.id = key;
     const options = getTeamsForScope();
-    
+
     if (!options.length) {
       select.disabled = true;
       return select;
     }
-    
+
     options.forEach(team => {
       const option = doc.createElement('option');
       option.value = team.id;
@@ -227,13 +249,13 @@ export function createUIRenderer(doc) {
       option.textContent = `${team.name}${conference}`;
       select.appendChild(option);
     });
-    
+
     if (value && options.some(team => team.id === value)) {
       select.value = value;
     } else {
       select.value = options[0].id;
     }
-    
+
     select.addEventListener('change', event => {
       const target = event.target;
       const selectedValue = target.value || null;
@@ -241,14 +263,14 @@ export function createUIRenderer(doc) {
       patch[key] = selectedValue;
       applyState(patch);
     });
-    
+
     return select;
   }
 
   function renderTimeline(state, timeline) {
     if (!timeline) return;
     timeline.innerHTML = '';
-    
+
     if (state.loading) {
       timeline.appendChild(createEmptyState('Loading timeline…'));
       return;
@@ -422,23 +444,21 @@ function buildFactorBullets(game) {
   const bullets = [];
   const homeName = game.homeTeam?.name ?? 'Home team';
   const awayName = game.awayTeam?.name ?? 'Away team';
-  const homeWeight =
-    typeof game.rankWeightHome === 'number' ? game.rankWeightHome.toFixed(3) : '—';
-  const awayWeight =
-    typeof game.rankWeightAway === 'number' ? game.rankWeightAway.toFixed(3) : '—';
-    
+  const homeWeight = typeof game.rankWeightHome === 'number' ? game.rankWeightHome.toFixed(3) : '—';
+  const awayWeight = typeof game.rankWeightAway === 'number' ? game.rankWeightAway.toFixed(3) : '—';
+
   if (game.leverage !== undefined) {
     bullets.push(
       `Leverage ${formatLeverage(game.leverage)} blends ${homeName}'s ${homeWeight} weight with ${awayName}'s ${awayWeight}.`
     );
   }
-  
+
   if (game.bridgeBoost > 1) {
     bullets.push('Cross-conference bridge applies a 1.20× multiplier to connect the leagues.');
   } else {
     bullets.push('Same-conference tilt keeps the bridge multiplier at 1.00×.');
   }
-  
+
   if (game.timingBoost > 1) {
     bullets.push(
       `${formatPhase(game.phase)} timing and week ${game.week ?? 'TBD'} push the urgency to ${game.timingBoost.toFixed(2)}×.`
@@ -448,13 +468,13 @@ function buildFactorBullets(game) {
       `Timing multiplier stays at ${game.timingBoost.toFixed(2)}× for week ${game.week ?? 'TBD'}.`
     );
   }
-  
+
   if (game.type === 'CHAMPIONSHIP' || game.type === 'PLAYOFF' || game.type === 'BOWL') {
     bullets.push(
       `${formatGameType(game.type)} stakes heighten committee comparisons across the chain.`
     );
   }
-  
+
   return bullets;
 }
 

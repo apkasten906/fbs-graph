@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { buildLatestAPRankMap, computeLeverageForGame } from '../src/lib/score.js';
+import { buildLatestAPRankMap, computeLeverageForGame } from '../src/lib/score.ts';
 import type { Game, TeamSeason, PollSnapshot } from '../src/types/index.js';
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'data');
@@ -15,10 +15,10 @@ const polls: PollSnapshot[] = JSON.parse(
 
 const seasons = Array.from(new Set(games.map(g => g.season)));
 for (const season of seasons) {
-  const ap = buildLatestAPRankMap(polls, season);
+  const rankMap = buildLatestAPRankMap(polls, season, teamSeasons);
   const out = games
     .filter(g => g.season === season)
-    .map(g => computeLeverageForGame(g, teamSeasons, ap));
+    .map(g => computeLeverageForGame(g, teamSeasons, rankMap));
   fs.writeFileSync(
     path.join(DATA_DIR, `games.scored.${season}.json`),
     JSON.stringify(out, null, 2)

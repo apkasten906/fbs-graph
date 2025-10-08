@@ -41,228 +41,225 @@ function determineTier(value) {
 }
 
 function createTimelineApp(options = {}) {
-    const win = options.window ?? window;
-    const doc = options.document ?? win.document;
-    const location = options.location ?? win.location;
-    const pathSummary = options.pathSummary ?? doc.getElementById('pathSummary');
-    const filters = options.filters ?? doc.getElementById('filters');
-    const timeline = options.timeline ?? doc.getElementById('timeline');
-    const fetchImpl =
-      options.fetch ?? (typeof win.fetch === 'function' ? win.fetch.bind(win) : null);
-    const dataBase = options.dataBase ?? '../src/data';
-    const season = options.season ?? 2025;
-    const loadData = options.loadData ?? (() => defaultLoadData(fetchImpl, dataBase));
+  const win = options.window ?? window;
+  const doc = options.document ?? win.document;
+  const location = options.location ?? win.location;
+  const pathSummary = options.pathSummary ?? doc.getElementById('pathSummary');
+  const filters = options.filters ?? doc.getElementById('filters');
+  const timeline = options.timeline ?? doc.getElementById('timeline');
+  const fetchImpl = options.fetch ?? (typeof win.fetch === 'function' ? win.fetch.bind(win) : null);
+  const dataBase = options.dataBase ?? '../src/data';
+  const season = options.season ?? 2025;
+  const loadData = options.loadData ?? (() => defaultLoadData(fetchImpl, dataBase));
 
-    const state = {
-      loading: true,
-      error: null,
-      season,
-      scope: 'power4',
-      activeTier: 'all',
-      startTeam: null,
-      endTeam: null,
-      data: null,
-      path: null,
-      segments: [],
-      summary: null,
-    };
+  const state = {
+    loading: true,
+    error: null,
+    season,
+    scope: 'power4',
+    activeTier: 'all',
+    startTeam: null,
+    endTeam: null,
+    data: null,
+    path: null,
+    segments: [],
+    summary: null,
+  };
 
+  renderSummary();
+  renderFilters();
+  renderTimeline();
+
+  const runningFromFile = location?.protocol === 'file:';
+  const ready = runningFromFile ? Promise.resolve(false) : init();
+
+  if (runningFromFile) {
+    renderFileModeNotice();
+  }
+
+  async function init() {
+    try {
+      const raw = await loadData();
+      state.data = prepareSeasonModel(raw, state.season);
+      const available = getTeamsForScope('power4');
+      const defaultStart =
+        available.find(team => team.id === 'alabama')?.id ?? available[0]?.id ?? null;
+      let defaultEnd =
+        available.find(team => team.id === 'clemson' && team.id !== defaultStart)?.id ??
+        chooseFallbackTeam(available, defaultStart);
+      if (defaultEnd === defaultStart) {
+        defaultEnd = chooseFallbackTeam(available, defaultStart);
+      }
+      Object.assign(state, { loading: false, startTeam: defaultStart, endTeam: defaultEnd });
+      updatePath();
+    } catch (error) {
+      state.loading = false;
+      state.error = error instanceof Error ? error.message : String(error);
+    }
     renderSummary();
     renderFilters();
     renderTimeline();
+    return !state.error;
+  }
 
-    const runningFromFile = location?.protocol === 'file:';
-    const ready = runningFromFile ? Promise.resolve(false) : init();
+  function getTeamsForScope(scopeId = state.scope) {
+    if (!state.data) return [];
+    const scope = conferenceScopes.find(item => item.id === scopeId);
+    const filterFn = scope?.filter ?? (() => true);
+    return state.data.teams
+      .filter(filterFn)
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
 
-    if (runningFromFile) {
-      renderFileModeNotice();
+  function applyState(patch) {
+    Object.assign(state, patch);
+    if (!state.loading && state.data) {
+      updatePath();
     }
+    renderSummary();
+    renderFilters();
+    renderTimeline();
+  }
 
-    async function init() {
-      try {
-        const raw = await loadData();
-        state.data = prepareSeasonModel(raw, state.season);
-        const available = getTeamsForScope('power4');
-        const defaultStart =
-          available.find(team => team.id === 'alabama')?.id ?? available[0]?.id ?? null;
-        let defaultEnd =
-          available.find(team => team.id === 'clemson' && team.id !== defaultStart)?.id ??
-          chooseFallbackTeam(available, defaultStart);
-        if (defaultEnd === defaultStart) {
-          defaultEnd = chooseFallbackTeam(available, defaultStart);
-        }
-        Object.assign(state, { loading: false, startTeam: defaultStart, endTeam: defaultEnd });
-        updatePath();
-      } catch (error) {
-        state.loading = false;
-        state.error = error instanceof Error ? error.message : String(error);
-      }
-      renderSummary();
-      renderFilters();
-      renderTimeline();
-      return !state.error;
+  function updatePath() {
+    if (!state.data) return;
+    if (!state.startTeam || !state.endTeam) {
+      state.path = null;
+      state.segments = [];
+      state.summary = null;
+      return;
     }
-
-    function getTeamsForScope(scopeId = state.scope) {
-      if (!state.data) return [];
-      const scope = conferenceScopes.find(item => item.id === scopeId);
-      const filterFn = scope?.filter ?? (() => true);
-      return state.data.teams
-        .filter(filterFn)
-        .slice()
-        .sort((a, b) => a.name.localeCompare(b.name));
+    if (state.startTeam === state.endTeam) {
+      state.path = null;
+      state.segments = [];
+      state.summary = null;
+      return;
     }
-
-    function applyState(patch) {
-      Object.assign(state, patch);
-      if (!state.loading && state.data) {
-        updatePath();
-      }
-      renderSummary();
-      renderFilters();
-      renderTimeline();
+    const result = findShortestPath(state.data.adjacency, state.startTeam, state.endTeam);
+    if (!result) {
+      state.path = null;
+      state.segments = [];
+      state.summary = null;
+      return;
     }
-
-    function updatePath() {
-      if (!state.data) return;
-      if (!state.startTeam || !state.endTeam) {
-        state.path = null;
-        state.segments = [];
-        state.summary = null;
-        return;
-      }
-      if (state.startTeam === state.endTeam) {
-        state.path = null;
-        state.segments = [];
-        state.summary = null;
-        return;
-      }
-      const result = findShortestPath(state.data.adjacency, state.startTeam, state.endTeam);
-      if (!result) {
-        state.path = null;
-        state.segments = [];
-        state.summary = null;
-        return;
-      }
-      state.path = result;
-      const segments = result.edges.map((edge, index) => {
-        const entry = state.data.edgesByPair.get(edge.key);
-        const fromTeam = state.data.teamMap.get(edge.from);
-        const toTeam = state.data.teamMap.get(edge.to);
-        const color = palette[index % palette.length];
-        return {
-          id: edge.key,
-          from: fromTeam,
-          to: toTeam,
-          color,
-          label: `${fromTeam?.name ?? edge.from} ↔ ${toTeam?.name ?? edge.to}`,
-          games: entry ? entry.games : [],
-        };
-      });
-      state.segments = segments;
-      const programs = result.nodes
-        .map(id => state.data.teamMap.get(id))
-        .filter(Boolean);
-      const bestGames = segments.map(seg => seg.games[0]).filter(Boolean);
-      const totalLev = bestGames.reduce((acc, game) => acc + (game.leverage ?? 0), 0);
-      const avgLev = bestGames.length ? totalLev / bestGames.length : 0;
-      const conferences = Array.from(
-        new Set(programs.map(p => p.conference?.shortName).filter(Boolean))
-      );
-      state.summary = {
-        programs,
-        hops: segments.length,
-        averageLeverage: Number(avgLev.toFixed(3)),
-        totalDistance: Number((result.distance ?? 0).toFixed(3)),
-        conferences,
+    state.path = result;
+    const segments = result.edges.map((edge, index) => {
+      const entry = state.data.edgesByPair.get(edge.key);
+      const fromTeam = state.data.teamMap.get(edge.from);
+      const toTeam = state.data.teamMap.get(edge.to);
+      const color = palette[index % palette.length];
+      return {
+        id: edge.key,
+        from: fromTeam,
+        to: toTeam,
+        color,
+        label: `${fromTeam?.name ?? edge.from} ↔ ${toTeam?.name ?? edge.to}`,
+        games: entry ? entry.games : [],
       };
+    });
+    state.segments = segments;
+    // DEBUG: Log segments after path update
+    console.debug('[TimelineApp] updatePath: segments', segments);
+    const programs = result.nodes.map(id => state.data.teamMap.get(id)).filter(Boolean);
+    const bestGames = segments.map(seg => seg.games[0]).filter(Boolean);
+    const totalLev = bestGames.reduce((acc, game) => acc + (game.leverage ?? 0), 0);
+    const avgLev = bestGames.length ? totalLev / bestGames.length : 0;
+    const conferences = Array.from(
+      new Set(programs.map(p => p.conference?.shortName).filter(Boolean))
+    );
+    state.summary = {
+      programs,
+      hops: segments.length,
+      averageLeverage: Number(avgLev.toFixed(3)),
+      totalDistance: Number((result.distance ?? 0).toFixed(3)),
+      conferences,
+    };
+  }
+
+  function renderSummary() {
+    if (!pathSummary) return;
+    pathSummary.innerHTML = '';
+    if (state.loading) {
+      pathSummary.appendChild(createEmptyState('Loading leverage data…'));
+      return;
+    }
+    if (state.error) {
+      pathSummary.appendChild(createEmptyState(`Unable to load leverage data: ${state.error}`));
+      return;
+    }
+    if (!state.data) return;
+
+    const startTeam = state.startTeam ? state.data.teamMap.get(state.startTeam) : null;
+    const endTeam = state.endTeam ? state.data.teamMap.get(state.endTeam) : null;
+    if (!startTeam || !endTeam) {
+      pathSummary.appendChild(createEmptyState('Pick two programs to trace the leverage chain.'));
+      return;
     }
 
-    function renderSummary() {
-        if (!pathSummary) return;
-        pathSummary.innerHTML = '';
-        if (state.loading) {
-          pathSummary.appendChild(createEmptyState('Loading leverage data…'));
-          return;
-        }
-        if (state.error) {
-          pathSummary.appendChild(createEmptyState(`Unable to load leverage data: ${state.error}`));
-          return;
-        }
-        if (!state.data) return;
+    // Header section
+    const heading = doc.createElement('header');
+    const title = doc.createElement('h2');
+    title.textContent = 'Shortest leverage chain';
+    heading.appendChild(title);
+    const copy = doc.createElement('p');
+    if (state.path && state.summary) {
+      copy.textContent = `A leveraged hop-by-hop view that passes from the ${startTeam.conference?.shortName ?? ''} through ${state.summary.programs
+        .map(p => p.conference?.shortName ?? '')
+        .filter(Boolean)
+        .join(' into the ')} to reach ${endTeam.name}.`;
+    } else if (state.startTeam === state.endTeam) {
+      copy.textContent = 'Choose a different destination to analyze the leverage bridge.';
+    } else {
+      copy.textContent =
+        'These programs are not connected by any remaining 2025 games under the current schedule.';
+    }
+    heading.appendChild(copy);
+    pathSummary.appendChild(heading);
 
-        const startTeam = state.startTeam ? state.data.teamMap.get(state.startTeam) : null;
-        const endTeam = state.endTeam ? state.data.teamMap.get(state.endTeam) : null;
-        if (!startTeam || !endTeam) {
-          pathSummary.appendChild(
-            createEmptyState('Pick two programs to trace the leverage chain.')
-          );
-          return;
-        }
-
-        // Header section
-        const heading = doc.createElement('header');
-        const title = doc.createElement('h2');
-        title.textContent = 'Shortest leverage chain';
-        heading.appendChild(title);
-        const copy = doc.createElement('p');
-        if (state.path && state.summary) {
-          copy.textContent = `A leveraged hop-by-hop view that passes from the ${startTeam.conference?.shortName ?? ''} through ${state.summary.programs
-            .map(p => p.conference?.shortName ?? '')
-            .filter(Boolean)
-            .join(' into the ')} to reach ${endTeam.name}.`;
-        } else if (state.startTeam === state.endTeam) {
-          copy.textContent = 'Choose a different destination to analyze the leverage bridge.';
-        } else {
-          copy.textContent =
-            'These programs are not connected by any remaining 2025 games under the current schedule.';
-        }
-        heading.appendChild(copy);
-        pathSummary.appendChild(heading);
-
-        // Path chain
-        const chain = doc.createElement('div');
-        chain.className = 'leverage-chain';
-        const programList =
-          state.path && state.summary
-            ? state.summary.programs
-            : [startTeam, ...(state.startTeam === state.endTeam ? [] : [endTeam])];
-        programList.forEach((program, index) => {
-          const chip = doc.createElement('span');
-          chip.className = 'program-chip';
-          chip.textContent =
-            `${program.name} ${program.conference?.shortName ? program.conference.shortName : ''}`.trim();
-          chain.appendChild(chip);
-          if (index < programList.length - 1) {
-            const arrow = doc.createElement('span');
-            arrow.className = 'arrow';
-            arrow.textContent = '→';
-            chain.appendChild(arrow);
-          }
-        });
-        pathSummary.appendChild(chain);
-
-        // Legend for segments (if available)
-        if (state.segments && state.segments.length) {
-          const legend = doc.createElement('div');
-          legend.className = 'legend';
-          state.segments.forEach(segment => {
-            const item = doc.createElement('div');
-            item.className = 'legend-row';
-            const swatch = doc.createElement('span');
-            swatch.className = 'legend-swatch';
-            swatch.style.background = segment.color;
-            item.appendChild(swatch);
-            const text = doc.createElement('span');
-            text.textContent = segment.label;
-            item.appendChild(text);
-            legend.appendChild(item);
-          });
-          pathSummary.appendChild(legend);
-        }
+    // Path chain
+    const chain = doc.createElement('div');
+    chain.className = 'leverage-chain';
+    const programList =
+      state.path && state.summary
+        ? state.summary.programs
+        : [startTeam, ...(state.startTeam === state.endTeam ? [] : [endTeam])];
+    programList.forEach((program, index) => {
+      const chip = doc.createElement('span');
+      chip.className = 'program-chip';
+      chip.textContent =
+        `${program.name} ${program.conference?.shortName ? program.conference.shortName : ''}`.trim();
+      chain.appendChild(chip);
+      if (index < programList.length - 1) {
+        const arrow = doc.createElement('span');
+        arrow.className = 'arrow';
+        arrow.textContent = '→';
+        chain.appendChild(arrow);
       }
+    });
+    pathSummary.appendChild(chain);
 
-    function renderFilters() {
+    // Legend for segments (if available)
+    if (state.segments && state.segments.length) {
+      const legend = doc.createElement('div');
+      legend.className = 'legend';
+      state.segments.forEach(segment => {
+        const item = doc.createElement('div');
+        item.className = 'legend-row';
+        const swatch = doc.createElement('span');
+        swatch.className = 'legend-swatch';
+        swatch.style.background = segment.color;
+        item.appendChild(swatch);
+        const text = doc.createElement('span');
+        text.textContent = segment.label;
+        item.appendChild(text);
+        legend.appendChild(item);
+      });
+      pathSummary.appendChild(legend);
+    }
+  }
+
+  function renderFilters() {
     if (!filters) return;
     filters.innerHTML = '';
     if (state.loading) {
@@ -409,6 +406,8 @@ function createTimelineApp(options = {}) {
       timeline.appendChild(createEmptyState(`Unable to load timeline: ${state.error}`));
       return;
     }
+    // DEBUG: Log segments before rendering
+    console.debug('[TimelineApp] renderTimeline: state.segments', state.segments);
     if (!state.segments.length) {
       const message =
         !state.startTeam || !state.endTeam

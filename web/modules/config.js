@@ -1,3 +1,9 @@
+// Conference map: id → { shortName, name }
+import conferencesData from '../../src/data/conferences.json' assert { type: 'json' };
+
+export const conferenceMap = Object.fromEntries(
+  conferencesData.map(c => [c.id, { shortName: c.shortName, name: c.name }])
+);
 /**
  * Configuration and constants for the FBS Timeline App
  */

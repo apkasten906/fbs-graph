@@ -4,31 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FBS Schedule Graph — Teams & Matchups</title>
+    <link rel="stylesheet" href="common-theme.css" />
     <style>
-      :root {
-        --bg: #0b1020;
-        --panel: #121a33;
-        --ink: #e9eefc;
-        --muted: #9fb0e8;
-        --accent: #7ae;
-      }
       * {
         box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        font-family:
-          ui-sans-serif,
-          system-ui,
-          -apple-system,
-          Segoe UI,
-          Roboto,
-          Helvetica,
-          Arial,
-          'Apple Color Emoji',
-          'Segoe UI Emoji';
-        background: var(--bg);
-        color: var(--ink);
       }
       header {
         padding: 10px 12px;
@@ -131,9 +110,6 @@
         font-size: 12px;
         color: var(--muted);
       }
-      a {
-        color: #9bd;
-      }
     </style>
   </head>
   <body>
@@ -164,9 +140,13 @@
           <div class="muted small">
             Find connection between teams (shortest path by 1/leverage):
           </div>
-          <div style="display: flex; gap: 6px; margin-top: 6px">
+          <div
+            style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: flex-end"
+          >
             <select id="srcSel"></select>
             <select id="dstSel"></select>
+          </div>
+          <div style="margin-top: 8px">
             <button id="pathBtn">Path</button>
           </div>
           <div id="pathInfo" class="pathlist" style="margin-top: 8px">No path computed yet.</div>
@@ -348,19 +328,36 @@ query Graph($season: Int!) {
         document.getElementById('pathInfo').innerHTML = lines.join('');
       }
 
+      // Conference metadata cache (populated from GraphQL)
+      let conferenceMeta = [];
+
       function buildLegend() {
         const container = document.getElementById('legend');
         container.innerHTML = '';
         const seen = new Set();
+        // Collect all conferences present in the data
         for (const t of graphData.teams) {
           const conf = (t.conference && t.conference.id) || 'other';
-          if (seen.has(conf)) continue;
           seen.add(conf);
+        }
+        // Map to full names, filter, and sort
+        const legendEntries = Array.from(seen)
+          .map(id => {
+            const meta = conferenceMeta.find(c => c.id === id);
+            return {
+              id,
+              color: COLORS[id] || COLORS.other,
+              label: meta ? `${meta.name} (${meta.shortName})` : id.toUpperCase(),
+              sortKey: meta ? meta.name : id,
+            };
+          })
+          .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+        for (const entry of legendEntries) {
           const dot = document.createElement('div');
           dot.className = 'dot';
-          dot.style.background = COLORS[conf] || COLORS.other;
+          dot.style.background = entry.color;
           const lbl = document.createElement('div');
-          lbl.textContent = conf.toUpperCase();
+          lbl.textContent = entry.label;
           container.appendChild(dot);
           container.appendChild(lbl);
         }
@@ -449,9 +446,21 @@ query Graph($season: Int!) {
         return { nodes: pathIds, edges };
       }
 
+      const CONFERENCES_QUERY = `
+        query { conferences { id name shortName } }
+      `;
+
       async function load() {
         const endpoint = document.getElementById('endpoint').value.trim();
         const season = Number(document.getElementById('season').value);
+        // Fetch conference metadata first
+        const confRes = await POST(endpoint, { query: CONFERENCES_QUERY });
+        if (confRes.errors) {
+          alert('GraphQL error (conferences): ' + JSON.stringify(confRes.errors[0], null, 2));
+          return;
+        }
+        conferenceMeta = confRes.data.conferences || [];
+        // Now fetch main graph data
         const res = await POST(endpoint, { query: QUERY, variables: { season } });
         if (res.errors) {
           alert('GraphQL error: ' + JSON.stringify(res.errors[0], null, 2));

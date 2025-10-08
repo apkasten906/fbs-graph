@@ -22,7 +22,7 @@ This project models NCAA FBS football teams and schedules as a graph, exposing t
 ## Quick Start
 
 1. Install dependencies: `pnpm i` (or `npm i`/`yarn`)
-2. Start dev server: `pnpm dev` (GraphQL at http://localhost:4000/graphql)
+2. Start dev server: `pnpm dev` (GraphQL at http://localhost:4100/graphql)
 3. Try example queries in Apollo Sandbox (see `example.graphql`)
 
 ## Data Files
