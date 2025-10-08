@@ -103,7 +103,7 @@ const resolvers = {
         week?: number;
         limit?: number;
         includeConferenceGames?: boolean;
-        ranking?: 'AP' | 'ELO' | 'SP_PLUS' | 'AVERAGE';
+        ranking?: 'AP' | 'ELO' | 'SP_PLUS' | 'AVERAGE';        
       }
     ) => {
       const ranking = args.ranking ?? 'AVERAGE';

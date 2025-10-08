@@ -144,7 +144,7 @@ type Query {
     season: Int!
     week: Int
     limit: Int = 50
-    includeConferenceGames: Boolean = true
+    includeConferenceGames: Boolean = true    
   ): [Game!]!
   conferenceConnectivity(season: Int!): [ConferenceConnectivity!]!
   playoffPreview(
@@ -153,6 +153,11 @@ type Query {
     gameLimit: Int = 12
     leverageThreshold: Float = 0.75
   ): PlayoffPreview!
+}
+
+enum SortOrder {
+  ASC
+  DESC
 }
 
 input ConferenceInput {

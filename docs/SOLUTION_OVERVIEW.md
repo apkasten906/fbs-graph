@@ -1,34 +1,53 @@
-# FBS Graph Solution Overview
 
-## Purpose
+# FBS Schedule Graph: Solution Overview
 
-This project models NCAA FBS football teams and schedules as a graph, exposing the data via a GraphQL API (Apollo Server v4). It enables advanced queries, analytics, and leverage scoring for matchups.
+## Project Purpose
 
-## Main Features
+FBS Schedule Graph is a modern, modular tool for exploring the playoff leverage and impact of every FBS college football game. It provides:
 
-- **GraphQL API**: Query teams, games, conferences, polls, and computed leverage scores.
-- **Data Model**: JSON fixtures for teams, games, conferences, polls, and team seasons.
-- **Leverage Scoring**: Calculates matchup importance using rank, timing, and bridge boosts.
-- **Scripts**: Import data from CSV, recompute leverage scores, and manage fixtures.
+- A robust data pipeline for ingesting and normalizing schedule, team, and ranking data
+- Dynamic leverage calculations and graph-based pathfinding between programs
+- An interactive, modular web UI for visualizing leverage chains and filtering by conference, tier, or team
+- A secure, local static server for serving the web UI and data
 
-## Architecture
+## Solution Architecture
 
-- **Apollo Server v4**: Serves the GraphQL API.
-- **TypeScript**: Strictly typed codebase for reliability.
-- **Data Layer**: JSON files in `src/data/` for all core entities.
-- **Business Logic**: Leverage formula and scoring in `src/lib/score.ts`.
-- **CSV Import**: Scripts in `scripts/` for bulk data import.
+### 1. Data Pipeline
 
-## Quick Start
+- **CSV Ingestion**: Full FBS data is provided as CSVs in `csv/` (schedules, teams, conferences, polls, etc.)
+- **Automated Setup**: `npm run setup` (or PowerShell script) ingests CSVs and generates normalized JSON fixtures in `src/data/`
+- **Test Data**: JSON files are used for quick tests and onboarding; CSVs provide the full dataset
 
-1. Install dependencies: `pnpm i` (or `npm i`/`yarn`)
-2. Start dev server: `pnpm dev` (GraphQL at http://localhost:4100/graphql)
-3. Try example queries in Apollo Sandbox (see `example.graphql`)
+### 2. Leverage Calculation & Graph Model
 
-## Data Files
+- **Centralized Logic**: All leverage and pathfinding logic is in `src/lib/score.ts` and related modules
+- **Dynamic Conference Data**: Conferences and teams are loaded dynamically, supporting future expansion
+- **Graph Algorithms**: Teams and games are modeled as a graph for shortest-path and impact analysis
 
-- `conferences.json`, `teams.json`, `teamSeasons.json`, `polls.json`, `games.json` (in `src/data/`)
-- Replace sample data with full 136-team fixtures for production use.
+### 3. Modular Web Frontend
+
+- **ES Modules**: UI logic is split into focused modules under `web/modules/` for maintainability
+- **Interactive Timeline**: Users can select teams, filter by conference or leverage tier, and trace leverage chains
+- **Modern UX**: Responsive design, clear filtering, and dynamic path summaries
+
+### 4. Static Server
+
+- **`web/serve-web.ts`**: Secure, local static server with correct MIME types and safe routing
+- **Project Root Serving**: Serves both `/web/` and root-level assets for a seamless local experience
+
+## Data Flow
+
+1. **Ingest**: Run the setup script to import CSVs and generate normalized JSON in `src/data/`
+2. **Process**: Leverage logic processes the data and builds the graph model
+3. **Serve**: The static server serves the web UI and data files for local exploration
+4. **Explore**: Use the web UI to select teams, filter by conference, and trace leverage paths
+
+## Getting Started
+
+1. **Install dependencies**: `npm install`
+2. **Run setup**: `npm run setup` (imports CSVs, builds JSON)
+3. **Start server**: `npm run web:serve`
+4. **Open**: Visit `http://localhost:4173/web/index.html` in your browser
 
 ## Leverage Formula
 
@@ -36,27 +55,34 @@ This project models NCAA FBS football teams and schedules as a graph, exposing t
 leverage = rankWeight(home) * rankWeight(away) * bridgeBoost * timingBoost
 ```
 
-- `rankWeight(team)`: Based on AP rank or SP+ percentile.
-- `bridgeBoost`: Higher for non-conference/inter-division games.
-- `timingBoost`: Increases for late season and playoffs.
-
-## Scripts
-
-- `score`: Recomputes leverage scores.
-- `import:csv`: Imports teams/games from CSV files.
+- `rankWeight(team)`: Based on AP rank or SP+ percentile
+- `bridgeBoost`: Higher for non-conference/inter-division games
+- `timingBoost`: Increases for late season and playoffs
 
 ## Project Structure
 
-- `src/`: Main source code and schema
-- `scripts/`: Utility scripts
-- `csv/`: Example CSV data
+- `src/`: Main source code, leverage logic, and data
+- `web/`: Static assets, modular frontend, and static server
+- `scripts/`: Data ingestion and utility scripts
+- `csv/`: Full FBS CSV data
 - `docs/`: Documentation
 
 ## How to Extend
 
-- Add new teams/games to JSON or via CSV import.
-- Adjust leverage formula in `src/lib/score.ts`.
-- Expand GraphQL schema for new queries.
+- Add new data sources by updating the CSVs and ingestion scripts
+- Extend leverage logic in `src/lib/score.ts`
+- Add new UI modules in `web/modules/`
+
+## FAQ
+
+**Q: What is "leverage"?**
+A: A metric estimating the impact of a game on playoff selection, blending team quality, conference structure, and schedule timing.
+
+**Q: Can I use my own data?**
+A: Yes! Replace the CSVs in `csv/` and rerun the setup script.
+
+**Q: Is this production-ready?**
+A: This is a research and exploration tool, not a production system. Contributions and improvements are welcome!
 
 ## License
 
