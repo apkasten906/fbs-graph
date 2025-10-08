@@ -107,7 +107,7 @@ const result = await server.executeOperation({
       }
     }
   `,
-  variables: options
+  variables: options,
 });
 
 await server.stop();

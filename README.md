@@ -1,30 +1,93 @@
-# FBS GraphQL Graph (Schedules as a Graph)
+# FBS Schedule Graph: GraphQL + Interactive Web Visualizer
 
-This project models FBS teams and schedules as a graph and exposes it via GraphQL (Apollo Server v4).
+This project models FBS college football teams and schedules as a graph, exposing rich data and analytics via a GraphQL API and interactive web UI.
 
-## Quick start
+## 🚀 Getting Started
+
+### 1. Install dependencies
 
 ```bash
-pnpm i   # or npm i / yarn
-pnpm dev # starts GraphQL on http://localhost:4100/
+npm install   # or pnpm install / yarn install
 ```
 
-Open Apollo Sandbox in the console output and try:
+### 2. Import and prepare all data (one step)
+
+```bash
+npm run setup
+# This script fetches conferences, teams, schedules, polls, Elo, SP+ ratings, and builds all required data files.
+# Requires a valid CFBD_KEY (see below).
+```
+
+> **Note:** The setup script uses PowerShell. On macOS/Linux, run the equivalent commands in your shell or adapt as needed.
+
+### 3. Start the backend GraphQL server
+
+```bash or ps
+npm run dev
+# Starts Apollo Server at http://localhost:4100/
+```
+
+Open the Apollo Sandbox link from the console to explore the API, or use the sample queries below.
+
+### 4. Start the static web server (for the interactive UI)
+
+```bash or ps
+npm run web:serve
+# Serves the web/ directory at http://localhost:4173
+```
+
+From the main page, choose either [Matchup Timeline](http://localhost:4173/web/matchup-timeline.html)
+or [FBS Graph Visualizer](http://localhost:4173/web/fbs-graph-visualizer.html).
+
+> **Tip:** Opening HTML files directly from disk will not work due to browser security restrictions—always use the static server.
+
+---
+
+## 🗝️ Environment Variables
+
+- `CFBD_KEY`: Required for data import scripts. Get a free API key from [CollegeFootballData.com](https://collegefootballdata.com/).
+- You can set this in a `.env` file or export it in your shell before running `npm run setup`. See an example file here: `.env.example`
+
+---
+
+## 🏗️ Project Structure
+
+- `scripts/` — Data ingestion, transformation, and setup scripts (see `setup.ps1` for the full pipeline)
+- `src/` — Core backend logic, GraphQL schema, and data models
+- `web/` — Static web UI (HTML, JS, CSS modules)
+- `csv/` — Raw and processed CSV data (imported by scripts)
+- `package.json` — All available scripts and dependencies
+
+---
+
+## 🧑‍💻 Example GraphQL Queries
+
+**Essential matchups:**
 
 ```graphql
 query {
   essentialMatchups(season: 2025, limit: 20) {
     id
     date
-    home { id name conference { shortName } }
-    away { id name conference { shortName } }
+    home {
+      name
+      conference {
+        shortName
+      }
+    }
+    away {
+      name
+      conference {
+        shortName
+      }
+    }
     type
     leverage
   }
 }
 ```
 
-To preview the playoff picture with updated data from the Sandbox:
+**Playoff preview:**
 
 ```graphql
 query {
@@ -34,18 +97,62 @@ query {
       id
       date
       leverage
-      home { name }
-      away { name }
+      home {
+        name
+      }
+      away {
+        name
+      }
     }
     contenders {
-      team { name }
+      team {
+        name
+      }
       rank
-      leverageIndex
       resumeScore
+      leverageIndex
     }
   }
 }
 ```
+
+---
+
+## 🖥️ Web UI Features
+
+- Interactive timeline and graph visualizations of the FBS schedule
+- Dynamic conference/legend data from backend
+- Shortest path and leverage chain explorer
+- Modern, responsive design (see `web/common-theme.css`)
+
+---
+
+## 🧩 Useful Scripts
+
+- `npm run setup` — One-step data import and preparation
+- `npm run dev` — Start backend GraphQL server
+- `npm run web:serve` — Start static web server
+- `npm run fetch:all` — Fetch all data (conferences, teams, schedules, polls, ratings)
+- `npm run import:csv` — Import/transform CSV data
+- `npm run preview:playoff` — Run playoff preview query from CLI
+
+---
+
+## 🛠️ Troubleshooting
+
+- **Web UI not loading data?** Make sure you are using the static server (`npm run web:serve`) and not opening files directly.
+- **Missing data?** Ensure you have set `CFBD_KEY` and run `npm run setup`.
+- **Port conflicts?** Change the `PORT` environment variable for the backend or web server as needed.
+
+---
+
+## 📚 Further Reading
+
+- See `docs/SOLUTION_OVERVIEW.md` for architecture and data flow
+- See `scripts/setup.ps1` for the full data pipeline
+- Explore `src/lib/score.ts` for leverage computation details
+
+---
 
 ### Run everything inside Codex
 
@@ -112,21 +219,53 @@ The script spins up an in-memory Apollo Server instance, executes the query, and
 The build process transpiles the TypeScript server into `dist/` and performs a full type check along the way. That surfaces schema or data inconsistencies immediately instead of at runtime. Now that the `tsconfig` scopes only the server code, `pnpm build` completes cleanly again and provides quick confidence that the GraphQL changes can be deployed safely.
 
 ### Scripts
+
 - `pnpm score` recomputes leverage scores from polls and ratings.
 - Edit JSON in `src/data/` to add all teams/games. A CSV importer stub lives in `scripts/compute-leverage.ts`.
 
+## Tests
+
+Install dependencies and execute the Vitest suite to confirm the dynamic timeline continues to populate matchups when filters change:
+
+```bash
+npm install
+npm test -- --run
+```
+
 ## Data
-Small, illustrative fixtures are included. Replace with full 136-team data when ready:
-- `conferences.json`
-- `teams.json`
-- `teamSeasons.json`
-- `polls.json`
-- `games.json`
+
+Small, illustrative fixtures are included in JSON. Replace with full 136-team data when ready:
+
+**Data options:**
+
+- CSV files in `csv/` provide the full, up-to-date FBS data (recommended for real analysis and the web UI/backend). Run setup script to refresh the data.
+- JSON files in `src/data/` are small, illustrative fixtures for testing or quick demos.
+
+**Key files:**
+
+- `csv/conferences.csv`, `csv/teams.csv`, `csv/team_seasons.csv`, `csv/polls.csv`, `csv/schedules_2025.csv` (full data, auto-generated by setup)
+- `src/data/conferences.json`, `src/data/teams.json`, `src/data/teamSeasons.json`, `src/data/polls.json`, `src/data/games.json` (limited sample data)
+
+## Visualize leverage timelines in the browser
+
+Want to explore the projected impact chains without wiring up a frontend framework? The repo ships a static HTML experience at `web/matchup-timeline.html` that loads the schedule JSON and renders the shortest 1/leverage path between any two programs.
+
+1. Start the static server:
+   ```bash
+   npm run web:serve
+   ```
+   The helper serves the `web/` directory at [http://localhost:4173](http://localhost:4173) with the correct MIME types so the page can request JSON and modules.
+2. Open [High-Impact Matchup Timeline](http://localhost:4173/web/matchup-timeline.html) in your browser.
+3. Pick a conference scope (individual conference, Power 4, or all FBS) and select any two teams to see the chain of matchups that most influence their playoff odds.
+
+Opening the file directly from disk will display instructions that remind you to launch the static server—modern browsers block `fetch()` calls from the file system for security reasons, so serving over HTTP is required.
 
 ## Leverage formula (simplified)
+
 ```
 leverage = rankWeight(home) * rankWeight(away) * bridgeBoost * timingBoost
 ```
+
 - `rankWeight(team)`: from AP rank if present (1/rank scaled), else SP+ percentile.
 - `bridgeBoost`: 1.2 for non-conference, 1.1 for inter-division, else 1.0.
 - `timingBoost`: 1.0 early season → 1.15 late season (Week 12+), bowls/playoffs 1.25.

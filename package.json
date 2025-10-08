@@ -9,18 +9,44 @@
     "build": "tsc -p tsconfig.json",
     "score": "tsx scripts/compute-leverage.ts",
     "import:csv": "tsx scripts/import-from-csv.ts",
-    "preview:playoff": "tsx scripts/run-playoff-preview.ts"
+    "preview:playoff": "tsx scripts/run-playoff-preview.ts",
+    "web:serve": "tsx scripts/serve-web.ts",
+    "test": "vitest",
+    "lint": "eslint . --config .eslintrc.cjs",
+    "format": "prettier --write .",
+    "audit:data": "npx tsx ./scripts/audit-data.ts",
+    "fetch:confs": "tsx scripts/fetch-cfbd-conferences-to-json.ts",
+    "fetch:teams": "tsx scripts/fetch-cfbd-teams-to-csv.ts",
+    "fetch:schedules": "tsx scripts/fetch-cfbd-schedules-to-csv.ts",
+    "seasons:make": "tsx scripts/generate-team-seasons-from-teams.ts",
+    "fetch:ap": "tsx scripts/fetch-cfbd-ap-to-polls.ts",
+    "fetch:elo": "tsx scripts/fetch-cfbd-elo-to-seasons.ts",
+    "fetch:sp": "tsx scripts/fetch-cfbd-sp-to-seasons.ts",
+    "fetch:ratings": "npm run fetch:elo; npm run fetch:sp",
+    "fetch:ranks": "npm run fetch:ap; npm run fetch:ratings",
+    "fetch:all": "npm run fetch:confs; npm run fetch:teams; npm run seasons:make; npm run fetch:schedules; npm run fetch:ranks",
+    "setup": "powershell.exe -ExecutionPolicy Bypass -File .\\scripts\\setup.ps1"
   },
   "dependencies": {
     "@apollo/server": "^4.10.0",
+    "csv-parse": "^5.5.6",
+    "dotenv": "^17.2.3",
     "graphql": "^16.9.0",
     "graphql-tag": "^2.12.6",
-    "zod": "^3.23.8",
-    "csv-parse": "^5.5.6"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^15.5.4",
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^8.46.0",
+    "@typescript-eslint/parser": "^8.46.0",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "jsdom": "^24.0.0",
+    "prettier": "^3.6.2",
     "tsx": "^4.16.2",
     "typescript": "^5.4.5",
-    "@types/node": "^20.11.30"
+    "vitest": "^1.6.0"
   }
 }

@@ -1,0 +1,44 @@
+/* common-theme.css */
+:root {
+  --bg: #0b1020;
+  --panel: #121a33;
+  --ink: #e9eefc;
+  --muted: #9fb0e8;
+  --accent: #7ae;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  margin: 0;
+}
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: #fff;
+}
+.container {
+  max-width: 480px;
+  margin: 80px auto 0 auto;
+  background: var(--panel);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #0008;
+  padding: 32px 24px 24px 24px;
+  text-align: center;
+}
+h1 {
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.5px;
+}
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+li {
+  margin: 1.2em 0;
+}

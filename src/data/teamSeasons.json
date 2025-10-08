@@ -1,16 +1,31 @@
 [
   {
-    "id": "georgia-2025",
-    "teamId": "georgia",
+    "id": "air-force-2025",
+    "teamId": "air-force",
     "season": 2025,
-    "coach": "Kirby Smart",
-    "spPlus": 30.4,
-    "returningProduction": 0.68,
+    "coach": null,
+    "spPlus": -4.2,
+    "returningProduction": 0,
     "record": {
-      "wins": 7,
+      "wins": 0,
       "losses": 0,
       "ties": 0,
-      "confWins": 4,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "akron-2025",
+    "teamId": "akron",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -18.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
       "confLosses": 0
     }
   },
@@ -18,102 +33,447 @@
     "id": "alabama-2025",
     "teamId": "alabama",
     "season": 2025,
-    "coach": "Kalen DeBoer",
-    "spPlus": 25.6,
-    "returningProduction": 0.63,
+    "coach": null,
+    "spPlus": 22.6,
+    "returningProduction": 0,
     "record": {
-      "wins": 6,
-      "losses": 1,
-      "ties": 0,
-      "confWins": 3,
-      "confLosses": 1
-    }
-  },
-  {
-    "id": "texas-2025",
-    "teamId": "texas",
-    "season": 2025,
-    "coach": "Steve Sarkisian",
-    "spPlus": 27.1,
-    "returningProduction": 0.66,
-    "record": {
-      "wins": 6,
-      "losses": 1,
-      "ties": 0,
-      "confWins": 4,
-      "confLosses": 1
-    }
-  },
-  {
-    "id": "ohio-state-2025",
-    "teamId": "ohio-state",
-    "season": 2025,
-    "coach": "Ryan Day",
-    "spPlus": 29.7,
-    "returningProduction": 0.62,
-    "record": {
-      "wins": 7,
+      "wins": 0,
       "losses": 0,
       "ties": 0,
-      "confWins": 4,
+      "confWins": 0,
       "confLosses": 0
     }
   },
   {
-    "id": "michigan-2025",
-    "teamId": "michigan",
+    "id": "app-state-2025",
+    "teamId": "app-state",
     "season": 2025,
-    "coach": "Sherrone Moore",
-    "spPlus": 28.1,
-    "returningProduction": 0.64,
+    "coach": null,
+    "spPlus": -14.1,
+    "returningProduction": 0,
     "record": {
-      "wins": 6,
-      "losses": 1,
-      "ties": 0,
-      "confWins": 3,
-      "confLosses": 1
-    }
-  },
-  {
-    "id": "oregon-2025",
-    "teamId": "oregon",
-    "season": 2025,
-    "coach": "Dan Lanning",
-    "spPlus": 27.9,
-    "returningProduction": 0.65,
-    "record": {
-      "wins": 7,
+      "wins": 0,
       "losses": 0,
       "ties": 0,
-      "confWins": 4,
+      "confWins": 0,
       "confLosses": 0
     }
   },
   {
-    "id": "washington-2025",
-    "teamId": "washington",
+    "id": "arizona-2025",
+    "teamId": "arizona",
     "season": 2025,
-    "coach": "Jedd Fisch",
-    "spPlus": 23.9,
-    "returningProduction": 0.6,
+    "coach": null,
+    "spPlus": 10.9,
+    "returningProduction": 0,
     "record": {
-      "wins": 6,
-      "losses": 1,
+      "wins": 0,
+      "losses": 0,
       "ties": 0,
-      "confWins": 4,
-      "confLosses": 1
+      "confWins": 0,
+      "confLosses": 0
     }
   },
   {
-    "id": "notre-dame-2025",
-    "teamId": "notre-dame",
+    "id": "arizona-state-2025",
+    "teamId": "arizona-state",
     "season": 2025,
-    "coach": "Marcus Freeman",
-    "spPlus": 22.5,
-    "returningProduction": 0.58,
+    "coach": null,
+    "spPlus": 10.6,
+    "returningProduction": 0,
     "record": {
-      "wins": 6,
-      "losses": 1,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "arkansas-2025",
+    "teamId": "arkansas",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 11.2,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "arkansas-state-2025",
+    "teamId": "arkansas-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -13,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "army-2025",
+    "teamId": "army",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -2.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "auburn-2025",
+    "teamId": "auburn",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 14.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "ball-state-2025",
+    "teamId": "ball-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -16.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "baylor-2025",
+    "teamId": "baylor",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "boise-state-2025",
+    "teamId": "boise-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 4.2,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "boston-college-2025",
+    "teamId": "boston-college",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -5.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "bowling-green-2025",
+    "teamId": "bowling-green",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -14.2,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "buffalo-2025",
+    "teamId": "buffalo",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -8.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "byu-2025",
+    "teamId": "byu",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 16.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "california-2025",
+    "teamId": "california",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -3.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "central-michigan-2025",
+    "teamId": "central-michigan",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -15.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "charlotte-2025",
+    "teamId": "charlotte",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -20.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "cincinnati-2025",
+    "teamId": "cincinnati",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 12.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "clemson-2025",
+    "teamId": "clemson",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 8.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "coastal-carolina-2025",
+    "teamId": "coastal-carolina",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -18.8,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "colorado-2025",
+    "teamId": "colorado",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 3.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "colorado-state-2025",
+    "teamId": "colorado-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -14.3,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "delaware-2025",
+    "teamId": "delaware",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -6.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "duke-2025",
+    "teamId": "duke",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 9.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "east-carolina-2025",
+    "teamId": "east-carolina",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "eastern-michigan-2025",
+    "teamId": "eastern-michigan",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -19.2,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "florida-2025",
+    "teamId": "florida",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 12.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "florida-atlantic-2025",
+    "teamId": "florida-atlantic",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -8.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "florida-international-2025",
+    "teamId": "florida-international",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -18.2,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
       "ties": 0,
       "confWins": 0,
       "confLosses": 0
@@ -123,135 +483,1560 @@
     "id": "florida-state-2025",
     "teamId": "florida-state",
     "season": 2025,
-    "coach": "Mike Norvell",
-    "spPlus": 24.9,
-    "returningProduction": 0.61,
+    "coach": null,
+    "spPlus": 14.4,
+    "returningProduction": 0,
     "record": {
-      "wins": 6,
-      "losses": 1,
+      "wins": 0,
+      "losses": 0,
       "ties": 0,
-      "confWins": 4,
+      "confWins": 0,
       "confLosses": 0
     }
   },
   {
-    "id": "clemson-2025",
-    "teamId": "clemson",
+    "id": "fresno-state-2025",
+    "teamId": "fresno-state",
     "season": 2025,
-    "coach": "Dabo Swinney",
-    "spPlus": 21.5,
-    "returningProduction": 0.59,
+    "coach": null,
+    "spPlus": -0.3,
+    "returningProduction": 0,
     "record": {
-      "wins": 5,
-      "losses": 2,
+      "wins": 0,
+      "losses": 0,
       "ties": 0,
-      "confWins": 3,
-      "confLosses": 1
+      "confWins": 0,
+      "confLosses": 0
     }
   },
   {
-    "id": "ole-miss-2025",
-    "teamId": "ole-miss",
+    "id": "georgia-2025",
+    "teamId": "georgia",
     "season": 2025,
-    "coach": "Lane Kiffin",
-    "spPlus": 23.0,
-    "returningProduction": 0.6,
+    "coach": null,
+    "spPlus": 21.7,
+    "returningProduction": 0,
     "record": {
-      "wins": 6,
-      "losses": 1,
+      "wins": 0,
+      "losses": 0,
       "ties": 0,
-      "confWins": 3,
-      "confLosses": 1
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "georgia-southern-2025",
+    "teamId": "georgia-southern",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -12.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "georgia-state-2025",
+    "teamId": "georgia-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -19.6,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "georgia-tech-2025",
+    "teamId": "georgia-tech",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 11.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "hawaii-2025",
+    "teamId": "hawaii",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -7.3,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "houston-2025",
+    "teamId": "houston",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 5.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "illinois-2025",
+    "teamId": "illinois",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 14.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "indiana-2025",
+    "teamId": "indiana",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 26.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "iowa-2025",
+    "teamId": "iowa",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 10.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "iowa-state-2025",
+    "teamId": "iowa-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 11,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "jacksonville-state-2025",
+    "teamId": "jacksonville-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -9.3,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "james-madison-2025",
+    "teamId": "james-madison",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 4.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "kansas-2025",
+    "teamId": "kansas",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 12.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "kansas-state-2025",
+    "teamId": "kansas-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 4.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "kennesaw-state-2025",
+    "teamId": "kennesaw-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -11.3,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "kent-state-2025",
+    "teamId": "kent-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -25.2,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "kentucky-2025",
+    "teamId": "kentucky",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 3.3,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "liberty-2025",
+    "teamId": "liberty",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -11.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "louisiana-2025",
+    "teamId": "louisiana",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -9.6,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "louisiana-tech-2025",
+    "teamId": "louisiana-tech",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 0.6,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "louisville-2025",
+    "teamId": "louisville",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 14.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
     }
   },
   {
     "id": "lsu-2025",
     "teamId": "lsu",
     "season": 2025,
-    "coach": "Brian Kelly",
-    "spPlus": 24.2,
-    "returningProduction": 0.57,
+    "coach": null,
+    "spPlus": 19,
+    "returningProduction": 0,
     "record": {
-      "wins": 5,
-      "losses": 2,
+      "wins": 0,
+      "losses": 0,
       "ties": 0,
-      "confWins": 3,
-      "confLosses": 1
+      "confWins": 0,
+      "confLosses": 0
     }
   },
   {
-    "id": "oklahoma-2025",
-    "teamId": "oklahoma",
+    "id": "marshall-2025",
+    "teamId": "marshall",
     "season": 2025,
-    "coach": "Brent Venables",
-    "spPlus": 23.6,
-    "returningProduction": 0.62,
+    "coach": null,
+    "spPlus": -8.2,
+    "returningProduction": 0,
     "record": {
-      "wins": 5,
-      "losses": 2,
+      "wins": 0,
+      "losses": 0,
       "ties": 0,
-      "confWins": 3,
-      "confLosses": 1
+      "confWins": 0,
+      "confLosses": 0
     }
   },
   {
-    "id": "penn-state-2025",
-    "teamId": "penn-state",
+    "id": "maryland-2025",
+    "teamId": "maryland",
     "season": 2025,
-    "coach": "James Franklin",
-    "spPlus": 23.8,
-    "returningProduction": 0.6,
+    "coach": null,
+    "spPlus": 12.1,
+    "returningProduction": 0,
     "record": {
-      "wins": 6,
-      "losses": 1,
+      "wins": 0,
+      "losses": 0,
       "ties": 0,
-      "confWins": 3,
-      "confLosses": 1
+      "confWins": 0,
+      "confLosses": 0
     }
   },
   {
-    "id": "utah-2025",
-    "teamId": "utah",
+    "id": "massachusetts-2025",
+    "teamId": "massachusetts",
     "season": 2025,
-    "coach": "Kyle Whittingham",
-    "spPlus": 22.8,
-    "returningProduction": 0.55,
+    "coach": null,
+    "spPlus": -27.9,
+    "returningProduction": 0,
     "record": {
-      "wins": 5,
-      "losses": 2,
+      "wins": 0,
+      "losses": 0,
       "ties": 0,
-      "confWins": 3,
-      "confLosses": 1
+      "confWins": 0,
+      "confLosses": 0
     }
   },
   {
-    "id": "usc-2025",
-    "teamId": "usc",
+    "id": "memphis-2025",
+    "teamId": "memphis",
     "season": 2025,
-    "coach": "Lincoln Riley",
-    "spPlus": 22.1,
-    "returningProduction": 0.58,
+    "coach": null,
+    "spPlus": 15.7,
+    "returningProduction": 0,
     "record": {
-      "wins": 5,
-      "losses": 2,
+      "wins": 0,
+      "losses": 0,
       "ties": 0,
-      "confWins": 3,
-      "confLosses": 1
+      "confWins": 0,
+      "confLosses": 0
     }
   },
   {
     "id": "miami-2025",
     "teamId": "miami",
     "season": 2025,
-    "coach": "Mario Cristobal",
-    "spPlus": 21.9,
-    "returningProduction": 0.56,
+    "coach": null,
+    "spPlus": 21.5,
+    "returningProduction": 0,
     "record": {
-      "wins": 5,
-      "losses": 2,
+      "wins": 0,
+      "losses": 0,
       "ties": 0,
-      "confWins": 3,
-      "confLosses": 1
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "miami-oh-2025",
+    "teamId": "miami-oh",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -7.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "michigan-2025",
+    "teamId": "michigan",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 19.8,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "michigan-state-2025",
+    "teamId": "michigan-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 3.8,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "middle-tennessee-2025",
+    "teamId": "middle-tennessee",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -23.8,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "minnesota-2025",
+    "teamId": "minnesota",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "mississippi-state-2025",
+    "teamId": "mississippi-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 9.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "missouri-2025",
+    "teamId": "missouri",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 21.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "missouri-state-2025",
+    "teamId": "missouri-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -12,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "navy-2025",
+    "teamId": "navy",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 8.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "nc-state-2025",
+    "teamId": "nc-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 5.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "nebraska-2025",
+    "teamId": "nebraska",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 17.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "nevada-2025",
+    "teamId": "nevada",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -15.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "new-mexico-2025",
+    "teamId": "new-mexico",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -5.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "new-mexico-state-2025",
+    "teamId": "new-mexico-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -14.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "north-carolina-2025",
+    "teamId": "north-carolina",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -8.8,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "northern-illinois-2025",
+    "teamId": "northern-illinois",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -13.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "north-texas-2025",
+    "teamId": "north-texas",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 10.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "northwestern-2025",
+    "teamId": "northwestern",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 0.2,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "notre-dame-2025",
+    "teamId": "notre-dame",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 21.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "ohio-2025",
+    "teamId": "ohio",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -6.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "ohio-state-2025",
+    "teamId": "ohio-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 29.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "oklahoma-2025",
+    "teamId": "oklahoma",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 24.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "oklahoma-state-2025",
+    "teamId": "oklahoma-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -13.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "old-dominion-2025",
+    "teamId": "old-dominion",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 7.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "ole-miss-2025",
+    "teamId": "ole-miss",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 22.8,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "oregon-2025",
+    "teamId": "oregon",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 29.8,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "oregon-state-2025",
+    "teamId": "oregon-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -9.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "penn-state-2025",
+    "teamId": "penn-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 19,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "pittsburgh-2025",
+    "teamId": "pittsburgh",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 13.3,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "purdue-2025",
+    "teamId": "purdue",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -2.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "rice-2025",
+    "teamId": "rice",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -10.3,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "rutgers-2025",
+    "teamId": "rutgers",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 8,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "sam-houston-2025",
+    "teamId": "sam-houston",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -25.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "san-diego-state-2025",
+    "teamId": "san-diego-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 2.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "san-josé-state-2025",
+    "teamId": "san-josé-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -8.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "smu-2025",
+    "teamId": "smu",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 8.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "south-alabama-2025",
+    "teamId": "south-alabama",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -12.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "south-carolina-2025",
+    "teamId": "south-carolina",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 10,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "southern-miss-2025",
+    "teamId": "southern-miss",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -4.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "south-florida-2025",
+    "teamId": "south-florida",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 5.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "stanford-2025",
+    "teamId": "stanford",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -8.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "syracuse-2025",
+    "teamId": "syracuse",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -0.8,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "tcu-2025",
+    "teamId": "tcu",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 14.7,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "temple-2025",
+    "teamId": "temple",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -6.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "tennessee-2025",
+    "teamId": "tennessee",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 21.8,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "texas-2025",
+    "teamId": "texas",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 17.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "texas-aandm-2025",
+    "teamId": "texas-aandm",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 20.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "texas-state-2025",
+    "teamId": "texas-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -1.6,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "texas-tech-2025",
+    "teamId": "texas-tech",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 25,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "toledo-2025",
+    "teamId": "toledo",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 8.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "troy-2025",
+    "teamId": "troy",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -7.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "tulane-2025",
+    "teamId": "tulane",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 2.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "tulsa-2025",
+    "teamId": "tulsa",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -11.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "uab-2025",
+    "teamId": "uab",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -12.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "ucf-2025",
+    "teamId": "ucf",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 6,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "ucla-2025",
+    "teamId": "ucla",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -5.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "uconn-2025",
+    "teamId": "uconn",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 2.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "ul-monroe-2025",
+    "teamId": "ul-monroe",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -15.2,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "unlv-2025",
+    "teamId": "unlv",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -0.3,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "usc-2025",
+    "teamId": "usc",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 21.3,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "utah-2025",
+    "teamId": "utah",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 18.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "utah-state-2025",
+    "teamId": "utah-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -3.2,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "utep-2025",
+    "teamId": "utep",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -15.2,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "utsa-2025",
+    "teamId": "utsa",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -2.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "vanderbilt-2025",
+    "teamId": "vanderbilt",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 16.9,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "virginia-2025",
+    "teamId": "virginia",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 7.2,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "virginia-tech-2025",
+    "teamId": "virginia-tech",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -2.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "wake-forest-2025",
+    "teamId": "wake-forest",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 1.2,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "washington-2025",
+    "teamId": "washington",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 16.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "washington-state-2025",
+    "teamId": "washington-state",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -7.5,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "western-kentucky-2025",
+    "teamId": "western-kentucky",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -2.6,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "western-michigan-2025",
+    "teamId": "western-michigan",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -9.1,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "west-virginia-2025",
+    "teamId": "west-virginia",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -3.6,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "wisconsin-2025",
+    "teamId": "wisconsin",
+    "season": 2025,
+    "coach": null,
+    "spPlus": 2.4,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
+    }
+  },
+  {
+    "id": "wyoming-2025",
+    "teamId": "wyoming",
+    "season": 2025,
+    "coach": null,
+    "spPlus": -9.3,
+    "returningProduction": 0,
+    "record": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "confWins": 0,
+      "confLosses": 0
     }
   }
 ]

@@ -2,11 +2,35 @@
 
 scalar DateTime
 
-enum GamePhase { PRESEASON REGULAR POSTSEASON }
-enum GameResult { TBD HOME_WIN AWAY_WIN TIE CANCELLED NO_CONTEST }
-enum GameType { CONFERENCE NON_CONFERENCE BOWL PLAYOFF CHAMPIONSHIP }
-enum PollType { AP COACHES CFP CUSTOM }
-enum Division { FBS }
+enum GamePhase {
+  PRESEASON
+  REGULAR
+  POSTSEASON
+}
+enum GameResult {
+  TBD
+  HOME_WIN
+  AWAY_WIN
+  TIE
+  CANCELLED
+  NO_CONTEST
+}
+enum GameType {
+  CONFERENCE
+  NON_CONFERENCE
+  BOWL
+  PLAYOFF
+  CHAMPIONSHIP
+}
+enum PollType {
+  AP
+  COACHES
+  CFP
+  CUSTOM
+}
+enum Division {
+  FBS
+}
 
 type Conference {
   id: ID!
@@ -108,10 +132,32 @@ type Query {
   conference(id: ID!): Conference
   teams(conferenceId: ID, season: Int): [Team!]!
   team(id: ID!): Team
-  games(season: Int!, week: Int, teamId: ID, conferenceId: ID, type: GameType, playedOnly: Boolean): [Game!]!
-  essentialMatchups(season: Int!, week: Int, limit: Int = 50, includeConferenceGames: Boolean = true): [Game!]!
+  games(
+    season: Int!
+    week: Int
+    teamId: ID
+    conferenceId: ID
+    type: GameType
+    playedOnly: Boolean
+  ): [Game!]!
+  essentialMatchups(
+    season: Int!
+    week: Int
+    limit: Int = 50
+    includeConferenceGames: Boolean = true    
+  ): [Game!]!
   conferenceConnectivity(season: Int!): [ConferenceConnectivity!]!
-  playoffPreview(season: Int!, limit: Int = 12, gameLimit: Int = 12, leverageThreshold: Float = 0.75): PlayoffPreview!
+  playoffPreview(
+    season: Int!
+    limit: Int = 12
+    gameLimit: Int = 12
+    leverageThreshold: Float = 0.75
+  ): PlayoffPreview!
+}
+
+enum SortOrder {
+  ASC
+  DESC
 }
 
 input ConferenceInput {

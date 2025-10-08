@@ -1,19 +1,1227 @@
 [
-  { "teamSeasonId": "georgia-2025", "poll": "AP", "week": 9, "rank": 1, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "ohio-state-2025", "poll": "AP", "week": 9, "rank": 2, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "oregon-2025", "poll": "AP", "week": 9, "rank": 3, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "texas-2025", "poll": "AP", "week": 9, "rank": 4, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "michigan-2025", "poll": "AP", "week": 9, "rank": 5, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "florida-state-2025", "poll": "AP", "week": 9, "rank": 6, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "alabama-2025", "poll": "AP", "week": 9, "rank": 7, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "notre-dame-2025", "poll": "AP", "week": 9, "rank": 8, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "ole-miss-2025", "poll": "AP", "week": 9, "rank": 9, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "penn-state-2025", "poll": "AP", "week": 9, "rank": 10, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "washington-2025", "poll": "AP", "week": 9, "rank": 11, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "lsu-2025", "poll": "AP", "week": 9, "rank": 12, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "oklahoma-2025", "poll": "AP", "week": 9, "rank": 13, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "clemson-2025", "poll": "AP", "week": 9, "rank": 14, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "utah-2025", "poll": "AP", "week": 9, "rank": 15, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "usc-2025", "poll": "AP", "week": 9, "rank": 16, "date": "2025-10-20T12:00:00Z" },
-  { "teamSeasonId": "miami-2025", "poll": "AP", "week": 9, "rank": 17, "date": "2025-10-20T12:00:00Z" }
+  {
+    "teamSeasonId": "texas-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 1,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "penn-state-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 2,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ohio-state-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 3,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "clemson-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 4,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "georgia-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 5,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "notre-dame-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 6,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oregon-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 7,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "alabama-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 8,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "lsu-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 9,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "miami-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 10,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "arizona-state-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 11,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "illinois-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 12,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "south-carolina-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 13,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "michigan-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 14,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "florida-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 15,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "smu-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 16,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "kansas-state-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 17,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oklahoma-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 18,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-am-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 19,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "indiana-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 20,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ole-miss-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 21,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "iowa-state-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 22,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-tech-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 23,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "tennessee-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 24,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "boise-state-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 25,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ohio-state-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 1,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "penn-state-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 2,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "lsu-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 3,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "georgia-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 4,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "miami-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 5,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oregon-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 6,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 7,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "clemson-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 8,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "notre-dame-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 9,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "south-carolina-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 10,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "illinois-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 11,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "arizona-state-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 12,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "florida-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 13,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "florida-state-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 14,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "michigan-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 15,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "iowa-state-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 16,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "smu-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 17,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oklahoma-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 18,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-am-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 19,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ole-miss-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 20,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "alabama-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 21,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "tennessee-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 22,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "indiana-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 23,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-tech-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 24,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "utah-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 25,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ohio-state-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 1,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "penn-state-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 2,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "lsu-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 3,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oregon-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 4,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "miami-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 5,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "georgia-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 6,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 7,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "notre-dame-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 8,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "illinois-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 9,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "florida-state-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 10,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "south-carolina-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 11,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "clemson-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 12,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oklahoma-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 13,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "iowa-state-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 14,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "tennessee-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 15,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-am-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 16,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ole-miss-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 17,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "south-florida-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 18,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "alabama-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 19,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "utah-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 20,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-tech-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 21,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "indiana-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 22,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "michigan-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 23,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "auburn-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 24,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "missouri-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 25,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ohio-state-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 1,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "penn-state-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 2,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "lsu-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 3,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "miami-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 4,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "georgia-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 5,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oregon-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 6,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "florida-state-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 7,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 8,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "illinois-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 9,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-am-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 10,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oklahoma-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 11,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "iowa-state-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 12,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ole-miss-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 13,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "alabama-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 14,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "tennessee-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 15,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "utah-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 16,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-tech-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 17,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "georgia-tech-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 18,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "indiana-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 19,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "vanderbilt-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 20,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "michigan-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 21,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "auburn-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 22,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "missouri-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 23,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "notre-dame-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 24,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "usc-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 25,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ohio-state-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 1,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "miami-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 2,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "penn-state-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 3,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "lsu-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 4,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "georgia-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 5,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oregon-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 6,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oklahoma-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 7,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "florida-state-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 8,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-am-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 9,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 10,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "indiana-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 11,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-tech-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 12,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ole-miss-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 13,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "iowa-state-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 14,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "tennessee-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 15,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "georgia-tech-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 16,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "alabama-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 17,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "vanderbilt-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 18,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "michigan-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 19,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "missouri-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 20,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "usc-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 21,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "notre-dame-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 22,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "illinois-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 23,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "tcu-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 24,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "byu-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 25,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ohio-state-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 1,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oregon-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 2,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "miami-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 3,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ole-miss-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 4,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oklahoma-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 5,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-am-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 6,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "penn-state-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 7,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "indiana-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 8,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 9,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "alabama-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 10,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-tech-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 11,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "georgia-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 12,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "lsu-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 13,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "iowa-state-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 14,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "tennessee-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 15,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "vanderbilt-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 16,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "georgia-tech-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 17,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "florida-state-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 18,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "missouri-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 19,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "michigan-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 20,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "notre-dame-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 21,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "illinois-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 22,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "byu-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 23,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "virginia-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 24,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "arizona-state-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 25,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ohio-state-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 1,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "miami-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 2,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oregon-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 3,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "ole-miss-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 4,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-am-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 5,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "oklahoma-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 6,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "indiana-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 7,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "alabama-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 8,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "texas-tech-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 9,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "georgia-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 10,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "lsu-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 11,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "tennessee-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 12,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "georgia-tech-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 13,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "missouri-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 14,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "michigan-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 15,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "notre-dame-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 16,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "illinois-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 17,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "byu-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 18,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "virginia-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 19,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "vanderbilt-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 20,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "arizona-state-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 21,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "iowa-state-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 22,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "memphis-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 23,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "south-florida-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 24,
+    "date": "2025-10-08T18:17:35.995Z"
+  },
+  {
+    "teamSeasonId": "florida-state-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 25,
+    "date": "2025-10-08T18:17:35.995Z"
+  }
 ]
