@@ -43,7 +43,7 @@ function isConferenceGame(game: GameT): boolean {
   return Boolean(hc) && Boolean(ac) && hc === ac && game.type === 'CONFERENCE';
 }
 function enrichGamesForSeason(season: number, ranking: PollType): GameT[] {
-  const apMap = buildAPRankMap(polls as PollSnapshot[], season);
+  const apMap = buildAPRankMap(polls, season);
   const spNorm = buildNormalizedSpPlus(teamSeasons, season);
   const eloNorm = buildNormalizedElo(teamSeasons, season);
   return gamesRaw
@@ -175,7 +175,7 @@ const resolvers = {
   },
   TeamSeason: {
     team: (ts: TeamSeasonT) => teamById(ts.teamId),
-    polls: (ts: TeamSeasonT) => (polls as PollSnapshot[]).filter(p => p.teamSeasonId === ts.id),
+    polls: (ts: TeamSeasonT) => (polls).filter(p => p.teamSeasonId === ts.id),
     games: (ts: TeamSeasonT) =>
       enrichGamesForSeason(ts.season, 'AVERAGE').filter(
         g => g.homeTeamId === ts.teamId || g.awayTeamId === ts.teamId

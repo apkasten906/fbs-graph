@@ -3,76 +3,537 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FBS Schedule Graph — Timeline Explorer</title>
+    <title>FBS Schedule Graph — Teams & Matchups</title>
     <link rel="stylesheet" href="common-theme.css" />
-    <link rel="stylesheet" href="css/fbs-graph-visualizer.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      header {
+        padding: 10px 12px;
+        background: linear-gradient(90deg, #0e1631, #151f43);
+        border-bottom: 1px solid #26335f;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+      }
+      header h1 {
+        font-size: 16px;
+        margin: 0 0 6px;
+        letter-spacing: 0.3px;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .controls label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .controls input,
+      .controls select,
+      .controls button {
+        background: #0d1634;
+        color: var(--ink);
+        border: 1px solid #23315e;
+        border-radius: 8px;
+        padding: 6px 8px;
+        font-size: 12px;
+      }
+      .controls input[type='range'] {
+        width: 160px;
+      }
+      .controls button {
+        cursor: pointer;
+        transition: 0.2s background;
+      }
+      .controls button:hover {
+        background: #112058;
+      }
+      main {
+        display: flex;
+        height: calc(100vh - 72px);
+      }
+      #sidebar {
+        width: 320px;
+        border-right: 1px solid #26335f;
+        background: var(--panel);
+        padding: 10px;
+        overflow: auto;
+      }
+      #cy {
+        flex: 1;
+      }
+      .legend {
+        font-size: 12px;
+        display: grid;
+        grid-template-columns: 14px 1fr;
+        gap: 8px 8px;
+        align-items: center;
+      }
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .section {
+        margin-bottom: 12px;
+      }
+      .small {
+        font-size: 12px;
+      }
+      .pathlist {
+        font-size: 12px;
+        line-height: 1.35;
+        max-height: 180px;
+        overflow: auto;
+        background: #0c1430;
+        padding: 8px;
+        border: 1px solid #23315e;
+        border-radius: 8px;
+      }
+      .mono {
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+          monospace;
+      }
+      footer {
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        z-index: 10;
+        font-size: 12px;
+        color: var(--muted);
+      }
+    </style>
   </head>
   <body>
     <header>
-      <h1>FBS Schedule Graph — Timeline Explorer</h1>
+      <h1>FBS Schedule Graph — Teams & Matchups</h1>
       <div class="controls">
-        <label for="endpoint">GraphQL:</label>
+        <label>GraphQL:</label>
         <input id="endpoint" value="http://localhost:4100/graphql" size="34" />
-        <label for="season">Season:</label>
-        <input id="season" type="number" value="2025" style="width: 86px" />
-        <label for="typeFilter">Type:</label>
+        <label>Season:</label>
+        <input id="season" type="number" value="2025" style="width: 80px" />
+        <label>Type:</label>
         <select id="typeFilter">
           <option value="ALL" selected>All</option>
           <option value="NON_CONFERENCE">Non-Conference</option>
           <option value="CONFERENCE">Conference</option>
         </select>
-        <label for="lev">Min leverage:</label>
+        <label>Min leverage:</label>
         <input id="lev" type="range" min="0" max="1.2" step="0.01" value="0" />
-        <span id="levVal" class="status">≥ 0.00</span>
+        <span id="levVal" class="muted small">0</span>
         <button id="loadBtn">Reload</button>
+        <button id="fitBtn">Fit</button>
       </div>
     </header>
+
     <main>
       <aside id="sidebar">
-        <section class="section">
-          <h2>Team connection</h2>
-          <p>Select two programs to surface the strongest leverage chain that connects them. The timeline will narrow to only the games that build that path.</p>
-          <div class="selector-row">
+        <div class="section">
+          <div class="muted small">
+            Find connection between teams (shortest path by 1/leverage):
+          </div>
+          <div
+            style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: flex-end"
+          >
             <select id="srcSel"></select>
             <select id="dstSel"></select>
           </div>
-          <div class="selector-row">
-            <button id="pathBtn">Find connection</button>
-            <button id="clearPathBtn" title="Reset to the full schedule">Clear</button>
+          <div style="margin-top: 8px">
+            <button id="pathBtn">Path</button>
           </div>
-          <div id="pathInfo" class="status">No connection selected.</div>
-        </section>
-        <section class="section">
-          <h2>Legend</h2>
-          <div id="legend" class="legend-grid"></div>
-        </section>
-        <section class="section">
-          <h2>Status</h2>
-          <div id="status" class="status">Waiting for data…</div>
-        </section>
-      </aside>
-      <section id="content">
-        <div id="timelineWrap">
-          <div id="timelineHeading">
-            <h2>Weekly leverage storylines</h2>
-            <span id="timelineSummary" class="status"></span>
-          </div>
-          <div id="timelineHost">
-            <div id="weekGrid" class="week-grid" role="list"></div>
-            <div id="timelineEmpty" class="empty-state" hidden>
-              Adjust the leverage slider or load a season to see matchups.
-            </div>
-          </div>
-          <div id="connectionSection">
-            <div class="connection-legend" id="connectionLegend"></div>
-            <div id="connectionHost">
-              <svg id="connectionSvg"></svg>
-            </div>
-          </div>
+          <div id="pathInfo" class="pathlist" style="margin-top: 8px">No path computed yet.</div>
         </div>
-      </section>
+        <div class="section">
+          <div class="muted small">Legend / Conferences</div>
+          <div id="legend" class="legend" style="margin-top: 6px"></div>
+        </div>
+        <div class="section small muted">
+          Tip: drag nodes, wheel to zoom. Click an edge to see the games that create that
+          connection.
+        </div>
+      </aside>
+      <div id="cy"></div>
     </main>
-    <footer>Tip: try nudging the leverage slider to surface only the highest-impact weeks. Reload pulls fresh data from your GraphQL endpoint.</footer>
-    <script src="js/fbs-graph-visualizer.js"></script>
+
+    <footer class="small">Edit endpoint if your server runs elsewhere; set season; Reload.</footer>
+
+    <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+    <script>
+      const COLORS = {
+        sec: '#6CCFF6',
+        b1g: '#B28DFF',
+        b12: '#F6AE2D',
+        acc: '#4CC9F0',
+        aac: '#FF6B6B',
+        mwc: '#80ED99',
+        mac: '#FFD166',
+        sbc: '#90CAF9',
+        cusa: '#FF9E00',
+        ind: '#BDB2FF',
+        pac12: '#9CCC65',
+        other: '#CCD6F6',
+      };
+
+      const QUERY = `
+query Graph($season: Int!) {
+  teams(season: $season) {
+    id name shortName conference { id shortName }
+  }
+  games(season: $season) {
+    id type leverage date
+    home { id name conference { id shortName } }
+    away { id name conference { id shortName } }
+  }
+}`;
+
+      const POST = (url, body) =>
+        fetch(url, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(body),
+        }).then(r => r.json());
+
+      let cy;
+      let graphData = { teams: [], games: [] };
+      let pairGames = new Map(); // key "a__b" -> array of games
+      let teamIndex = new Map();
+
+      function key(a, b) {
+        return a < b ? a + '__' + b : b + '__' + a;
+      }
+
+      function buildGraph(season, typeFilter, minLev) {
+        const els = [];
+        teamIndex.clear();
+        graphData.teams.forEach(t => teamIndex.set(t.id, t));
+
+        // Nodes
+        for (const t of graphData.teams) {
+          const conf = (t.conference && t.conference.id) || 'other';
+          els.push({
+            group: 'nodes',
+            data: { id: t.id, label: t.name, conf },
+            classes: conf,
+          });
+        }
+
+        // Edge aggregation by pair
+        pairGames.clear();
+        const edges = new Map();
+        for (const g of graphData.games) {
+          if (typeFilter !== 'ALL' && g.type !== typeFilter) continue;
+          const lev = typeof g.leverage === 'number' ? g.leverage : 0;
+          if (lev < minLev) continue;
+          const a = g.home.id,
+            b = g.away.id;
+          if (!teamIndex.has(a) || !teamIndex.has(b)) continue;
+          const k = key(a, b);
+          const arr = pairGames.get(k) || [];
+          arr.push(g);
+          pairGames.set(k, arr);
+        }
+        for (const [k, list] of pairGames) {
+          // compute edge weight
+          const a = list[0].home.id,
+            b = list[0].away.id;
+          const sumLev = list.reduce((s, x) => s + (x.leverage || 0), 0);
+          const avgLev = sumLev / list.length;
+          const w = Math.max(1, Math.log2(1 + sumLev * 4));
+          edges.set(k, { a, b, count: list.length, sumLev, avgLev, weight: w });
+        }
+        for (const [k, e] of edges) {
+          els.push({
+            group: 'edges',
+            data: {
+              id: 'e_' + k,
+              source: e.a,
+              target: e.b,
+              label: `${e.count}`,
+              weight: e.weight,
+              avgLev: e.avgLev,
+            },
+          });
+        }
+
+        // Init / update Cytoscape
+        if (!cy) {
+          cy = cytoscape({
+            container: document.getElementById('cy'),
+            elements: els,
+            layout: { name: 'cose', idealEdgeLength: 120, nodeOverlap: 10 },
+            style: [
+              {
+                selector: 'node',
+                style: {
+                  'background-color': ele => COLORS[ele.data('conf')] || COLORS.other,
+                  label: 'data(label)',
+                  color: '#cfe1ff',
+                  'font-size': '9px',
+                  'text-outline-color': '#0b1020',
+                  'text-outline-width': 2,
+                  width: 'mapData(deg, 0, 24, 8, 34)',
+                  height: 'mapData(deg, 0, 24, 8, 34)',
+                },
+              },
+              {
+                selector: 'edge',
+                style: {
+                  'line-color': '#4562aa',
+                  width: ele => Math.max(1.5, ele.data('weight') || 1.5),
+                  opacity: 0.7,
+                  'curve-style': 'haystack',
+                },
+              },
+              { selector: 'edge:selected', style: { 'line-color': '#fff', opacity: 1 } },
+              {
+                selector: '.highlight',
+                style: { 'line-color': '#fff', 'background-color': '#fff', opacity: 1 },
+              },
+            ],
+          });
+          cy.on('tap', 'edge', e => showEdgeGames(e.target().data()));
+        } else {
+          cy.elements().remove();
+          cy.add(els);
+        }
+
+        // Compute degree for sizing
+        cy.nodes().forEach(n => {
+          n.data('deg', n.connectedEdges().length);
+        });
+
+        cy.layout({ name: 'cose', idealEdgeLength: 120, nodeOverlap: 10 }).run();
+      }
+
+      function showEdgeGames(data) {
+        const { id } = data;
+        const [_, k] = id.split('e_');
+        const games = pairGames.get(k) || [];
+        const lines = [];
+        lines.push(`<div class="small muted">Games on this connection (${games.length}):</div>`);
+        for (const g of games.slice().sort((a, b) => (a.date || '').localeCompare(b.date || ''))) {
+          const when = g.date ? new Date(g.date).toLocaleString() : 'TBD';
+          lines.push(
+            `<div class="mono">${when} — ${g.home.name} vs ${g.away.name} <span class="muted">(lev ${Number(g.leverage || 0).toFixed(3)})</span></div>`
+          );
+        }
+        document.getElementById('pathInfo').innerHTML = lines.join('');
+      }
+
+      // Conference metadata cache (populated from GraphQL)
+      let conferenceMeta = [];
+
+      function buildLegend() {
+        const container = document.getElementById('legend');
+        container.innerHTML = '';
+        const seen = new Set();
+        // Collect all conferences present in the data
+        for (const t of graphData.teams) {
+          const conf = (t.conference && t.conference.id) || 'other';
+          seen.add(conf);
+        }
+        // Map to full names, filter, and sort
+        const legendEntries = Array.from(seen)
+          .map(id => {
+            const meta = conferenceMeta.find(c => c.id === id);
+            return {
+              id,
+              color: COLORS[id] || COLORS.other,
+              label: meta ? `${meta.name} (${meta.shortName})` : id.toUpperCase(),
+              sortKey: meta ? meta.name : id,
+            };
+          })
+          .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+        for (const entry of legendEntries) {
+          const dot = document.createElement('div');
+          dot.className = 'dot';
+          dot.style.background = entry.color;
+          const lbl = document.createElement('div');
+          lbl.textContent = entry.label;
+          container.appendChild(dot);
+          container.appendChild(lbl);
+        }
+      }
+
+      function buildSelectors() {
+        const srcSel = document.getElementById('srcSel');
+        const dstSel = document.getElementById('dstSel');
+        const opts = graphData.teams.slice().sort((a, b) => a.name.localeCompare(b.name));
+        srcSel.innerHTML = '';
+        dstSel.innerHTML = '';
+        for (const t of opts) {
+          const o1 = document.createElement('option');
+          o1.value = t.id;
+          o1.textContent = t.name;
+          srcSel.appendChild(o1);
+          const o2 = document.createElement('option');
+          o2.value = t.id;
+          o2.textContent = t.name;
+          dstSel.appendChild(o2);
+        }
+      }
+
+      function shortestPathByInverseLeverage(srcId, dstId, typeFilter, minLev) {
+        // Build adjacency with weight = 1 / (avg leverage of pair). If multiple games per pair, we use avg.
+        const adj = new Map();
+        for (const [k, list] of pairGames) {
+          const a = list[0].home.id,
+            b = list[0].away.id;
+          const filtered = list.filter(
+            g => (typeFilter === 'ALL' || g.type === typeFilter) && (g.leverage || 0) >= minLev
+          );
+          if (!filtered.length) continue;
+          const avg = filtered.reduce((s, x) => s + (x.leverage || 0), 0) / filtered.length;
+          const w = 1 / Math.max(1e-6, avg);
+          if (!adj.has(a)) adj.set(a, []);
+          if (!adj.has(b)) adj.set(b, []);
+          adj.get(a).push({ to: b, k, w, avg, games: filtered });
+          adj.get(b).push({ to: a, k, w, avg, games: filtered });
+        }
+        // Dijkstra
+        const dist = new Map(),
+          prev = new Map(),
+          prevEdge = new Map();
+        const allIds = Array.from(graphData.teams, t => t.id);
+        const Q = new Set(allIds);
+        for (const id of allIds) dist.set(id, Infinity);
+        dist.set(srcId, 0);
+        while (Q.size) {
+          let u = null,
+            best = Infinity;
+          for (const v of Q) {
+            const d = dist.get(v);
+            if (d < best) {
+              best = d;
+              u = v;
+            }
+          }
+          if (u === null || best === Infinity) break;
+          Q.delete(u);
+          if (u === dstId) break;
+          const nbrs = adj.get(u) || [];
+          for (const e of nbrs) {
+            if (!Q.has(e.to)) continue;
+            const alt = dist.get(u) + e.w;
+            if (alt < dist.get(e.to)) {
+              dist.set(e.to, alt);
+              prev.set(e.to, u);
+              prevEdge.set(e.to, e.k);
+            }
+          }
+        }
+        if (!prev.has(dstId)) return null;
+        // Rebuild path
+        const pathIds = [];
+        const edges = [];
+        let cur = dstId;
+        while (cur !== srcId) {
+          pathIds.push(cur);
+          edges.push(prevEdge.get(cur));
+          cur = prev.get(cur);
+        }
+        pathIds.push(srcId);
+        pathIds.reverse();
+        edges.reverse();
+        return { nodes: pathIds, edges };
+      }
+
+      const CONFERENCES_QUERY = `
+        query { conferences { id name shortName } }
+      `;
+
+      async function load() {
+        const endpoint = document.getElementById('endpoint').value.trim();
+        const season = Number(document.getElementById('season').value);
+        // Fetch conference metadata first
+        const confRes = await POST(endpoint, { query: CONFERENCES_QUERY });
+        if (confRes.errors) {
+          alert('GraphQL error (conferences): ' + JSON.stringify(confRes.errors[0], null, 2));
+          return;
+        }
+        conferenceMeta = confRes.data.conferences || [];
+        // Now fetch main graph data
+        const res = await POST(endpoint, { query: QUERY, variables: { season } });
+        if (res.errors) {
+          alert('GraphQL error: ' + JSON.stringify(res.errors[0], null, 2));
+          return;
+        }
+        graphData = res.data;
+        buildLegend();
+        buildSelectors();
+        applyFilters();
+      }
+
+      function applyFilters() {
+        const typeFilter = document.getElementById('typeFilter').value;
+        const minLev = Number(document.getElementById('lev').value);
+        document.getElementById('levVal').textContent = String(minLev);
+        buildGraph(Number(document.getElementById('season').value), typeFilter, minLev);
+      }
+
+      document.getElementById('loadBtn').addEventListener('click', load);
+      document.getElementById('fitBtn').addEventListener('click', () => cy && cy.fit());
+      document.getElementById('lev').addEventListener('input', applyFilters);
+      document.getElementById('typeFilter').addEventListener('change', applyFilters);
+      document.getElementById('pathBtn').addEventListener('click', () => {
+        const typeFilter = document.getElementById('typeFilter').value;
+        const minLev = Number(document.getElementById('lev').value);
+        const src = document.getElementById('srcSel').value;
+        const dst = document.getElementById('dstSel').value;
+        const res = shortestPathByInverseLeverage(src, dst, typeFilter, minLev);
+        const box = document.getElementById('pathInfo');
+        if (!res) {
+          box.textContent = 'No path found (maybe filters are too strict).';
+          return;
+        }
+        // Highlight
+        cy.elements().removeClass('highlight');
+        const elist = [];
+        for (const id of res.nodes) elist.push(cy.getElementById(id));
+        for (const k of res.edges) elist.push(cy.getElementById('e_' + k));
+        elist.forEach(e => e.addClass('highlight'));
+        cy.style()
+          .selector('.highlight')
+          .style({ 'line-color': '#fff', 'background-color': '#fff' })
+          .update();
+        // Render path with game details
+        const lines = [];
+        lines.push(`<div class="small muted">Shortest connection (by 1/leverage):</div>`);
+        for (let i = 0; i < res.nodes.length; i++) {
+          const id = res.nodes[i];
+          const t = teamIndex.get(id);
+          lines.push(`<div>${t.name}${i < res.nodes.length - 1 ? ' → ' : ''}</div>`);
+          if (i < res.nodes.length - 1) {
+            const k = res.edges[i];
+            const games = pairGames.get(k) || [];
+            const top = games
+              .slice()
+              .sort((a, b) => (b.leverage || 0) - (a.leverage || 0))
+              .slice(0, 3);
+            lines.push(
+              `<div class="muted small" style="margin:4px 0 6px 8px">Top games on this edge:</div>`
+            );
+            for (const g of top) {
+              const when = g.date ? new Date(g.date).toLocaleDateString() : 'TBD';
+              lines.push(
+                `<div class="mono" style="margin-left:8px">${when} — ${g.home.name} vs ${g.away.name} (lev ${Number(g.leverage || 0).toFixed(3)})</div>`
+              );
+            }
+          }
+        }
+        box.innerHTML = lines.join('');
+      });
+
+      // Auto-load on start
+      load();
+    </script>
   </body>
 </html>
