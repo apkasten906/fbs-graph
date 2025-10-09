@@ -1,0 +1,658 @@
+const COLORS = {
+  sec: '#6CCFF6',
+  b1g: '#B28DFF',
+  b12: '#F6AE2D',
+  acc: '#4CC9F0',
+  aac: '#FF6B6B',
+  mwc: '#80ED99',
+  mac: '#FFD166',
+  sbc: '#90CAF9',
+  cusa: '#FF9E00',
+  ind: '#BDB2FF',
+  pac12: '#9CCC65',
+  other: '#CCD6F6',
+};
+
+const SEGMENT_COLORS = ['#60a5fa', '#f97316', '#a855f7', '#22c55e', '#facc15', '#f43f5e'];
+
+const QUERY = `
+  query Graph($season: Int!) {
+    teams(season: $season) {
+      id
+      name
+      shortName
+      conference { id shortName name }
+    }
+    games(season: $season) {
+      id
+      type
+      leverage
+      date
+      week
+      home { id name shortName conference { id shortName } }
+      away { id name shortName conference { id shortName } }
+    }
+  }
+`;
+
+const CONFERENCES_QUERY = `
+  query { conferences { id name shortName } }
+`;
+
+const state = {
+  loading: false,
+  error: null,
+  graph: { teams: [], games: [] },
+  conferenceMeta: [],
+  filteredGames: [],
+  filteredPairs: new Map(),
+  connection: null,
+  connectionGames: [],
+  connectionSegments: [],
+};
+
+function POST(url, body) {
+  return fetch(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  }).then(r => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  });
+}
+
+function byName(a, b) {
+  return a.name.localeCompare(b.name);
+}
+
+function applyConferenceLegend() {
+  const container = document.getElementById('legend');
+  container.innerHTML = '';
+  const seen = new Set();
+  for (const team of state.graph.teams) {
+    const conf = team.conference?.id || 'other';
+    if (!seen.has(conf)) seen.add(conf);
+  }
+  const entries = Array.from(seen)
+    .map(id => {
+      const meta = state.conferenceMeta.find(c => c.id === id);
+      return {
+        id,
+        color: COLORS[id] || COLORS.other,
+        label: meta ? `${meta.name} (${meta.shortName})` : id.toUpperCase(),
+      };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
+  for (const entry of entries) {
+    const dot = document.createElement('div');
+    dot.className = 'legend-dot';
+    dot.style.background = entry.color;
+    const label = document.createElement('div');
+    label.textContent = entry.label;
+    container.appendChild(dot);
+    container.appendChild(label);
+  }
+}
+
+function buildSelectors() {
+  const srcSel = document.getElementById('srcSel');
+  const dstSel = document.getElementById('dstSel');
+  const opts = state.graph.teams.slice().sort(byName);
+  srcSel.innerHTML = '';
+  dstSel.innerHTML = '';
+  for (const team of opts) {
+    const o1 = document.createElement('option');
+    o1.value = team.id;
+    o1.textContent = team.name;
+    srcSel.appendChild(o1);
+    const o2 = document.createElement('option');
+    o2.value = team.id;
+    o2.textContent = team.name;
+    dstSel.appendChild(o2);
+  }
+  if (opts.length) {
+    srcSel.value = opts[0].id;
+    dstSel.value = opts[1]?.id || opts[0].id;
+  }
+}
+
+function computeWeekKey(game) {
+  if (typeof game.week === 'number' && !Number.isNaN(game.week)) return game.week;
+  if (!game.date) return null;
+  const date = new Date(game.date);
+  if (Number.isNaN(date.getTime())) return null;
+  const oneDay = 1000 * 60 * 60 * 24;
+  const seasonStart = new Date(date.getFullYear(), 7, 20); // mid-August anchor
+  const diff = Math.max(0, date - seasonStart);
+  return 1 + Math.floor(diff / (7 * oneDay));
+}
+
+function formatWeekLabel(week) {
+  if (week === null) return 'Unscheduled';
+  return `Week ${week}`;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return 'TBD';
+  const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return 'TBD';
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+function formatType(type) {
+  if (!type || type === 'ALL') return 'All';
+  return type.replace('_', ' ');
+}
+
+function updateStatus(message) {
+  document.getElementById('status').textContent = message;
+}
+
+function updateTimelineSummary() {
+  const summary = document.getElementById('timelineSummary');
+  const games = state.connection ? state.connectionGames : state.filteredGames;
+  if (!games.length) {
+    summary.textContent = '';
+    return;
+  }
+  const uniqueWeeks = new Set(games.map(computeWeekKey).map(v => v ?? 'unknown'));
+  const avgLev =
+    games.reduce((sum, g) => sum + (typeof g.leverage === 'number' ? g.leverage : 0), 0) /
+    games.length;
+  summary.textContent = `${games.length} games · ${uniqueWeeks.size} weeks · avg leverage ${avgLev.toFixed(
+    3
+  )}`;
+}
+
+function renderTimeline() {
+  const grid = document.getElementById('weekGrid');
+  const empty = document.getElementById('timelineEmpty');
+  grid.innerHTML = '';
+  const games = state.connection ? state.connectionGames : state.filteredGames;
+  if (!games.length) {
+    empty.hidden = false;
+    updateTimelineSummary();
+    return;
+  }
+  empty.hidden = true;
+  const grouped = new Map();
+  for (const game of games) {
+    const wk = computeWeekKey(game);
+    const key = wk ?? 'unknown';
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(game);
+  }
+  const sortedWeeks = Array.from(grouped.keys()).sort((a, b) => {
+    if (a === 'unknown') return 1;
+    if (b === 'unknown') return -1;
+    return a - b;
+  });
+  for (const weekKey of sortedWeeks) {
+    const column = document.createElement('article');
+    column.className = 'week-column';
+    const header = document.createElement('header');
+    const label = document.createElement('div');
+    label.className = 'week-label';
+    label.textContent = formatWeekLabel(weekKey === 'unknown' ? null : weekKey);
+    header.appendChild(label);
+    const gamesForWeek = grouped.get(weekKey);
+    if (gamesForWeek.some(g => g.date)) {
+      const dates = gamesForWeek
+        .map(g => g.date)
+        .filter(Boolean)
+        .map(d => new Date(d))
+        .filter(d => !Number.isNaN(d.getTime()))
+        .sort((a, b) => a - b);
+      if (dates.length) {
+        const range = document.createElement('div');
+        range.className = 'week-date-range';
+        const start = dates[0].toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        const end = dates[dates.length - 1].toLocaleDateString(undefined, {
+          month: 'short',
+          day: 'numeric',
+        });
+        range.textContent = start === end ? start : `${start} – ${end}`;
+        header.appendChild(range);
+      }
+    }
+    column.appendChild(header);
+    for (const game of gamesForWeek.sort((a, b) => {
+      const da = a.date ? new Date(a.date).getTime() : 0;
+      const db = b.date ? new Date(b.date).getTime() : 0;
+      if (da !== db) return da - db;
+      return a.id.localeCompare(b.id);
+    })) {
+      const card = document.createElement('div');
+      card.className = 'game-card';
+      card.dataset.gameId = game.id;
+      if (game.__segmentColor) {
+        card.dataset.segmentColor = 'true';
+        card.style.setProperty('--segment-color', game.__segmentColor);
+        card.style.borderColor = `${game.__segmentColor}44`;
+      }
+      const meta = document.createElement('div');
+      meta.className = 'game-meta';
+      const date = document.createElement('span');
+      date.className = 'game-date';
+      date.textContent = formatDate(game.date);
+      const leverage = document.createElement('span');
+      leverage.textContent = `Leverage ${Number(game.leverage || 0).toFixed(3)}`;
+      meta.appendChild(date);
+      meta.appendChild(leverage);
+
+      const teams = document.createElement('div');
+      teams.className = 'team-row';
+      const home = document.createElement('div');
+      home.textContent = game.home?.name || 'Home';
+      const label = document.createElement('span');
+      label.textContent = 'vs';
+      const away = document.createElement('div');
+      away.textContent = game.away?.name || 'Away';
+      teams.appendChild(home);
+      teams.appendChild(label);
+      teams.appendChild(away);
+
+      const type = document.createElement('div');
+      type.className = 'game-meta';
+      type.innerHTML = `<span>${formatType(game.type)}</span><span>${
+        game.home?.conference?.shortName || ''
+      } · ${game.away?.conference?.shortName || ''}</span>`;
+
+      card.appendChild(meta);
+      card.appendChild(teams);
+      card.appendChild(type);
+      column.appendChild(card);
+    }
+    grid.appendChild(column);
+  }
+  updateTimelineSummary();
+}
+
+function computePairs(games) {
+  const map = new Map();
+  for (const game of games) {
+    const a = game.home?.id;
+    const b = game.away?.id;
+    if (!a || !b) continue;
+    const key = a < b ? `${a}__${b}` : `${b}__${a}`;
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(game);
+  }
+  return map;
+}
+
+function shortestPathByInverseLeverage(pairs, teams, srcId, dstId) {
+  if (!srcId || !dstId || srcId === dstId) return null;
+  const teamIds = new Set(teams.map(t => t.id));
+  if (!teamIds.has(srcId) || !teamIds.has(dstId)) return null;
+  const adj = new Map();
+  for (const [key, games] of pairs) {
+    if (!games.length) continue;
+    const first = games[0];
+    const a = first.home?.id;
+    const b = first.away?.id;
+    if (!a || !b) continue;
+    const sum = games.reduce((s, g) => s + (g.leverage || 0), 0);
+    const avg = sum / games.length;
+    const weight = 1 / Math.max(1e-6, avg);
+    if (!adj.has(a)) adj.set(a, []);
+    if (!adj.has(b)) adj.set(b, []);
+    adj.get(a).push({ to: b, key, weight, avg, games });
+    adj.get(b).push({ to: a, key, weight, avg, games });
+  }
+  const dist = new Map();
+  const prev = new Map();
+  const prevEdge = new Map();
+  for (const team of teams) {
+    dist.set(team.id, Infinity);
+  }
+  const unvisited = new Set(teams.map(t => t.id));
+  dist.set(srcId, 0);
+  while (unvisited.size) {
+    let current = null;
+    let best = Infinity;
+    for (const id of unvisited) {
+      const d = dist.get(id);
+      if (d < best) {
+        best = d;
+        current = id;
+      }
+    }
+    if (current === null || best === Infinity) break;
+    unvisited.delete(current);
+    if (current === dstId) break;
+    const edges = adj.get(current) || [];
+    for (const edge of edges) {
+      if (!unvisited.has(edge.to)) continue;
+      const alt = dist.get(current) + edge.weight;
+      if (alt < dist.get(edge.to)) {
+        dist.set(edge.to, alt);
+        prev.set(edge.to, current);
+        prevEdge.set(edge.to, edge.key);
+      }
+    }
+  }
+  if (!prev.has(dstId)) return null;
+  const nodes = [];
+  const edges = [];
+  let cur = dstId;
+  while (cur !== srcId) {
+    nodes.push(cur);
+    edges.push(prevEdge.get(cur));
+    cur = prev.get(cur);
+  }
+  nodes.push(srcId);
+  nodes.reverse();
+  edges.reverse();
+  return { nodes, edges };
+}
+
+function renderPathInfo() {
+  const box = document.getElementById('pathInfo');
+  if (!state.connection) {
+    box.innerHTML = 'No connection selected.';
+    return;
+  }
+  const teamsById = new Map(state.graph.teams.map(team => [team.id, team]));
+  const lines = [];
+  lines.push('<div class="small muted">Shortest chain by inverse leverage:</div>');
+  state.connection.nodes.forEach((id, idx) => {
+    const team = teamsById.get(id);
+    lines.push(`<div>${team ? team.name : id}</div>`);
+    if (idx < state.connection.edges.length) {
+      const seg = state.connectionSegments[idx];
+      const avg = seg.games.reduce((s, g) => s + (g.leverage || 0), 0) / seg.games.length;
+      lines.push(
+        `<div class="status" style="margin:6px 0 8px 8px; color:${seg.color}">↳ ${seg.games.length} game${
+          seg.games.length === 1 ? '' : 's'
+        } · avg leverage ${avg.toFixed(3)}</div>`
+      );
+    }
+  });
+  box.innerHTML = lines.join('');
+}
+
+function renderConnectionLegend() {
+  const legend = document.getElementById('connectionLegend');
+  legend.innerHTML = '';
+  if (!state.connection) return;
+  state.connectionSegments.forEach((segment, idx) => {
+    const fromTeam = state.graph.teams.find(t => t.id === segment.from);
+    const toTeam = state.graph.teams.find(t => t.id === segment.to);
+    const item = document.createElement('span');
+    const dot = document.createElement('span');
+    dot.className = 'connection-dot';
+    dot.style.background = segment.color;
+    const label = document.createElement('span');
+    label.textContent = `${fromTeam?.shortName || fromTeam?.name || segment.from} → ${
+      toTeam?.shortName || toTeam?.name || segment.to
+    }`;
+    item.appendChild(dot);
+    item.appendChild(label);
+    legend.appendChild(item);
+  });
+}
+
+function renderConnectionGraph() {
+  const section = document.getElementById('connectionSection');
+  if (!state.connection) {
+    section.classList.remove('active');
+    document.getElementById('connectionSvg').replaceChildren();
+    return;
+  }
+  section.classList.add('active');
+  const svg = document.getElementById('connectionSvg');
+  svg.replaceChildren();
+  const teams = Array.from(new Set(state.connection.nodes));
+  const weeks = Array.from(
+    new Set(state.connectionGames.map(g => computeWeekKey(g) ?? 'unknown'))
+  ).sort((a, b) => {
+    if (a === 'unknown') return 1;
+    if (b === 'unknown') return -1;
+    return a - b;
+  });
+  const columnWidth = 180;
+  const rowHeight = 56;
+  const margin = { top: 28, right: 60, bottom: 48, left: 140 };
+  const width = margin.left + margin.right + Math.max(0, weeks.length - 1) * columnWidth;
+  const height = margin.top + margin.bottom + Math.max(0, teams.length - 1) * rowHeight;
+  svg.setAttribute('width', width);
+  svg.setAttribute('height', height);
+
+  const yForTeam = new Map();
+  teams.forEach((teamId, idx) => {
+    yForTeam.set(teamId, margin.top + idx * rowHeight);
+  });
+  const xForWeek = new Map();
+  weeks.forEach((wk, idx) => {
+    xForWeek.set(wk, margin.left + idx * columnWidth);
+  });
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const bg = document.createElementNS(svgNS, 'rect');
+  bg.setAttribute('x', 0);
+  bg.setAttribute('y', 0);
+  bg.setAttribute('width', width);
+  bg.setAttribute('height', height);
+  bg.setAttribute('fill', 'rgba(15,23,42,0.18)');
+  svg.appendChild(bg);
+
+  weeks.forEach(wk => {
+    const x = xForWeek.get(wk);
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', x);
+    line.setAttribute('x2', x);
+    line.setAttribute('y1', margin.top - 16);
+    line.setAttribute('y2', height - margin.bottom + 12);
+    line.setAttribute('stroke', 'rgba(148,163,184,0.22)');
+    line.setAttribute('stroke-dasharray', '4 6');
+    svg.appendChild(line);
+    const label = document.createElementNS(svgNS, 'text');
+    label.setAttribute('x', x);
+    label.setAttribute('y', height - margin.bottom + 32);
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('fill', 'rgba(226,232,240,0.78)');
+    label.setAttribute('font-size', '12');
+    label.textContent = wk === 'unknown' ? 'TBD' : `Week ${wk}`;
+    svg.appendChild(label);
+  });
+
+  teams.forEach(teamId => {
+    const y = yForTeam.get(teamId);
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', margin.left - 12);
+    line.setAttribute('x2', width - margin.right + 12);
+    line.setAttribute('y1', y);
+    line.setAttribute('y2', y);
+    line.setAttribute('stroke', 'rgba(148,163,184,0.16)');
+    svg.appendChild(line);
+    const label = document.createElementNS(svgNS, 'text');
+    label.setAttribute('x', margin.left - 24);
+    label.setAttribute('y', y + 4);
+    label.setAttribute('text-anchor', 'end');
+    label.setAttribute('fill', 'rgba(226,232,240,0.8)');
+    label.setAttribute('font-size', '13');
+    const team = state.graph.teams.find(t => t.id === teamId);
+    label.textContent = team?.shortName || team?.name || teamId;
+    svg.appendChild(label);
+  });
+
+  const pointsByTeam = new Map();
+  state.connectionGames.forEach(game => {
+    const wk = computeWeekKey(game) ?? 'unknown';
+    const x = xForWeek.get(wk);
+    const homeY = yForTeam.get(game.home.id);
+    const awayY = yForTeam.get(game.away.id);
+    if (x === undefined || homeY === undefined || awayY === undefined) return;
+    if (!pointsByTeam.has(game.home.id)) pointsByTeam.set(game.home.id, []);
+    if (!pointsByTeam.has(game.away.id)) pointsByTeam.set(game.away.id, []);
+    pointsByTeam.get(game.home.id).push({ x, y: homeY, leverage: game.leverage });
+    pointsByTeam.get(game.away.id).push({ x, y: awayY, leverage: game.leverage });
+    const vert = document.createElementNS(svgNS, 'line');
+    vert.setAttribute('x1', x);
+    vert.setAttribute('x2', x);
+    vert.setAttribute('y1', homeY);
+    vert.setAttribute('y2', awayY);
+    vert.setAttribute('stroke', game.__segmentColor || '#38bdf8');
+    vert.setAttribute('stroke-width', Math.max(2, (game.leverage || 0) * 2 + 1));
+    vert.setAttribute('stroke-linecap', 'round');
+    svg.appendChild(vert);
+    const dotHome = document.createElementNS(svgNS, 'circle');
+    dotHome.setAttribute('cx', x);
+    dotHome.setAttribute('cy', homeY);
+    dotHome.setAttribute('r', 6);
+    dotHome.setAttribute('fill', game.__segmentColor || '#38bdf8');
+    svg.appendChild(dotHome);
+    const dotAway = document.createElementNS(svgNS, 'circle');
+    dotAway.setAttribute('cx', x);
+    dotAway.setAttribute('cy', awayY);
+    dotAway.setAttribute('r', 6);
+    dotAway.setAttribute('fill', game.__segmentColor || '#38bdf8');
+    svg.appendChild(dotAway);
+  });
+
+  pointsByTeam.forEach((points, teamId) => {
+    const sorted = points
+      .slice()
+      .sort((a, b) => a.x - b.x)
+      .filter((pt, idx, arr) => idx === 0 || pt.x !== arr[idx - 1].x || pt.y !== arr[idx - 1].y);
+    if (sorted.length < 2) return;
+    const path = document.createElementNS(svgNS, 'path');
+    const d = sorted.map((pt, idx) => `${idx === 0 ? 'M' : 'L'}${pt.x} ${pt.y}`).join(' ');
+    path.setAttribute('d', d);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', 'rgba(96, 165, 250, 0.4)');
+    path.setAttribute('stroke-width', 2);
+    path.setAttribute('stroke-linejoin', 'round');
+    svg.appendChild(path);
+  });
+}
+
+function applyFilters({ recomputePath = true } = {}) {
+  const minLev = Number(document.getElementById('lev').value) || 0;
+  const typeFilter = document.getElementById('typeFilter').value;
+  const levLabel = document.getElementById('levVal');
+  levLabel.textContent = `≥ ${minLev.toFixed(2)}`;
+  const filtered = state.graph.games.filter(game => {
+    const lev = typeof game.leverage === 'number' ? game.leverage : 0;
+    if (lev < minLev) return false;
+    if (typeFilter !== 'ALL' && game.type !== typeFilter) return false;
+    return true;
+  });
+  state.filteredGames = filtered;
+  state.filteredPairs = computePairs(filtered);
+  if (recomputePath && state.connection) {
+    const src = document.getElementById('srcSel').value;
+    const dst = document.getElementById('dstSel').value;
+    activatePath(src, dst);
+  } else {
+    renderTimeline();
+    renderConnectionGraph();
+    renderPathInfo();
+    renderConnectionLegend();
+  }
+}
+
+async function load() {
+  try {
+    state.loading = true;
+    state.error = null;
+    updateStatus('Loading data…');
+    const endpoint = document.getElementById('endpoint').value.trim();
+    const season = Number(document.getElementById('season').value);
+    const [confRes, mainRes] = await Promise.all([
+      POST(endpoint, { query: CONFERENCES_QUERY }),
+      POST(endpoint, { query: QUERY, variables: { season } }),
+    ]);
+    if (confRes.errors) throw new Error(confRes.errors[0]?.message || 'Conference query failed');
+    if (mainRes.errors) throw new Error(mainRes.errors[0]?.message || 'Graph query failed');
+    state.conferenceMeta = confRes.data?.conferences ?? [];
+    state.graph = mainRes.data || { teams: [], games: [] };
+    buildSelectors();
+    applyConferenceLegend();
+    applyFilters({ recomputePath: false });
+    state.connection = null;
+    state.connectionGames = [];
+    state.connectionSegments = [];
+    renderTimeline();
+    renderPathInfo();
+    renderConnectionLegend();
+    renderConnectionGraph();
+    updateStatus(
+      `Loaded ${state.graph.teams.length} teams and ${state.graph.games.length} games for ${season}.`
+    );
+  } catch (error) {
+    console.error(error);
+    state.error = error instanceof Error ? error.message : String(error);
+    updateStatus(`Error: ${state.error}`);
+    document.getElementById('weekGrid').innerHTML = '';
+    document.getElementById('timelineEmpty').hidden = false;
+    state.connection = null;
+    renderConnectionGraph();
+    renderPathInfo();
+  } finally {
+    state.loading = false;
+  }
+}
+
+function activatePath(src, dst) {
+  const result = shortestPathByInverseLeverage(state.filteredPairs, state.graph.teams, src, dst);
+  if (!result) {
+    state.connection = null;
+    state.connectionGames = [];
+    state.connectionSegments = [];
+    renderTimeline();
+    renderPathInfo();
+    renderConnectionLegend();
+    renderConnectionGraph();
+    document.getElementById('pathInfo').innerHTML =
+      '<span class="status">No path found with current filters.</span>';
+    return;
+  }
+  const segments = [];
+  const games = [];
+  result.edges.forEach((edgeKey, idx) => {
+    const rawGames = state.filteredPairs.get(edgeKey) || [];
+    const color = SEGMENT_COLORS[idx % SEGMENT_COLORS.length];
+    const from = result.nodes[idx];
+    const to = result.nodes[idx + 1];
+    const enriched = rawGames
+      .slice()
+      .sort((a, b) => {
+        const da = a.date ? new Date(a.date).getTime() : 0;
+        const db = b.date ? new Date(b.date).getTime() : 0;
+        return da - db;
+      })
+      .map(game => ({ ...game, __segmentColor: color }));
+    segments.push({ key: edgeKey, from, to, color, games: enriched });
+    games.push(...enriched);
+  });
+  state.connection = result;
+  state.connectionGames = games;
+  state.connectionSegments = segments;
+  renderTimeline();
+  renderPathInfo();
+  renderConnectionLegend();
+  renderConnectionGraph();
+}
+
+document.getElementById('loadBtn').addEventListener('click', () => load());
+document.getElementById('lev').addEventListener('input', () => applyFilters());
+document.getElementById('typeFilter').addEventListener('change', () => applyFilters());
+document.getElementById('pathBtn').addEventListener('click', () => {
+  const src = document.getElementById('srcSel').value;
+  const dst = document.getElementById('dstSel').value;
+  activatePath(src, dst);
+});
+document.getElementById('clearPathBtn').addEventListener('click', () => {
+  state.connection = null;
+  state.connectionGames = [];
+  state.connectionSegments = [];
+  renderTimeline();
+  renderPathInfo();
+  renderConnectionLegend();
+  renderConnectionGraph();
+});
+
+load();
