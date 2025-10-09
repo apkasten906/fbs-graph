@@ -10,7 +10,6 @@ import type {
   TeamSeason as TeamSeasonT,
   Game as GameT,
   PollType,
-  PollSnapshot,
 } from '../types/index.js';
 import {
   computeLeverageForGame,
