@@ -21,6 +21,33 @@ const palette = [
   'var(--slate)',
 ];
 
+const GRAPH_TYPES = [
+  { id: 'ALL', label: 'All matchups' },
+  { id: 'CONFERENCE', label: 'Conference games' },
+  { id: 'NON_CONFERENCE', label: 'Non-conference games' },
+];
+
+const CONFERENCE_COLORS = {
+  sec: '#6CCFF6',
+  b1g: '#B28DFF',
+  b12: '#F6AE2D',
+  acc: '#4CC9F0',
+  aac: '#FF6B6B',
+  mwc: '#80ED99',
+  mac: '#FFD166',
+  sbc: '#90CAF9',
+  cusa: '#FF9E00',
+  ind: '#BDB2FF',
+  pac12: '#9CCC65',
+};
+
+const DEFAULT_CONFERENCE_COLOR = '#CCD6F6';
+
+function colorForConference(conferenceId) {
+  if (!conferenceId) return DEFAULT_CONFERENCE_COLOR;
+  return CONFERENCE_COLORS[conferenceId] ?? DEFAULT_CONFERENCE_COLOR;
+}
+
 const power4Set = new Set(['sec', 'b1g', 'b12', 'acc']);
 
 const conferenceScopes = [
@@ -47,6 +74,14 @@ function createTimelineApp(options = {}) {
   const pathSummary = options.pathSummary ?? doc.getElementById('pathSummary');
   const filters = options.filters ?? doc.getElementById('filters');
   const timeline = options.timeline ?? doc.getElementById('timeline');
+  const networkPanel = options.networkPanel ?? doc.getElementById('networkPanel');
+  const networkControls = options.networkControls ?? doc.getElementById('networkControls');
+  const networkFocus = options.networkFocus ?? doc.getElementById('networkFocus');
+  const networkLegend = options.networkLegend ?? doc.getElementById('networkLegend');
+  const networkSummary = options.networkSummary ?? doc.getElementById('networkSummary');
+  const networkGraphContainer =
+    options.networkGraphContainer ?? doc.getElementById('networkGraph');
+  const networkEmpty = options.networkEmpty ?? doc.getElementById('networkEmpty');
   const fetchImpl = options.fetch ?? (typeof win.fetch === 'function' ? win.fetch.bind(win) : null);
   const dataBase = options.dataBase ?? '../src/data';
   const season = options.season ?? 2025;
@@ -60,15 +95,28 @@ function createTimelineApp(options = {}) {
     activeTier: 'all',
     startTeam: null,
     endTeam: null,
+    graphType: 'ALL',
+    graphConference: 'all',
+    graphShowIsolated: false,
+    focusSelection: null,
+    focusTeam: null,
+    focusDegrees: 2,
     data: null,
     path: null,
     segments: [],
     summary: null,
+    graphStats: { nodes: 0, edges: 0, hiddenIsolates: 0, candidates: 0 },
+  };
+
+  const graphState = {
+    cy: null,
+    adjacency: new Map(),
   };
 
   renderSummary();
   renderFilters();
   renderTimeline();
+  renderNetworkPanel();
 
   const runningFromFile = location?.protocol === 'file:';
   const ready = runningFromFile ? Promise.resolve(false) : init();
@@ -99,6 +147,7 @@ function createTimelineApp(options = {}) {
     renderSummary();
     renderFilters();
     renderTimeline();
+    renderNetworkPanel();
     return !state.error;
   }
 
@@ -113,13 +162,15 @@ function createTimelineApp(options = {}) {
   }
 
   function applyState(patch) {
+    const shouldUpdatePath = ['startTeam', 'endTeam', 'scope'].some(key => key in patch);
     Object.assign(state, patch);
-    if (!state.loading && state.data) {
+    if (shouldUpdatePath && !state.loading && state.data) {
       updatePath();
     }
     renderSummary();
     renderFilters();
     renderTimeline();
+    renderNetworkPanel();
   }
 
   function updatePath() {
@@ -519,6 +570,597 @@ function createTimelineApp(options = {}) {
       });
   }
 
+  function renderNetworkPanel() {
+    if (!networkPanel) return;
+    if (state.loading) {
+      if (networkControls) networkControls.innerHTML = '';
+      if (networkFocus) networkFocus.innerHTML = '';
+      if (networkLegend) networkLegend.innerHTML = '';
+      if (networkEmpty) {
+        networkEmpty.hidden = false;
+        networkEmpty.textContent = 'Loading matchup network…';
+      }
+      updateNetworkSummary();
+      return;
+    }
+    if (state.error) {
+      if (networkControls) networkControls.innerHTML = '';
+      if (networkFocus) networkFocus.innerHTML = '';
+      if (networkLegend) networkLegend.innerHTML = '';
+      if (networkEmpty) {
+        networkEmpty.hidden = false;
+        networkEmpty.textContent = `Unable to load network: ${state.error}`;
+      }
+      if (graphState.cy) {
+        graphState.cy.elements().remove();
+      }
+      updateNetworkSummary();
+      return;
+    }
+    if (!state.data) return;
+
+    if (networkEmpty) {
+      networkEmpty.hidden = true;
+    }
+
+    updateGraphView();
+
+    if (networkControls) {
+      networkControls.innerHTML = '';
+      const typeLabel = doc.createElement('label');
+      typeLabel.textContent = 'Game filter';
+      const typeSelect = doc.createElement('select');
+      GRAPH_TYPES.forEach(option => {
+        const opt = doc.createElement('option');
+        opt.value = option.id;
+        opt.textContent = option.label;
+        typeSelect.appendChild(opt);
+      });
+      typeSelect.value = state.graphType;
+      typeSelect.addEventListener('change', event => {
+        const next = event.target.value;
+        applyState({ graphType: next });
+      });
+
+      const conferenceLabel = doc.createElement('label');
+      conferenceLabel.textContent = 'Conference';
+      const conferenceSelect = doc.createElement('select');
+      const conferenceOptions = [
+        { id: 'all', label: 'All conferences' },
+        ...state.data.conferences
+          .slice()
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(conf => ({
+            id: conf.id,
+            label: conf.name,
+          })),
+      ];
+      conferenceOptions.forEach(conf => {
+        const opt = doc.createElement('option');
+        opt.value = conf.id;
+        opt.textContent = conf.label;
+        conferenceSelect.appendChild(opt);
+      });
+      conferenceSelect.value = state.graphConference;
+      conferenceSelect.addEventListener('change', event => {
+        const next = event.target.value || 'all';
+        applyState({ graphConference: next });
+      });
+
+      const isolateButton = doc.createElement('button');
+      isolateButton.type = 'button';
+      isolateButton.dataset.active = String(!state.graphShowIsolated);
+      isolateButton.setAttribute('aria-pressed', String(state.graphShowIsolated));
+      isolateButton.textContent = state.graphShowIsolated
+        ? 'Hide isolated programs'
+        : 'Show isolated programs';
+      isolateButton.addEventListener('click', () => {
+        applyState({ graphShowIsolated: !state.graphShowIsolated });
+      });
+
+      networkControls.append(typeLabel, typeSelect, conferenceLabel, conferenceSelect, isolateButton);
+    }
+
+    if (networkFocus) {
+      networkFocus.innerHTML = '';
+
+      const focusLabel = doc.createElement('label');
+      focusLabel.textContent = 'Focus team';
+
+      const focusSelect = doc.createElement('select');
+      focusSelect.style.minWidth = '220px';
+      const emptyOption = doc.createElement('option');
+      emptyOption.value = '';
+      emptyOption.textContent = 'Select team';
+      focusSelect.appendChild(emptyOption);
+      state.data.teams
+        .slice()
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .forEach(team => {
+          const option = doc.createElement('option');
+          option.value = team.id;
+          const conf = team.conference?.shortName ? ` (${team.conference.shortName})` : '';
+          option.textContent = `${team.name}${conf}`;
+          focusSelect.appendChild(option);
+        });
+      const selectedFocus = state.focusSelection ?? state.focusTeam ?? '';
+      focusSelect.value = selectedFocus ?? '';
+      focusSelect.addEventListener('change', event => {
+        const value = event.target.value || null;
+        applyState({ focusSelection: value });
+      });
+
+      const degreeLabel = doc.createElement('label');
+      degreeLabel.textContent = 'Degrees';
+      const degreeInput = doc.createElement('input');
+      degreeInput.type = 'number';
+      degreeInput.min = '1';
+      degreeInput.max = '6';
+      degreeInput.value = String(state.focusDegrees);
+      degreeInput.addEventListener('change', event => {
+        const raw = Number(event.target.value);
+        const clamped = Number.isFinite(raw) ? Math.max(1, Math.min(6, raw)) : 1;
+        event.target.value = String(clamped);
+        if (clamped !== state.focusDegrees) {
+          applyState({ focusDegrees: clamped });
+        }
+      });
+
+      const focusButton = doc.createElement('button');
+      focusButton.type = 'button';
+      focusButton.textContent = 'Focus';
+      const focusCandidate = state.focusSelection ?? state.focusTeam;
+      focusButton.disabled = !focusCandidate;
+      focusButton.addEventListener('click', () => {
+        const targetTeam = state.focusSelection ?? state.focusTeam;
+        applyState({ focusTeam: targetTeam ?? null });
+      });
+
+      const resetButton = doc.createElement('button');
+      resetButton.type = 'button';
+      resetButton.textContent = 'Reset focus';
+      resetButton.disabled = !state.focusTeam;
+      resetButton.addEventListener('click', () => {
+        applyState({ focusTeam: null });
+      });
+
+      networkFocus.append(
+        focusLabel,
+        focusSelect,
+        degreeLabel,
+        degreeInput,
+        focusButton,
+        resetButton
+      );
+    }
+  }
+
+  function ensureGraphInstance() {
+    if (graphState.cy) return graphState.cy;
+    if (!networkGraphContainer) return null;
+    const cytoscapeFactory =
+      typeof options.cytoscape === 'function' ? options.cytoscape : win.cytoscape;
+    if (typeof cytoscapeFactory !== 'function') return null;
+    graphState.cy = cytoscapeFactory({
+      container: networkGraphContainer,
+      elements: [],
+      wheelSensitivity: 0.2,
+      style: [
+        {
+          selector: 'node',
+          style: {
+            'background-color': 'data(color)',
+            width: 'mapData(sizeFactor, 0, 1, 18, 38)',
+            height: 'mapData(sizeFactor, 0, 1, 18, 38)',
+            label: 'data(label)',
+            color: '#dfe7ff',
+            'font-size': 'mapData(sizeFactor, 0, 1, 10, 18)',
+            'text-wrap': 'wrap',
+            'text-max-width': '80px',
+            'text-halign': 'center',
+            'text-valign': 'center',
+            'text-outline-color': '#050a1c',
+            'text-outline-width': 2,
+            'overlay-opacity': 0,
+          },
+        },
+        { selector: 'node[primary="false"]', style: { opacity: 0.72 } },
+        {
+          selector: 'node.focused',
+          style: {
+            'border-width': 3,
+            'border-color': '#facc15',
+            'text-outline-color': '#0b1020',
+            'text-outline-width': 3,
+            opacity: 1,
+          },
+        },
+        {
+          selector: 'node.focus-root',
+          style: {
+            'border-width': 5,
+            'border-color': '#38bdf8',
+          },
+        },
+        { selector: 'node.dimmed', style: { opacity: 0.18 } },
+        {
+          selector: 'edge',
+          style: {
+            'curve-style': 'haystack',
+            'haystack-radius': 0.5,
+            opacity: 0.55,
+            'line-color': 'data(color)',
+            width: 'mapData(leverage, 0.4, 1.6, 1, 6)',
+          },
+        },
+        {
+          selector: 'edge.focus-edge',
+          style: {
+            opacity: 0.95,
+            'line-color': '#7dd3fc',
+            width: 4,
+          },
+        },
+        { selector: 'edge.dimmed', style: { opacity: 0.12 } },
+      ],
+    });
+    if (graphState.cy) {
+      graphState.cy.on('tap', 'node', event => {
+        const id = event.target.id();
+        applyState({ focusSelection: id });
+      });
+    }
+    return graphState.cy;
+  }
+
+  function buildGraphViewModel() {
+    if (!state.data) {
+      return { nodes: [], edges: [], adjacency: new Map(), hiddenIsolates: 0, candidates: 0 };
+    }
+
+    const edges = [];
+    const adjacency = new Map();
+    const visibleNodeIds = new Set();
+    const degreeMap = new Map();
+    const typeFilter = state.graphType;
+    const activeTier = state.activeTier;
+
+    for (const entry of state.data.edgesByPair.values()) {
+      const [teamAId, teamBId] = entry.teams;
+      const teamA = state.data.teamMap.get(teamAId);
+      const teamB = state.data.teamMap.get(teamBId);
+      if (!teamA || !teamB) continue;
+
+      let games = entry.games.filter(game => game.result === 'TBD');
+      if (!games.length) continue;
+
+      if (typeFilter !== 'ALL') {
+        games = games.filter(game => game.type === typeFilter);
+        if (!games.length) continue;
+      }
+
+      if (activeTier !== 'all') {
+        games = games.filter(game => determineTier(game.leverage) === activeTier);
+        if (!games.length) continue;
+      }
+
+      const bestGame = games[0];
+
+      const includeEdge =
+        state.graphConference === 'all' ||
+        teamA.conferenceId === state.graphConference ||
+        teamB.conferenceId === state.graphConference;
+      if (!includeEdge) continue;
+
+      const sameConference = teamA.conferenceId && teamA.conferenceId === teamB.conferenceId;
+      const edgeColor = sameConference
+        ? colorForConference(teamA.conferenceId)
+        : '#6ba4ff';
+
+      edges.push({
+        data: {
+          id: entry.key,
+          source: teamAId,
+          target: teamBId,
+          leverage: bestGame.leverage ?? 0,
+          color: edgeColor,
+        },
+      });
+
+      visibleNodeIds.add(teamAId);
+      visibleNodeIds.add(teamBId);
+
+      degreeMap.set(teamAId, (degreeMap.get(teamAId) ?? 0) + 1);
+      degreeMap.set(teamBId, (degreeMap.get(teamBId) ?? 0) + 1);
+
+      if (!adjacency.has(teamAId)) adjacency.set(teamAId, []);
+      if (!adjacency.has(teamBId)) adjacency.set(teamBId, []);
+      adjacency.get(teamAId).push({ id: teamBId, edgeId: entry.key });
+      adjacency.get(teamBId).push({ id: teamAId, edgeId: entry.key });
+    }
+
+    const candidates = state.data.teams.length;
+    const nodes = [];
+    const maxDegree = Array.from(degreeMap.values()).reduce(
+      (max, value) => Math.max(max, value),
+      0
+    );
+
+    state.data.teams.forEach(team => {
+      const id = team.id;
+      const isPrimary = state.graphConference === 'all' ? true : team.conferenceId === state.graphConference;
+      const hasEdge = visibleNodeIds.has(id);
+      if (!hasEdge && !state.graphShowIsolated) return;
+      if (state.graphConference !== 'all' && !isPrimary && !hasEdge) return;
+      const degree = degreeMap.get(id) ?? 0;
+      const normalized = maxDegree ? 1 - Math.min(1, degree / maxDegree) : 1;
+      nodes.push({
+        data: {
+          id,
+          label: team.shortName ?? team.name,
+          conferenceId: team.conferenceId ?? 'other',
+          color: colorForConference(team.conferenceId),
+          primary: String(isPrimary),
+          degree,
+          sizeFactor: normalized,
+        },
+      });
+      if (!adjacency.has(id)) {
+        adjacency.set(id, []);
+      }
+    });
+
+    const hiddenIsolates = state.graphShowIsolated
+      ? 0
+      : state.data.teams.filter(team => {
+          if (state.graphConference !== 'all' && team.conferenceId !== state.graphConference) {
+            return false;
+          }
+          return !visibleNodeIds.has(team.id);
+        }).length;
+
+    return { nodes, edges, adjacency, hiddenIsolates, candidates };
+  }
+
+  function updateGraphView() {
+    if (!networkGraphContainer) {
+      updateNetworkSummary();
+      return;
+    }
+    const { nodes, edges, adjacency, hiddenIsolates, candidates } = buildGraphViewModel();
+    graphState.adjacency = adjacency;
+    state.graphStats = {
+      nodes: nodes.length,
+      edges: edges.length,
+      hiddenIsolates,
+      candidates,
+    };
+
+    if (!nodes.length) {
+      if (graphState.cy) {
+        graphState.cy.elements().remove();
+      }
+      if (networkEmpty) {
+        networkEmpty.hidden = false;
+        networkEmpty.textContent = 'No qualifying matchups for the current filters.';
+      }
+      if (networkLegend) networkLegend.innerHTML = '';
+      updateNetworkSummary();
+      return;
+    }
+
+    if (networkEmpty) {
+      networkEmpty.hidden = true;
+    }
+
+    updateNetworkLegendDisplay(nodes);
+
+    const cy = ensureGraphInstance();
+    if (!cy) {
+      updateNetworkSummary();
+      return;
+    }
+
+    cy.batch(() => {
+      cy.elements().remove();
+      cy.add([...nodes, ...edges]);
+    });
+    runDefaultLayout(cy);
+    applyGraphFocus();
+  }
+
+  function runDefaultLayout(cy) {
+    if (!cy) return;
+    if (cy.nodes().length <= 1) {
+      cy.fit(cy.nodes(), 80);
+      return;
+    }
+    const layout = cy.layout({
+      name: 'cose',
+      animate: false,
+      idealEdgeLength: 120,
+      nodeRepulsion: 8000,
+      nodeOverlap: 10,
+      gravity: 0.9,
+      fit: true,
+      padding: 50,
+    });
+    layout.run();
+    cy.fit(cy.elements(), 60);
+  }
+
+  function applyGraphFocus() {
+    if (!graphState.cy) {
+      updateNetworkSummary();
+      return;
+    }
+
+    const cy = graphState.cy;
+    cy.nodes().removeClass('focused dimmed focus-root');
+    cy.edges().removeClass('focus-edge dimmed');
+
+    if (!state.focusTeam) {
+      updateNetworkSummary();
+      return;
+    }
+
+    const focusNode = cy.getElementById(state.focusTeam);
+    if (!focusNode || !focusNode.nonempty()) {
+      const missing = state.focusTeam;
+      state.focusTeam = null;
+      if (state.focusSelection === missing) {
+        state.focusSelection = null;
+      }
+      updateNetworkSummary();
+      return;
+    }
+
+    const neighborhood = computeFocusNeighborhood(state.focusTeam, state.focusDegrees);
+    const { nodes, edges } = neighborhood;
+    if (!nodes.size) {
+      updateNetworkSummary();
+      return;
+    }
+
+    nodes.forEach(id => {
+      const node = cy.getElementById(id);
+      if (node && node.nonempty()) {
+        node.addClass('focused');
+      }
+    });
+    focusNode.addClass('focus-root');
+    cy.nodes().forEach(node => {
+      if (!nodes.has(node.id())) {
+        node.addClass('dimmed');
+      }
+    });
+
+    cy.edges().forEach(edge => {
+      if (edges.has(edge.id())) {
+        edge.addClass('focus-edge');
+      } else {
+        edge.addClass('dimmed');
+      }
+    });
+
+    const focusElements = cy.collection();
+    nodes.forEach(id => {
+      const node = cy.getElementById(id);
+      if (node && node.nonempty()) {
+        focusElements.merge(node);
+      }
+    });
+    cy.edges().forEach(edge => {
+      if (edges.has(edge.id())) {
+        focusElements.merge(edge);
+      }
+    });
+
+    if (focusElements.length) {
+      const layout = focusElements.layout({
+        name: 'breadthfirst',
+        circle: true,
+        spacingFactor: 1.18,
+        roots: `#${state.focusTeam}`,
+        animate: false,
+      });
+      layout.run();
+      cy.fit(focusElements, 70);
+    }
+
+    updateNetworkSummary({ nodes: nodes.size, edges: edges.size });
+  }
+
+  function computeFocusNeighborhood(rootId, degrees) {
+    const resultNodes = new Set();
+    const resultEdges = new Set();
+    if (!graphState.adjacency.size) {
+      resultNodes.add(rootId);
+      return { nodes: resultNodes, edges: resultEdges };
+    }
+
+    const visited = new Set([rootId]);
+    resultNodes.add(rootId);
+    const queue = [{ id: rootId, depth: 0 }];
+    while (queue.length) {
+      const current = queue.shift();
+      const neighbors = graphState.adjacency.get(current.id) ?? [];
+      for (const neighbor of neighbors) {
+        if (current.depth >= degrees) continue;
+        resultEdges.add(neighbor.edgeId);
+        if (!visited.has(neighbor.id)) {
+          visited.add(neighbor.id);
+          resultNodes.add(neighbor.id);
+          queue.push({ id: neighbor.id, depth: current.depth + 1 });
+        }
+      }
+    }
+    return { nodes: resultNodes, edges: resultEdges };
+  }
+
+  function updateNetworkLegendDisplay(nodes) {
+    if (!networkLegend) return;
+    networkLegend.innerHTML = '';
+    if (!nodes.length) return;
+    const seen = new Map();
+    nodes.forEach(node => {
+      const confId = node.data.conferenceId ?? 'other';
+      if (seen.has(confId)) return;
+      const confEntry = state.data?.conferenceMap?.get(confId);
+      const label = confEntry?.name ?? (confId === 'ind' ? 'Independents' : 'Unaffiliated');
+      seen.set(confId, { label, color: colorForConference(confId) });
+    });
+    Array.from(seen.entries())
+      .map(([id, value]) => ({ id, ...value }))
+      .sort((a, b) => a.label.localeCompare(b.label))
+      .forEach(entry => {
+        const wrapper = doc.createElement('span');
+        const dot = doc.createElement('span');
+        dot.className = 'legend-dot';
+        dot.style.background = entry.color;
+        wrapper.appendChild(dot);
+        const text = doc.createElement('span');
+        text.textContent = entry.label;
+        wrapper.appendChild(text);
+        networkLegend.appendChild(wrapper);
+      });
+  }
+
+  function updateNetworkSummary(focusStats) {
+    if (!networkSummary) return;
+    if (state.loading) {
+      networkSummary.textContent = 'Loading matchup network…';
+      return;
+    }
+    if (state.error) {
+      networkSummary.textContent = `Unable to load network: ${state.error}`;
+      return;
+    }
+    if (!state.data) {
+      networkSummary.textContent = '';
+      return;
+    }
+    const { nodes, edges, hiddenIsolates } = state.graphStats;
+    if (!nodes) {
+      networkSummary.textContent = 'No qualifying matchups for the current filters.';
+      return;
+    }
+    let message = `Showing ${nodes} ${nodes === 1 ? 'program' : 'programs'} connected by ${edges} ${
+      edges === 1 ? 'matchup' : 'matchups'
+    }.`;
+    if (!state.graphShowIsolated && hiddenIsolates > 0) {
+      message += ` ${hiddenIsolates} isolated programs hidden.`;
+    }
+    if (focusStats && state.focusTeam) {
+      message += ` Focus: ${focusStats.nodes} program${focusStats.nodes === 1 ? '' : 's'} within ${
+        state.focusDegrees
+      } hop${state.focusDegrees === 1 ? '' : 's'} (${focusStats.edges} edge${
+        focusStats.edges === 1 ? '' : 's'
+      }).`;
+    }
+    networkSummary.textContent = message;
+  }
+
   function flattenTimeline(segments) {
     return segments.flatMap(segment =>
       segment.games.map(game => ({
@@ -897,3 +1539,4 @@ function findShortestPath(adjacency, start, end) {
 }
 
 export default createTimelineApp;
+export { createTimelineApp };

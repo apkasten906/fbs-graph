@@ -42,6 +42,15 @@
         padding: 6px 8px;
         font-size: 12px;
       }
+      .controls label.inline {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .controls input[type='checkbox'] {
+        width: 14px;
+        height: 14px;
+      }
       .controls input[type='range'] {
         width: 160px;
       }
@@ -102,6 +111,11 @@
           ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
           monospace;
       }
+      .status {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
       footer {
         position: fixed;
         bottom: 10px;
@@ -126,9 +140,14 @@
           <option value="NON_CONFERENCE">Non-Conference</option>
           <option value="CONFERENCE">Conference</option>
         </select>
+        <label>Conference:</label>
+        <select id="conferenceFilter">
+          <option value="ALL" selected>All Conferences</option>
+        </select>
         <label>Min leverage:</label>
         <input id="lev" type="range" min="0" max="1.2" step="0.01" value="0" />
         <span id="levVal" class="muted small">0</span>
+        <label class="inline"><input type="checkbox" id="hideIsolates" /> Hide isolated</label>
         <button id="loadBtn">Reload</button>
         <button id="fitBtn">Fit</button>
       </div>
@@ -150,6 +169,23 @@
             <button id="pathBtn">Path</button>
           </div>
           <div id="pathInfo" class="pathlist" style="margin-top: 8px">No path computed yet.</div>
+        </div>
+        <div class="section">
+          <div class="muted small">Focus on a team and explore nearby connections:</div>
+          <div
+            style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: flex-end"
+          >
+            <select id="focusSel"></select>
+            <label class="small" style="display: flex; align-items: center; gap: 4px"
+              >Degrees
+              <input id="focusDepth" type="number" min="1" max="6" value="2" style="width: 48px" />
+            </label>
+          </div>
+          <div style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap">
+            <button id="focusBtn">Focus</button>
+            <button id="clearFocusBtn">Clear focus</button>
+          </div>
+          <div id="focusStatus" class="status"></div>
         </div>
         <div class="section">
           <div class="muted small">Legend / Conferences</div>
@@ -210,19 +246,29 @@ query Graph($season: Int!) {
         return a < b ? a + '__' + b : b + '__' + a;
       }
 
-      function buildGraph(season, typeFilter, minLev) {
-        const els = [];
+      function getConferenceId(team) {
+        if (!team || !team.conference) return 'ind';
+        return team.conference.id || 'ind';
+      }
+
+      function buildGraph(season, typeFilter, minLev, conferenceFilter, hideIsolates) {
+        const nodeElements = [];
+        const edgeElements = [];
+        const allowedTeams = new Set();
+        const activeTeams = new Set();
         teamIndex.clear();
         graphData.teams.forEach(t => teamIndex.set(t.id, t));
 
         // Nodes
         for (const t of graphData.teams) {
-          const conf = (t.conference && t.conference.id) || 'other';
-          els.push({
+          const conf = getConferenceId(t);
+          if (conferenceFilter !== 'ALL' && conf !== conferenceFilter) continue;
+          nodeElements.push({
             group: 'nodes',
-            data: { id: t.id, label: t.name, conf },
+            data: { id: t.id, label: t.name, conf, sizeScale: 1 },
             classes: conf,
           });
+          allowedTeams.add(t.id);
         }
 
         // Edge aggregation by pair
@@ -235,6 +281,7 @@ query Graph($season: Int!) {
           const a = g.home.id,
             b = g.away.id;
           if (!teamIndex.has(a) || !teamIndex.has(b)) continue;
+          if (conferenceFilter !== 'ALL' && (!allowedTeams.has(a) || !allowedTeams.has(b))) continue;
           const k = key(a, b);
           const arr = pairGames.get(k) || [];
           arr.push(g);
@@ -250,7 +297,9 @@ query Graph($season: Int!) {
           edges.set(k, { a, b, count: list.length, sumLev, avgLev, weight: w });
         }
         for (const [k, e] of edges) {
-          els.push({
+          activeTeams.add(e.a);
+          activeTeams.add(e.b);
+          edgeElements.push({
             group: 'edges',
             data: {
               id: 'e_' + k,
@@ -262,6 +311,11 @@ query Graph($season: Int!) {
             },
           });
         }
+
+        const nodesToUse = hideIsolates
+          ? nodeElements.filter(n => activeTeams.has(n.data.id))
+          : nodeElements;
+        const els = [...nodesToUse, ...edgeElements];
 
         // Init / update Cytoscape
         if (!cy) {
@@ -276,11 +330,22 @@ query Graph($season: Int!) {
                   'background-color': ele => COLORS[ele.data('conf')] || COLORS.other,
                   label: 'data(label)',
                   color: '#cfe1ff',
-                  'font-size': '9px',
+                  'font-size': ele => {
+                    const scale = ele.data('sizeScale') || 1;
+                    return 11 * Math.max(0.55, scale);
+                  },
                   'text-outline-color': '#0b1020',
                   'text-outline-width': 2,
-                  width: 'mapData(deg, 0, 24, 8, 34)',
-                  height: 'mapData(deg, 0, 24, 8, 34)',
+                  width: ele => {
+                    const deg = ele.data('deg') || 0;
+                    const base = 16 + Math.min(18, deg * 1.2);
+                    return base * (ele.data('sizeScale') || 1);
+                  },
+                  height: ele => {
+                    const deg = ele.data('deg') || 0;
+                    const base = 16 + Math.min(18, deg * 1.2);
+                    return base * (ele.data('sizeScale') || 1);
+                  },
                 },
               },
               {
@@ -297,6 +362,32 @@ query Graph($season: Int!) {
                 selector: '.highlight',
                 style: { 'line-color': '#fff', 'background-color': '#fff', opacity: 1 },
               },
+              {
+                selector: '.hidden-node',
+                style: { display: 'none' },
+              },
+              {
+                selector: '.hidden-edge',
+                style: { display: 'none' },
+              },
+              {
+                selector: '.focus-root',
+                style: {
+                  'border-width': 2,
+                  'border-color': '#ffffff',
+                  'background-color': '#ffffff',
+                  color: '#0b1020',
+                },
+              },
+              {
+                selector: '.focus-related',
+                style: {
+                  opacity: 1,
+                  'text-opacity': 1,
+                  'line-color': '#9db6ff',
+                  'line-opacity': 0.9,
+                },
+              },
             ],
           });
           cy.on('tap', 'edge', e => showEdgeGames(e.target().data()));
@@ -306,11 +397,162 @@ query Graph($season: Int!) {
         }
 
         // Compute degree for sizing
+        updateNodeMetrics();
+        runMainLayout();
+      }
+
+      function updateNodeMetrics() {
+        if (!cy) return;
         cy.nodes().forEach(n => {
           n.data('deg', n.connectedEdges().length);
+          if (typeof n.data('sizeScale') !== 'number') {
+            n.data('sizeScale', 1);
+          }
+        });
+      }
+
+      function applyDensityScaling() {
+        if (!cy) return;
+        const visibleNodes = cy.nodes().filter(n => !n.hasClass('hidden-node'));
+        if (!visibleNodes.length) return;
+        const maxDist = 90;
+        visibleNodes.forEach(n => n.data('sizeScale', 1));
+        visibleNodes.forEach(n => {
+          const p = n.position();
+          let minDist = Infinity;
+          visibleNodes.forEach(m => {
+            if (n === m) return;
+            const mp = m.position();
+            const dx = p.x - mp.x;
+            const dy = p.y - mp.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < minDist) minDist = dist;
+          });
+          if (!isFinite(minDist)) minDist = maxDist;
+          const scale = Math.max(0.45, Math.min(1, minDist / maxDist));
+          n.data('sizeScale', scale);
+        });
+        cy.style().update();
+      }
+
+      function runMainLayout() {
+        if (!cy || cy.elements().length === 0) return;
+        const layout = cy.layout({
+          name: 'cose',
+          idealEdgeLength: 120,
+          nodeOverlap: 10,
+          animate: false,
+          fit: true,
+          padding: 80,
+        });
+        layout.on('layoutstop', () => {
+          applyDensityScaling();
+        });
+        layout.run();
+      }
+
+      function resetFocusState() {
+        const statusEl = document.getElementById('focusStatus');
+        statusEl.textContent = '';
+        if (!cy) {
+          return;
+        }
+        cy.batch(() => {
+          cy.elements().removeClass('hidden-node hidden-edge focus-root focus-related highlight');
+        });
+        applyDensityScaling();
+      }
+
+      function focusOnTeam() {
+        if (!cy) return;
+        const teamId = document.getElementById('focusSel').value;
+        const depthLimit = Number(document.getElementById('focusDepth').value) || 1;
+        const statusEl = document.getElementById('focusStatus');
+        const root = cy.getElementById(teamId);
+        if (!root || root.empty()) {
+          statusEl.textContent = 'Team not visible with the current filters.';
+          return;
+        }
+
+        const visited = new Map();
+        const queue = [{ id: teamId, depth: 0 }];
+        visited.set(teamId, 0);
+
+        while (queue.length) {
+          const { id, depth } = queue.shift();
+          if (depth >= depthLimit) continue;
+          const node = cy.getElementById(id);
+          node.connectedEdges().forEach(edge => {
+            if (edge.hasClass('hidden-edge')) return;
+            const connected = edge.connectedNodes();
+            connected.forEach(n => {
+              const nid = n.id();
+              if (nid === id || n.hasClass('hidden-node')) return;
+              if (!visited.has(nid)) {
+                visited.set(nid, depth + 1);
+                queue.push({ id: nid, depth: depth + 1 });
+              }
+            });
+          });
+        }
+
+        const focusedNodes = cy.collection();
+        visited.forEach((_, id) => {
+          const node = cy.getElementById(id);
+          if (node && node.length) {
+            focusedNodes.merge(node);
+          }
+        });
+        if (!focusedNodes.length) {
+          statusEl.textContent = 'No connected teams found within that separation.';
+          return;
+        }
+
+        const focusedEdges = cy.edges().filter(edge => {
+          const src = edge.source().id();
+          const tgt = edge.target().id();
+          return visited.has(src) && visited.has(tgt);
         });
 
-        cy.layout({ name: 'cose', idealEdgeLength: 120, nodeOverlap: 10 }).run();
+        cy.batch(() => {
+          cy.elements().removeClass('hidden-node hidden-edge focus-root focus-related highlight');
+          cy.nodes().forEach(node => {
+            if (!visited.has(node.id())) {
+              node.addClass('hidden-node');
+            } else {
+              node.addClass('focus-related');
+            }
+          });
+          cy.edges().forEach(edge => {
+            if (!visited.has(edge.source().id()) || !visited.has(edge.target().id())) {
+              edge.addClass('hidden-edge');
+            } else {
+              edge.addClass('focus-related');
+            }
+          });
+          root.addClass('focus-root');
+        });
+
+        const maxDepth = Math.max(...visited.values());
+        const layout = cy.layout({
+          name: 'concentric',
+          fit: true,
+          animate: true,
+          padding: 100,
+          sweep: Math.PI * 2,
+          startAngle: (3 / 2) * Math.PI,
+          concentric: node => maxDepth - (visited.get(node.id()) || maxDepth),
+          levelWidth: () => 1,
+          eles: focusedNodes.union(focusedEdges),
+        });
+        layout.on('layoutstop', () => {
+          applyDensityScaling();
+          const shownDepth = Math.min(maxDepth, depthLimit);
+          statusEl.textContent = `Showing ${focusedNodes.length} teams within ${shownDepth} degree${
+            shownDepth === 1 ? '' : 's'
+          } of separation.`;
+        });
+        layout.run();
       }
 
       function showEdgeGames(data) {
@@ -331,24 +573,35 @@ query Graph($season: Int!) {
       // Conference metadata cache (populated from GraphQL)
       let conferenceMeta = [];
 
-      function buildLegend() {
+      function conferenceLabel(id) {
+        if (!id) return 'Unknown';
+        if (id === 'ind') return 'Independents';
+        const meta = conferenceMeta.find(c => c.id === id);
+        if (meta) {
+          return meta.shortName ? `${meta.name} (${meta.shortName})` : meta.name;
+        }
+        if (id === 'other') return 'Other / TBD';
+        return id.toUpperCase();
+      }
+
+      function buildLegend(activeFilter = 'ALL') {
         const container = document.getElementById('legend');
         container.innerHTML = '';
         const seen = new Set();
         // Collect all conferences present in the data
         for (const t of graphData.teams) {
-          const conf = (t.conference && t.conference.id) || 'other';
+          const conf = getConferenceId(t);
+          if (activeFilter !== 'ALL' && conf !== activeFilter) continue;
           seen.add(conf);
         }
         // Map to full names, filter, and sort
         const legendEntries = Array.from(seen)
           .map(id => {
-            const meta = conferenceMeta.find(c => c.id === id);
             return {
               id,
               color: COLORS[id] || COLORS.other,
-              label: meta ? `${meta.name} (${meta.shortName})` : id.toUpperCase(),
-              sortKey: meta ? meta.name : id,
+              label: conferenceLabel(id),
+              sortKey: conferenceLabel(id),
             };
           })
           .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
@@ -366,9 +619,14 @@ query Graph($season: Int!) {
       function buildSelectors() {
         const srcSel = document.getElementById('srcSel');
         const dstSel = document.getElementById('dstSel');
+        const focusSel = document.getElementById('focusSel');
+        const prevSrc = srcSel.value;
+        const prevDst = dstSel.value;
+        const prevFocus = focusSel.value;
         const opts = graphData.teams.slice().sort((a, b) => a.name.localeCompare(b.name));
         srcSel.innerHTML = '';
         dstSel.innerHTML = '';
+        focusSel.innerHTML = '';
         for (const t of opts) {
           const o1 = document.createElement('option');
           o1.value = t.id;
@@ -378,6 +636,48 @@ query Graph($season: Int!) {
           o2.value = t.id;
           o2.textContent = t.name;
           dstSel.appendChild(o2);
+          const o3 = document.createElement('option');
+          o3.value = t.id;
+          o3.textContent = t.name;
+          focusSel.appendChild(o3);
+        }
+        if (prevSrc) srcSel.value = prevSrc;
+        if (prevDst) dstSel.value = prevDst;
+        if (prevFocus) focusSel.value = prevFocus;
+      }
+
+      function populateConferenceFilter() {
+        const select = document.getElementById('conferenceFilter');
+        const previous = select.value;
+        const seen = new Map();
+        conferenceMeta.forEach(c => {
+          seen.set(c.id, conferenceLabel(c.id));
+        });
+        graphData.teams.forEach(team => {
+          const id = getConferenceId(team);
+          if (!seen.has(id)) {
+            seen.set(id, conferenceLabel(id));
+          }
+        });
+        const options = Array.from(seen.entries())
+          .map(([value, label]) => ({ value, label }))
+          .sort((a, b) => a.label.localeCompare(b.label));
+        select.innerHTML = '';
+        const allOpt = document.createElement('option');
+        allOpt.value = 'ALL';
+        allOpt.textContent = 'All Conferences';
+        select.appendChild(allOpt);
+        for (const opt of options) {
+          const option = document.createElement('option');
+          option.value = opt.value;
+          option.textContent = opt.label;
+          select.appendChild(option);
+        }
+        if (previous && previous !== 'ALL') {
+          select.value = previous;
+          if (select.value !== previous) {
+            select.value = 'ALL';
+          }
         }
       }
 
@@ -469,21 +769,35 @@ query Graph($season: Int!) {
         graphData = res.data;
         buildLegend();
         buildSelectors();
+        populateConferenceFilter();
         applyFilters();
       }
 
       function applyFilters() {
         const typeFilter = document.getElementById('typeFilter').value;
         const minLev = Number(document.getElementById('lev').value);
-        document.getElementById('levVal').textContent = String(minLev);
-        buildGraph(Number(document.getElementById('season').value), typeFilter, minLev);
+        const conferenceFilter = document.getElementById('conferenceFilter').value;
+        const hideIsolates = document.getElementById('hideIsolates').checked;
+        document.getElementById('levVal').textContent = minLev.toFixed(2);
+        resetFocusState();
+        buildGraph(
+          Number(document.getElementById('season').value),
+          typeFilter,
+          minLev,
+          conferenceFilter,
+          hideIsolates
+        );
+        buildLegend(conferenceFilter);
       }
 
       document.getElementById('loadBtn').addEventListener('click', load);
       document.getElementById('fitBtn').addEventListener('click', () => cy && cy.fit());
       document.getElementById('lev').addEventListener('input', applyFilters);
       document.getElementById('typeFilter').addEventListener('change', applyFilters);
+      document.getElementById('conferenceFilter').addEventListener('change', applyFilters);
+      document.getElementById('hideIsolates').addEventListener('change', applyFilters);
       document.getElementById('pathBtn').addEventListener('click', () => {
+        resetFocusState();
         const typeFilter = document.getElementById('typeFilter').value;
         const minLev = Number(document.getElementById('lev').value);
         const src = document.getElementById('srcSel').value;
@@ -530,6 +844,12 @@ query Graph($season: Int!) {
           }
         }
         box.innerHTML = lines.join('');
+      });
+
+      document.getElementById('focusBtn').addEventListener('click', focusOnTeam);
+      document.getElementById('clearFocusBtn').addEventListener('click', () => {
+        resetFocusState();
+        runMainLayout();
       });
 
       // Auto-load on start
