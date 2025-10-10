@@ -1,0 +1,7 @@
+.game-result {
+  display: block;
+  text-align: center;
+  margin: 0.5em 0 0.25em 0;
+  font-weight: bold;
+  font-size: 1.1em;
+}

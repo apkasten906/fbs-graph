@@ -1,3 +1,79 @@
+// --- Helper functions for timeline explorer ---
+function computePairs(games) {
+  // Groups games by a unique key for each home/away pair (order-independent)
+  const map = new Map();
+  for (const game of games) {
+    if (!game.home || !game.away) continue;
+    const key = [game.home.id, game.away.id].sort().join('-');
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(game);
+  }
+  return map;
+}
+
+function shortestPathByInverseLeverage(pairs, teams, srcId, dstId) {
+  // Dijkstra's algorithm for shortest path by inverse average leverage
+  const adj = new Map();
+  for (const [key, games] of pairs) {
+    if (!games.length) continue;
+    const first = games[0];
+    const a = first.home?.id;
+    const b = first.away?.id;
+    if (!a || !b) continue;
+    const sum = games.reduce((s, g) => s + (g.leverage || 0), 0);
+    const avg = sum / games.length;
+    const weight = 1 / Math.max(1e-6, avg);
+    if (!adj.has(a)) adj.set(a, []);
+    if (!adj.has(b)) adj.set(b, []);
+    adj.get(a).push({ to: b, key, weight, avg, games });
+    adj.get(b).push({ to: a, key, weight, avg, games });
+  }
+  const dist = new Map();
+  const prev = new Map();
+  const prevEdge = new Map();
+  for (const team of teams) {
+    dist.set(team.id, Infinity);
+  }
+  const unvisited = new Set(teams.map(t => t.id));
+  dist.set(srcId, 0);
+  while (unvisited.size) {
+    let current = null;
+    let best = Infinity;
+    for (const id of unvisited) {
+      const d = dist.get(id);
+      if (d < best) {
+        best = d;
+        current = id;
+      }
+    }
+    if (current === null || best === Infinity) break;
+    unvisited.delete(current);
+    if (current === dstId) break;
+    const edges = adj.get(current) || [];
+    for (const edge of edges) {
+      if (!unvisited.has(edge.to)) continue;
+      const alt = dist.get(current) + edge.weight;
+      if (alt < dist.get(edge.to)) {
+        dist.set(edge.to, alt);
+        prev.set(edge.to, current);
+        prevEdge.set(edge.to, edge.key);
+      }
+    }
+  }
+  if (!prev.has(dstId)) return null;
+  const nodes = [];
+  const edges = [];
+  let cur = dstId;
+  while (cur !== srcId) {
+    nodes.push(cur);
+    edges.push(prevEdge.get(cur));
+    cur = prev.get(cur);
+  }
+  nodes.push(srcId);
+  nodes.reverse();
+  edges.reverse();
+  return { nodes, edges };
+}
 const COLORS = {
   sec: '#6CCFF6',
   b1g: '#B28DFF',
@@ -31,6 +107,9 @@ const QUERY = `
       week
       home { id name shortName conference { id shortName } }
       away { id name shortName conference { id shortName } }
+      homePoints
+      awayPoints
+      result
     }
   }
 `;
@@ -111,10 +190,13 @@ function buildSelectors() {
     o2.textContent = team.name;
     dstSel.appendChild(o2);
   }
-  if (opts.length) {
-    srcSel.value = opts[0].id;
-    dstSel.value = opts[1]?.id || opts[0].id;
-  }
+  // Restore last selection from localStorage if available, else use OSU/Georgia
+  const lastSrc = localStorage.getItem('fbsgraph_srcSel');
+  const lastDst = localStorage.getItem('fbsgraph_dstSel');
+  const osuId = opts.find(t => t.name.toLowerCase().includes('ohio state'))?.id || opts[0]?.id;
+  const ugaId = opts.find(t => t.name.toLowerCase().includes('georgia'))?.id || opts[1]?.id || opts[0]?.id;
+  srcSel.value = (lastSrc && opts.some(t => t.id === lastSrc)) ? lastSrc : osuId;
+  dstSel.value = (lastDst && opts.some(t => t.id === lastDst)) ? lastDst : ugaId;
 }
 
 function computeWeekKey(game) {
@@ -167,56 +249,38 @@ function updateTimelineSummary() {
 
 function renderTimeline() {
   const grid = document.getElementById('weekGrid');
-  const empty = document.getElementById('timelineEmpty');
   grid.innerHTML = '';
   const games = state.connection ? state.connectionGames : state.filteredGames;
   if (!games.length) {
-    empty.hidden = false;
-    updateTimelineSummary();
+    document.getElementById('timelineEmpty').hidden = false;
     return;
+  } else {
+    document.getElementById('timelineEmpty').hidden = true;
   }
-  empty.hidden = true;
-  const grouped = new Map();
+
+  // Group games by week
+  const gamesByWeek = new Map();
   for (const game of games) {
-    const wk = computeWeekKey(game);
-    const key = wk ?? 'unknown';
-    if (!grouped.has(key)) grouped.set(key, []);
-    grouped.get(key).push(game);
+    const week = computeWeekKey(game) ?? 'unknown';
+    if (!gamesByWeek.has(week)) gamesByWeek.set(week, []);
+    gamesByWeek.get(week).push(game);
   }
-  const sortedWeeks = Array.from(grouped.keys()).sort((a, b) => {
+  // Sort weeks
+  const sortedWeeks = Array.from(gamesByWeek.keys()).sort((a, b) => {
     if (a === 'unknown') return 1;
     if (b === 'unknown') return -1;
     return a - b;
   });
-  for (const weekKey of sortedWeeks) {
-    const column = document.createElement('article');
+
+  // Create columns for each week
+  for (const week of sortedWeeks) {
+    const column = document.createElement('div');
     column.className = 'week-column';
-    const header = document.createElement('header');
     const label = document.createElement('div');
     label.className = 'week-label';
-    label.textContent = formatWeekLabel(weekKey === 'unknown' ? null : weekKey);
-    header.appendChild(label);
-    const gamesForWeek = grouped.get(weekKey);
-    if (gamesForWeek.some(g => g.date)) {
-      const dates = gamesForWeek
-        .map(g => g.date)
-        .filter(Boolean)
-        .map(d => new Date(d))
-        .filter(d => !Number.isNaN(d.getTime()))
-        .sort((a, b) => a - b);
-      if (dates.length) {
-        const range = document.createElement('div');
-        range.className = 'week-date-range';
-        const start = dates[0].toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-        const end = dates[dates.length - 1].toLocaleDateString(undefined, {
-          month: 'short',
-          day: 'numeric',
-        });
-        range.textContent = start === end ? start : `${start} – ${end}`;
-        header.appendChild(range);
-      }
-    }
-    column.appendChild(header);
+    label.textContent = formatWeekLabel(week === 'unknown' ? null : week);
+    column.appendChild(label);
+    const gamesForWeek = gamesByWeek.get(week);
     for (const game of gamesForWeek.sort((a, b) => {
       const da = a.date ? new Date(a.date).getTime() : 0;
       const db = b.date ? new Date(b.date).getTime() : 0;
@@ -253,99 +317,36 @@ function renderTimeline() {
       teams.appendChild(label);
       teams.appendChild(away);
 
+      // Game result (score and winner) if played
+      let result = '';
+      const played = typeof game.homePoints === 'number' && typeof game.awayPoints === 'number';
+      if (played) {
+        const homeScore = game.homePoints;
+        const awayScore = game.awayPoints;
+        let winner = '';
+        if (game.result === 'HOME_WIN') winner = `🏠`;
+        else if (game.result === 'AWAY_WIN') winner = `✈️`;
+        else if (game.result === 'TIE') winner = '🤝';
+        else if (game.result === 'CANCELLED' || game.result === 'NO_CONTEST') winner = '🚫';
+        result = `<span class="game-result">${homeScore} - ${awayScore} ${winner}</span>`;
+      }
+
       const type = document.createElement('div');
       type.className = 'game-meta';
-      type.innerHTML = `<span>${formatType(game.type)}</span><span>${
-        game.home?.conference?.shortName || ''
-      } · ${game.away?.conference?.shortName || ''}</span>`;
+      type.innerHTML = `<span>${formatType(game.type)}</span><span>${game.home?.conference?.shortName || ''} · ${game.away?.conference?.shortName || ''}</span>`;
 
       card.appendChild(meta);
       card.appendChild(teams);
+      if (result) {
+        const resultDiv = document.createElement('div');
+        resultDiv.innerHTML = result;
+        card.appendChild(resultDiv);
+      }
       card.appendChild(type);
       column.appendChild(card);
     }
     grid.appendChild(column);
   }
-  updateTimelineSummary();
-}
-
-function computePairs(games) {
-  const map = new Map();
-  for (const game of games) {
-    const a = game.home?.id;
-    const b = game.away?.id;
-    if (!a || !b) continue;
-    const key = a < b ? `${a}__${b}` : `${b}__${a}`;
-    if (!map.has(key)) map.set(key, []);
-    map.get(key).push(game);
-  }
-  return map;
-}
-
-function shortestPathByInverseLeverage(pairs, teams, srcId, dstId) {
-  if (!srcId || !dstId || srcId === dstId) return null;
-  const teamIds = new Set(teams.map(t => t.id));
-  if (!teamIds.has(srcId) || !teamIds.has(dstId)) return null;
-  const adj = new Map();
-  for (const [key, games] of pairs) {
-    if (!games.length) continue;
-    const first = games[0];
-    const a = first.home?.id;
-    const b = first.away?.id;
-    if (!a || !b) continue;
-    const sum = games.reduce((s, g) => s + (g.leverage || 0), 0);
-    const avg = sum / games.length;
-    const weight = 1 / Math.max(1e-6, avg);
-    if (!adj.has(a)) adj.set(a, []);
-    if (!adj.has(b)) adj.set(b, []);
-    adj.get(a).push({ to: b, key, weight, avg, games });
-    adj.get(b).push({ to: a, key, weight, avg, games });
-  }
-  const dist = new Map();
-  const prev = new Map();
-  const prevEdge = new Map();
-  for (const team of teams) {
-    dist.set(team.id, Infinity);
-  }
-  const unvisited = new Set(teams.map(t => t.id));
-  dist.set(srcId, 0);
-  while (unvisited.size) {
-    let current = null;
-    let best = Infinity;
-    for (const id of unvisited) {
-      const d = dist.get(id);
-      if (d < best) {
-        best = d;
-        current = id;
-      }
-    }
-    if (current === null || best === Infinity) break;
-    unvisited.delete(current);
-    if (current === dstId) break;
-    const edges = adj.get(current) || [];
-    for (const edge of edges) {
-      if (!unvisited.has(edge.to)) continue;
-      const alt = dist.get(current) + edge.weight;
-      if (alt < dist.get(edge.to)) {
-        dist.set(edge.to, alt);
-        prev.set(edge.to, current);
-        prevEdge.set(edge.to, edge.key);
-      }
-    }
-  }
-  if (!prev.has(dstId)) return null;
-  const nodes = [];
-  const edges = [];
-  let cur = dstId;
-  while (cur !== srcId) {
-    nodes.push(cur);
-    edges.push(prevEdge.get(cur));
-    cur = prev.get(cur);
-  }
-  nodes.push(srcId);
-  nodes.reverse();
-  edges.reverse();
-  return { nodes, edges };
 }
 
 function renderPathInfo() {
@@ -572,13 +573,20 @@ async function load() {
     buildSelectors();
     applyConferenceLegend();
     applyFilters({ recomputePath: false });
-    state.connection = null;
-    state.connectionGames = [];
-    state.connectionSegments = [];
-    renderTimeline();
-    renderPathInfo();
-    renderConnectionLegend();
-    renderConnectionGraph();
+    // Auto-activate last or default connection
+    const srcSel = document.getElementById('srcSel');
+    const dstSel = document.getElementById('dstSel');
+    if (srcSel.value && dstSel.value) {
+      activatePath(srcSel.value, dstSel.value);
+    } else {
+      state.connection = null;
+      state.connectionGames = [];
+      state.connectionSegments = [];
+      renderTimeline();
+      renderPathInfo();
+      renderConnectionLegend();
+      renderConnectionGraph();
+    }
     updateStatus(
       `Loaded ${state.graph.teams.length} teams and ${state.graph.games.length} games for ${season}.`
     );
@@ -606,8 +614,14 @@ function activatePath(src, dst) {
     renderPathInfo();
     renderConnectionLegend();
     renderConnectionGraph();
-    document.getElementById('pathInfo').innerHTML =
-      '<span class="status">No path found with current filters.</span>';
+    const typeFilter = document.getElementById('typeFilter').value;
+    if (typeFilter === 'CONFERENCE') {
+      document.getElementById('pathInfo').innerHTML =
+        '<span class="status">No Conference Connections Found / Available.</span>';
+    } else {
+      document.getElementById('pathInfo').innerHTML =
+        '<span class="status">No path found with current filters.</span>';
+    }
     return;
   }
   const segments = [];
@@ -640,19 +654,26 @@ function activatePath(src, dst) {
 document.getElementById('loadBtn').addEventListener('click', () => load());
 document.getElementById('lev').addEventListener('input', () => applyFilters());
 document.getElementById('typeFilter').addEventListener('change', () => applyFilters());
+function persistSelection() {
+  const src = document.getElementById('srcSel').value;
+  const dst = document.getElementById('dstSel').value;
+  localStorage.setItem('fbsgraph_srcSel', src);
+  localStorage.setItem('fbsgraph_dstSel', dst);
+}
+
+document.getElementById('srcSel').addEventListener('change', persistSelection);
+document.getElementById('dstSel').addEventListener('change', persistSelection);
 document.getElementById('pathBtn').addEventListener('click', () => {
   const src = document.getElementById('srcSel').value;
   const dst = document.getElementById('dstSel').value;
+  persistSelection();
   activatePath(src, dst);
 });
 document.getElementById('clearPathBtn').addEventListener('click', () => {
   state.connection = null;
   state.connectionGames = [];
   state.connectionSegments = [];
-  renderTimeline();
-  renderPathInfo();
-  renderConnectionLegend();
-  renderConnectionGraph();
+  applyFilters({ recomputePath: false });
 });
 
 load();

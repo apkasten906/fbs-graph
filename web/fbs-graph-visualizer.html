@@ -379,6 +379,12 @@ query Graph($season: Int!) {
           o2.textContent = t.name;
           dstSel.appendChild(o2);
         }
+        // Set default selections: OSU and Georgia
+        // Try common IDs, fallback to first if not found
+        const osuId = opts.find(t => t.name.toLowerCase().includes('ohio state'))?.id || opts[0]?.id;
+        const ugaId = opts.find(t => t.name.toLowerCase().includes('georgia'))?.id || opts[1]?.id;
+        if (osuId) srcSel.value = osuId;
+        if (ugaId) dstSel.value = ugaId;
       }
 
       function shortestPathByInverseLeverage(srcId, dstId, typeFilter, minLev) {
