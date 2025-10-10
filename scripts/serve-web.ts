@@ -1,6 +1,5 @@
 import http from 'node:http';
-import { createReadStream } from 'node:fs';
-import { promises as fs } from 'node:fs';
+import { createReadStream, promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -42,6 +41,7 @@ async function resolvePath(requestPath: string) {
   try {
     stats = await fs.stat(candidate);
   } catch (error) {
+    console.error(`Error accessing path "${candidate}":`, error);
     return null;
   }
   if (stats.isDirectory()) {
@@ -50,6 +50,7 @@ async function resolvePath(requestPath: string) {
       await fs.access(indexPath);
       return indexPath;
     } catch (error) {
+      console.error(`Error accessing index file "${indexPath}":`, error);
       return null;
     }
   }
