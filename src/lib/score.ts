@@ -33,13 +33,13 @@ export function buildNormalizedSpPlus(
 ): Map<string, number> {
   const m = new Map<string, number>();
   for (const ts of teamSeasons)
-    if (ts.season === season && typeof ts.spPlus === 'number') m.set(ts.id, ts.spPlus!);
+    if (ts.season === season && typeof ts.spPlus === 'number') m.set(ts.id, ts.spPlus);
   return normalizeMap(m);
 }
 export function buildNormalizedElo(teamSeasons: TeamSeason[], season: number): Map<string, number> {
   const m = new Map<string, number>();
   for (const ts of teamSeasons)
-    if (ts.season === season && typeof ts.elo === 'number') m.set(ts.id, ts.elo!);
+    if (ts.season === season && typeof ts.elo === 'number') m.set(ts.id, ts.elo);
   return normalizeMap(m);
 }
 
