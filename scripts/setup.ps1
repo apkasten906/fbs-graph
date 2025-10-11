@@ -1,28 +1,50 @@
 # set CFBD key
-# PowerShell:   
-$env:CFBD_KEY="AA0okF/lE7un15VjY0TNHKZzNfVnK9OzH7dS2FHWGE6h3LD2SK1nIQp20Oq7UZvA"
+# PowerShell:
+$env:CFBD_KEY=$null
 $env:MODE = "full"
 $env:YEAR = "2025"
 # macOS/Linux:  export CFBD_KEY="pk_..."
+
+function GetLocalEnvVariable {
+  param (
+    [string]$RequiredVar = "",
+    [string]$EnvFilePath = "./.env",
+    [switch]$Debug = $false
+  )
+
+  $value = $null
+
+  if (-not (Test-Path $EnvFilePath)) {
+    Write-Warning "$EnvFilePath not found."
+    return $value
+  }
+
+  if ((Test-Path $EnvFilePath) -and (-not $value)) {
+    Get-Content $EnvFilePath | ForEach-Object {
+      if ($_ -match "^($RequiredVar)=(.*)$") {
+        $value = $matches[2].Trim()
+        if ($Debug) { Write-Host "[DEBUG] Loaded $RequiredVar from .env" $value -ForegroundColor Green }
+      }
+    }
+  }
+  else {
+    Write-Warning ".env file not found and $RequiredVar not set."
+  }
+
+  return $value
+}
+
+$env:CFBD_KEY = GetLocalEnvVariable -RequiredVar "CFBD_KEY" 
+
+if (-not $env:CFBD_KEY) {
+  Write-Error "CFBD_KEY is not set. Please set it in the environment or in the .env file."
+  exit 1
+}
 
 # Debug: Print environment variables
 Write-Host "[DEBUG] CFBD_KEY: $env:CFBD_KEY"
 Write-Host "[DEBUG] MODE: $env:MODE"
 Write-Host "[DEBUG] YEAR: $env:YEAR"
-
-# Set CFBD_KEY from .env if not already set
-if (-not $env:CFBD_KEY) {
-	if (Test-Path "./.env") {
-		Get-Content .env | ForEach-Object {
-			if ($_ -match '^(CFBD_KEY)=(.*)$') {
-				$env:CFBD_KEY = $matches[2].Trim()
-				Write-Host "[DEBUG] Loaded CFBD_KEY from .env"
-			}
-		}
-	} else {
-		Write-Warning ".env file not found and CFBD_KEY not set."
-	}
-}
 
 Write-Host "[DEBUG] Starting fetch:confs"
 if (-not (npm run fetch:confs)) { Write-Error "fetch:confs failed"; exit 1 }
