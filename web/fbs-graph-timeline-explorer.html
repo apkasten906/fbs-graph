@@ -12,8 +12,6 @@
     <header>
       <h1>FBS Schedule Graph — Timeline Explorer</h1>
       <div class="controls">
-        <label for="endpoint">GraphQL:</label>
-        <input id="endpoint" value="http://localhost:4100/graphql" size="34" />
         <label for="season">Season:</label>
         <input id="season" type="number" value="2025" style="width: 86px" />
         <label for="typeFilter">Type:</label>
@@ -73,7 +71,17 @@
         </div>
       </section>
     </main>
-    <footer>Tip: try nudging the leverage slider to surface only the highest-impact weeks. Reload pulls fresh data from your GraphQL endpoint.</footer>
-    <script src="modules/fbs-graph-timeline-explorer.js"></script>
+    <footer>Tip: try nudging the leverage slider to surface only the highest-impact weeks.</footer>
+    <script type="module">
+      // Load static data adapter first
+      import { staticData } from './modules/static-data-adapter.js';
+      window.staticDataAdapter = staticData;
+      console.log('[Timeline Explorer] Static data adapter initialized');
+      
+      // Then load the main script dynamically to ensure adapter is ready
+      const script = document.createElement('script');
+      script.src = './modules/fbs-graph-timeline-explorer.js';
+      document.body.appendChild(script);
+    </script>
   </body>
 </html>

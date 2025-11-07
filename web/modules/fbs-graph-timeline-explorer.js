@@ -194,9 +194,10 @@ function buildSelectors() {
   const lastSrc = localStorage.getItem('fbsgraph_srcSel');
   const lastDst = localStorage.getItem('fbsgraph_dstSel');
   const osuId = opts.find(t => t.name.toLowerCase().includes('ohio state'))?.id || opts[0]?.id;
-  const ugaId = opts.find(t => t.name.toLowerCase().includes('georgia'))?.id || opts[1]?.id || opts[0]?.id;
-  srcSel.value = (lastSrc && opts.some(t => t.id === lastSrc)) ? lastSrc : osuId;
-  dstSel.value = (lastDst && opts.some(t => t.id === lastDst)) ? lastDst : ugaId;
+  const ugaId =
+    opts.find(t => t.name.toLowerCase().includes('georgia'))?.id || opts[1]?.id || opts[0]?.id;
+  srcSel.value = lastSrc && opts.some(t => t.id === lastSrc) ? lastSrc : osuId;
+  dstSel.value = lastDst && opts.some(t => t.id === lastDst) ? lastDst : ugaId;
 }
 
 function computeWeekKey(game) {
@@ -378,7 +379,7 @@ function renderConnectionLegend() {
   const legend = document.getElementById('connectionLegend');
   legend.innerHTML = '';
   if (!state.connection) return;
-  state.connectionSegments.forEach((segment, idx) => {
+  state.connectionSegments.forEach(segment => {
     const fromTeam = state.graph.teams.find(t => t.id === segment.from);
     const toTeam = state.graph.teams.find(t => t.id === segment.to);
     const item = document.createElement('span');
@@ -513,7 +514,7 @@ function renderConnectionGraph() {
     svg.appendChild(dotAway);
   });
 
-  pointsByTeam.forEach((points, teamId) => {
+  pointsByTeam.forEach(points => {
     const sorted = points
       .slice()
       .sort((a, b) => a.x - b.x)
@@ -552,6 +553,7 @@ function applyFilters({ recomputePath = true } = {}) {
     renderConnectionGraph();
     renderPathInfo();
     renderConnectionLegend();
+    updateTimelineSummary();
   }
 }
 
@@ -560,16 +562,41 @@ async function load() {
     state.loading = true;
     state.error = null;
     updateStatus('Loading data…');
-    const endpoint = document.getElementById('endpoint').value.trim();
     const season = Number(document.getElementById('season').value);
-    const [confRes, mainRes] = await Promise.all([
-      POST(endpoint, { query: CONFERENCES_QUERY }),
-      POST(endpoint, { query: QUERY, variables: { season } }),
-    ]);
-    if (confRes.errors) throw new Error(confRes.errors[0]?.message || 'Conference query failed');
-    if (mainRes.errors) throw new Error(mainRes.errors[0]?.message || 'Graph query failed');
-    state.conferenceMeta = confRes.data?.conferences ?? [];
-    state.graph = mainRes.data || { teams: [], games: [] };
+
+    console.log(
+      '[Timeline Explorer] Starting load, staticDataAdapter available:',
+      !!window.staticDataAdapter
+    );
+
+    // Use static data adapter if available, otherwise fall back to GraphQL
+    if (window.staticDataAdapter) {
+      console.log('[Timeline Explorer] Using static data adapter');
+      const [conferences, result] = await Promise.all([
+        window.staticDataAdapter.getConferences(),
+        window.staticDataAdapter.queryGraph(season),
+      ]);
+      console.log('[Timeline Explorer] Data loaded:', {
+        conferences: conferences?.length,
+        teams: result.data?.teams?.length,
+        games: result.data?.games?.length,
+      });
+      state.conferenceMeta = conferences ?? [];
+      state.graph = result.data || { teams: [], games: [] };
+    } else {
+      console.log('[Timeline Explorer] Static data adapter not available, using GraphQL');
+      // Fallback to GraphQL if static data not available
+      const endpoint =
+        document.getElementById('endpoint')?.value?.trim() || 'http://localhost:4100/graphql';
+      const [confRes, mainRes] = await Promise.all([
+        POST(endpoint, { query: CONFERENCES_QUERY }),
+        POST(endpoint, { query: QUERY, variables: { season } }),
+      ]);
+      if (confRes.errors) throw new Error(confRes.errors[0]?.message || 'Conference query failed');
+      if (mainRes.errors) throw new Error(mainRes.errors[0]?.message || 'Graph query failed');
+      state.conferenceMeta = confRes.data?.conferences ?? [];
+      state.graph = mainRes.data || { teams: [], games: [] };
+    }
     buildSelectors();
     applyConferenceLegend();
     applyFilters({ recomputePath: false });

@@ -48,7 +48,7 @@ async function resolvePath(requestPath: string) {
   let stats;
   try {
     stats = await fs.stat(candidate);
-  } catch (error) {
+  } catch {
     return null;
   }
   if (stats.isDirectory()) {
@@ -56,7 +56,7 @@ async function resolvePath(requestPath: string) {
     try {
       await fs.access(indexPath);
       return indexPath;
-    } catch (error) {
+    } catch {
       return null;
     }
   }

@@ -1,5 +1,7 @@
 // Conference map: id → { shortName, name }
-import conferencesData from '../../src/data/conferences.json' assert { type: 'json' };
+// Note: import assertions can cause parser issues in some ESLint/parser versions.
+// Use a plain import here to keep tooling happy.
+import conferencesData from '../../src/data/conferences.json';
 
 export const conferenceMap = Object.fromEntries(
   conferencesData.map(c => [c.id, { shortName: c.shortName, name: c.name }])

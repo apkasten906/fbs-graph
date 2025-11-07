@@ -116,8 +116,6 @@
     <header>
       <h1>FBS Schedule Graph — Teams & Matchups</h1>
       <div class="controls">
-        <label>GraphQL:</label>
-        <input id="endpoint" value="http://localhost:4100/graphql" size="34" />
         <label>Season:</label>
         <input id="season" type="number" value="2025" style="width: 80px" />
         <label>Type:</label>
@@ -457,22 +455,38 @@ query Graph($season: Int!) {
       `;
 
       async function load() {
-        const endpoint = document.getElementById('endpoint').value.trim();
         const season = Number(document.getElementById('season').value);
-        // Fetch conference metadata first
-        const confRes = await POST(endpoint, { query: CONFERENCES_QUERY });
-        if (confRes.errors) {
-          alert('GraphQL error (conferences): ' + JSON.stringify(confRes.errors[0], null, 2));
-          return;
+        
+        // Use static data adapter if available, otherwise fall back to GraphQL
+        if (window.staticDataAdapter) {
+          try {
+            const [conferences, result] = await Promise.all([
+              window.staticDataAdapter.getConferences(),
+              window.staticDataAdapter.queryGraph(season),
+            ]);
+            conferenceMeta = conferences || [];
+            graphData = result.data;
+          } catch (error) {
+            alert('Error loading static data: ' + error.message);
+            return;
+          }
+        } else {
+          // Fallback to GraphQL if static data not available
+          const endpoint = document.getElementById('endpoint')?.value?.trim() || 'http://localhost:4100/graphql';
+          const confRes = await POST(endpoint, { query: CONFERENCES_QUERY });
+          if (confRes.errors) {
+            alert('GraphQL error (conferences): ' + JSON.stringify(confRes.errors[0], null, 2));
+            return;
+          }
+          conferenceMeta = confRes.data.conferences || [];
+          const res = await POST(endpoint, { query: QUERY, variables: { season } });
+          if (res.errors) {
+            alert('GraphQL error: ' + JSON.stringify(res.errors[0], null, 2));
+            return;
+          }
+          graphData = res.data;
         }
-        conferenceMeta = confRes.data.conferences || [];
-        // Now fetch main graph data
-        const res = await POST(endpoint, { query: QUERY, variables: { season } });
-        if (res.errors) {
-          alert('GraphQL error: ' + JSON.stringify(res.errors[0], null, 2));
-          return;
-        }
-        graphData = res.data;
+        
         buildLegend();
         buildSelectors();
         applyFilters();
@@ -538,7 +552,15 @@ query Graph($season: Int!) {
         box.innerHTML = lines.join('');
       });
 
-      // Auto-load on start
+      // Auto-load will be triggered after static data adapter loads
+    </script>
+    <script type="module">
+      // Load static data adapter first
+      import { staticData } from './modules/static-data-adapter.js';
+      window.staticDataAdapter = staticData;
+      console.log('[Visualizer] Static data adapter initialized');
+      
+      // Trigger the load function that was defined in the previous script
       load();
     </script>
   </body>

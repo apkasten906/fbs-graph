@@ -2,6 +2,12 @@
 
 This project models FBS college football teams and schedules as a graph, exposing rich data and analytics via a GraphQL API and interactive web UI.
 
+## 🌐 Live Demo
+
+**[View the live interactive web app on GitHub Pages](https://apkasten906.github.io/fbs-graph/)**
+
+The GitHub Pages deployment provides a fully static version of the visualization tools, pre-generated with the latest FBS schedule data.
+
 ## 🚀 Getting Started
 
 ### 1. Install dependencies
@@ -129,12 +135,22 @@ query {
 
 ## 🧩 Useful Scripts
 
+### Local Development
 - `npm run setup` — One-step data import and preparation
 - `npm run dev` — Start backend GraphQL server
 - `npm run web:serve` — Start static web server
 - `npm run fetch:all` — Fetch all data (conferences, teams, schedules, polls, ratings)
 - `npm run import:csv` — Import/transform CSV data
 - `npm run preview:playoff` — Run playoff preview query from CLI
+
+### GitHub Pages Deployment
+- `npm run generate:static` — Generate static JSON data files for GitHub Pages
+- `npm run build:pages` — Alias for `generate:static`, used by CI/CD pipeline
+
+The GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) automatically:
+1. Generates static data files from the latest data
+2. Deploys the entire project to GitHub Pages
+3. Makes the interactive visualizations available at `https://apkasten906.github.io/fbs-graph/`
 
 ---
 

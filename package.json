@@ -12,7 +12,10 @@
     "preview:playoff": "tsx scripts/run-playoff-preview.ts",
     "web:serve": "tsx scripts/serve-web.ts",
     "test": "vitest",
-    "lint": "eslint . --config .eslintrc.cjs",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint .",
     "format": "prettier --write .",
     "audit:data": "npx tsx ./scripts/audit-data.ts",
     "fetch:confs": "tsx scripts/fetch-cfbd-conferences-to-json.ts",
@@ -25,7 +28,9 @@
     "fetch:ratings": "npm run fetch:elo; npm run fetch:sp",
     "fetch:ranks": "npm run fetch:ap; npm run fetch:ratings",
     "fetch:all": "npm run fetch:confs; npm run fetch:teams; npm run seasons:make; npm run fetch:schedules; npm run fetch:ranks",
-    "setup": "powershell.exe -ExecutionPolicy Bypass -File .\\scripts\\setup.ps1"
+    "setup": "powershell.exe -ExecutionPolicy Bypass -File .\\scripts\\setup.ps1",
+    "generate:static": "tsx scripts/generate-static-data.ts",
+    "build:pages": "npm run generate:static"
   },
   "dependencies": {
     "@apollo/server": "^4.10.0",
@@ -37,13 +42,15 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@next/eslint-plugin-next": "^15.5.4",
     "@types/node": "^20.11.30",
     "@typescript-eslint/eslint-plugin": "^8.46.0",
     "@typescript-eslint/parser": "^8.46.0",
-    "eslint": "^9.37.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "jsdom": "^24.0.0",
     "prettier": "^3.6.2",
     "tsx": "^4.16.2",

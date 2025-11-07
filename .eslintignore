@@ -1,9 +1,0 @@
-# Ignore build outputs
-**/dist/**/*
-**/node_modules/**/*
-
-# Ignore generated files
-**/*.d.ts
-
-# Ignore specific problem files while packages are excluded from root config
-

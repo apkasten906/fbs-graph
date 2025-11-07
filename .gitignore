@@ -48,6 +48,10 @@ coverage/
 # Generated JSON
 src/data/games.scored.*.json
 
+# GitHub Pages static data (generated on deployment)
+web/data/*.json
+!web/data/.gitkeep
+
 # Others
 .idea/
 *.iml

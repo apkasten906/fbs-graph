@@ -657,9 +657,9 @@ function createTimelineApp(options = {}) {
     const hint = doc.createElement('p');
     hint.innerHTML = 'Once the server is running, use this link to launch the full experience:';
 
-    const link = doc.createElement('a');
-    link.href = 'http://localhost:4173/web/matchup-timeline.html';
-    link.textContent = 'Open http://localhost:4173/web/matchup-timeline.html';
+    const link = document.createElement('a');
+    link.href = './matchup-timeline.html';
+    link.textContent = 'Open Matchup Timeline';
 
     wrapper.append(heading, copy, hint, link);
     doc.body.appendChild(wrapper);

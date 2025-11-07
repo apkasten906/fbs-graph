@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Game, PollSnapshot, TeamSeason, PollType } from './../../types/index';
 type RankMap = Map<string, number>; // teamSeasonId -> rank (1 best)
 
