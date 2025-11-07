@@ -51,3 +51,8 @@ export function determineTier(value) {
   if (value >= 0.85) return 'notable';
   return 'watch';
 }
+
+// Default GraphQL endpoint used when static adapter is not available or when
+// users haven't overridden the endpoint in the UI. Centralized here so the
+// same value is used across module and non-module pages (visualizer/timeline).
+export const GRAPHQL_ENDPOINT = 'http://localhost:4100/graphql';

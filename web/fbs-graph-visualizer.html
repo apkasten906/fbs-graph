@@ -164,6 +164,11 @@
     <footer class="small">Edit endpoint if your server runs elsewhere; set season; Reload.</footer>
 
     <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+    <script type="module">
+      // Expose centralized GraphQL endpoint to non-module scripts
+      import { GRAPHQL_ENDPOINT } from './modules/config.js';
+      window.GRAPHQL_ENDPOINT = GRAPHQL_ENDPOINT;
+    </script>
     <script>
       const COLORS = {
         sec: '#6CCFF6',
@@ -482,7 +487,7 @@ query Graph($season: Int!) {
           }
         } else {
           // Fallback to GraphQL if static data not available
-          const endpoint = document.getElementById('endpoint')?.value?.trim() || 'http://localhost:4100/graphql';
+          const endpoint = document.getElementById('endpoint')?.value?.trim() || window.GRAPHQL_ENDPOINT;
           const confRes = await POST(endpoint, { query: CONFERENCES_QUERY });
           if (confRes.errors) {
             alert('GraphQL error (conferences): ' + JSON.stringify(confRes.errors[0], null, 2));

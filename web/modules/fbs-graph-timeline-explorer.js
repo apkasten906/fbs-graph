@@ -118,6 +118,8 @@ const CONFERENCES_QUERY = `
   query { conferences { id name shortName } }
 `;
 
+import { GRAPHQL_ENDPOINT } from './config.js';
+
 const state = {
   loading: false,
   error: null,
@@ -586,8 +588,7 @@ async function load() {
     } else {
       console.log('[Timeline Explorer] Static data adapter not available, using GraphQL');
       // Fallback to GraphQL if static data not available
-      const endpoint =
-        document.getElementById('endpoint')?.value?.trim() || 'http://localhost:4100/graphql';
+      const endpoint = document.getElementById('endpoint')?.value?.trim() || GRAPHQL_ENDPOINT;
       const [confRes, mainRes] = await Promise.all([
         POST(endpoint, { query: CONFERENCES_QUERY }),
         POST(endpoint, { query: QUERY, variables: { season } }),

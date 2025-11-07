@@ -111,15 +111,9 @@ export class StaticDataAdapter {
    * Simulates GraphQL query for games with filtering
    */
   async queryGames(options = {}) {
-    const {
-      season = new Date().getFullYear(),
-      week,
-      teamId,
-      conferenceId,
-      type,
-      playedOnly,
-    } = options;
+    const { season, week, teamId, conferenceId, type, playedOnly } = options;
 
+    // Delegate season validation to getGames to keep a single source of truth
     let games = await this.getGames(season);
 
     if (week !== undefined) {
@@ -151,13 +145,9 @@ export class StaticDataAdapter {
    * Simulates GraphQL essentialMatchups query
    */
   async queryEssentialMatchups(options = {}) {
-    const {
-      season = new Date().getFullYear(),
-      week,
-      limit = 50,
-      includeConferenceGames = true,
-    } = options;
+    const { season, week, limit = 50, includeConferenceGames = true } = options;
 
+    // Let getEssentialMatchups handle season validation
     let matchups = await this.getEssentialMatchups(season);
 
     if (week !== undefined) {
@@ -202,7 +192,7 @@ export class StaticDataAdapter {
    * Legacy compatibility method - converts static data query to GraphQL-like response
    */
   async executeQuery(query, variables) {
-    const season = variables?.season || new Date().getFullYear();
+    const season = this._validatedSeason(variables?.season);
 
     // For the timeline explorer query
     if (
