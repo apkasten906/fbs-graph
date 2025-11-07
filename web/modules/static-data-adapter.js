@@ -7,6 +7,8 @@ export class StaticDataAdapter {
   constructor(basePath = 'data') {
     this.basePath = basePath;
     this.cache = new Map();
+    // Single source of truth for default season used when callers omit a season
+    this.defaultSeason = new Date().getFullYear();
   }
 
   /**
@@ -50,15 +52,35 @@ export class StaticDataAdapter {
   }
 
   async getGames(season) {
-    return this.loadJSON(`games-${season}.json`);
+    const s = this._validatedSeason(season);
+    return this.loadJSON(`games-${s}.json`);
   }
 
   async getEssentialMatchups(season) {
-    return this.loadJSON(`essential-matchups-${season}.json`);
+    const s = this._validatedSeason(season);
+    return this.loadJSON(`essential-matchups-${s}.json`);
   }
 
   async getConferenceConnectivity(season) {
-    return this.loadJSON(`conference-connectivity-${season}.json`);
+    const s = this._validatedSeason(season);
+    return this.loadJSON(`conference-connectivity-${s}.json`);
+  }
+
+  /**
+   * Validate season parameter, fallback to defaultSeason and warn when invalid.
+   * @param {any} season
+   * @returns {number} validated season
+   */
+  _validatedSeason(season) {
+    if (typeof season === 'number' && Number.isFinite(season) && season > 1900 && season < 3000)
+      return season;
+    if (season == null) return this.defaultSeason;
+    const parsed = Number(season);
+    if (Number.isFinite(parsed) && parsed > 1900 && parsed < 3000) return parsed;
+    console.warn(
+      `[StaticDataAdapter] Invalid season '${season}' supplied; falling back to ${this.defaultSeason}`
+    );
+    return this.defaultSeason;
   }
 
   /**
@@ -204,7 +226,9 @@ export class StaticDataAdapter {
     // Provide helpful context to aid debugging in CI/production
     const snippet = typeof query === 'string' ? query.substring(0, 200) : String(query);
     throw new Error(
-      `Unsupported query type. Expected timeline or essentialMatchups queries. Received: ${snippet}...`
+      'Unsupported query type. Expected timeline or essentialMatchups queries. Received: ' +
+        snippet +
+        '...'
     );
   }
 }

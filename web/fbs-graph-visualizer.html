@@ -315,23 +315,33 @@ query Graph($season: Int!) {
         const { id } = data;
         const [_, k] = id.split('e_');
         const games = pairGames.get(k) || [];
-        const lines = [];
-        lines.push(`<div class="small muted">Games on this connection (${games.length}):</div>`);
+        const container = document.getElementById('pathInfo');
+        // Build DOM nodes instead of using innerHTML to avoid XSS and ensure safe updates
+        const frag = document.createDocumentFragment();
+        const header = document.createElement('div');
+        header.className = 'small muted';
+        header.textContent = `Games on this connection (${games.length}):`;
+        frag.appendChild(header);
         for (const g of games.slice().sort((a, b) => (a.date || '').localeCompare(b.date || ''))) {
           const when = g.date ? new Date(g.date).toLocaleString() : 'TBD';
-          lines.push(
-            `<div class="mono">${when} — ${g.home.name} vs ${g.away.name} <span class="muted">(lev ${Number(g.leverage || 0).toFixed(3)})</span></div>`
-          );
+          const row = document.createElement('div');
+          row.className = 'mono';
+          row.textContent = `${when} — ${g.home.name} vs ${g.away.name} `;
+          const lev = document.createElement('span');
+          lev.className = 'muted';
+          lev.textContent = `(lev ${Number(g.leverage || 0).toFixed(3)})`;
+          row.appendChild(lev);
+          frag.appendChild(row);
         }
-        document.getElementById('pathInfo').innerHTML = lines.join('');
+        container.replaceChildren(frag);
       }
 
       // Conference metadata cache (populated from GraphQL)
       let conferenceMeta = [];
 
       function buildLegend() {
-        const container = document.getElementById('legend');
-        container.innerHTML = '';
+  const container = document.getElementById('legend');
+  container.replaceChildren();
         const seen = new Set();
         // Collect all conferences present in the data
         for (const t of graphData.teams) {
@@ -365,8 +375,8 @@ query Graph($season: Int!) {
         const srcSel = document.getElementById('srcSel');
         const dstSel = document.getElementById('dstSel');
         const opts = graphData.teams.slice().sort((a, b) => a.name.localeCompare(b.name));
-        srcSel.innerHTML = '';
-        dstSel.innerHTML = '';
+  srcSel.replaceChildren();
+  dstSel.replaceChildren();
         for (const t of opts) {
           const o1 = document.createElement('option');
           o1.value = t.id;
@@ -525,12 +535,17 @@ query Graph($season: Int!) {
           .style({ 'line-color': '#fff', 'background-color': '#fff' })
           .update();
         // Render path with game details
-        const lines = [];
-        lines.push(`<div class="small muted">Shortest connection (by 1/leverage):</div>`);
+        const frag = document.createDocumentFragment();
+        const header = document.createElement('div');
+        header.className = 'small muted';
+        header.textContent = 'Shortest connection (by 1/leverage):';
+        frag.appendChild(header);
         for (let i = 0; i < res.nodes.length; i++) {
           const id = res.nodes[i];
           const t = teamIndex.get(id);
-          lines.push(`<div>${t.name}${i < res.nodes.length - 1 ? ' → ' : ''}</div>`);
+          const nodeLine = document.createElement('div');
+          nodeLine.textContent = t.name + (i < res.nodes.length - 1 ? ' → ' : '');
+          frag.appendChild(nodeLine);
           if (i < res.nodes.length - 1) {
             const k = res.edges[i];
             const games = pairGames.get(k) || [];
@@ -538,18 +553,24 @@ query Graph($season: Int!) {
               .slice()
               .sort((a, b) => (b.leverage || 0) - (a.leverage || 0))
               .slice(0, 3);
-            lines.push(
-              `<div class="muted small" style="margin:4px 0 6px 8px">Top games on this edge:</div>`
-            );
+            const subHeader = document.createElement('div');
+            subHeader.className = 'muted small';
+            subHeader.style.margin = '4px 0 6px 8px';
+            subHeader.textContent = 'Top games on this edge:';
+            frag.appendChild(subHeader);
             for (const g of top) {
               const when = g.date ? new Date(g.date).toLocaleDateString() : 'TBD';
-              lines.push(
-                `<div class="mono" style="margin-left:8px">${when} — ${g.home.name} vs ${g.away.name} (lev ${Number(g.leverage || 0).toFixed(3)})</div>`
-              );
+              const row = document.createElement('div');
+              row.className = 'mono';
+              row.style.marginLeft = '8px';
+              row.textContent = `${when} — ${g.home.name} vs ${g.away.name} (lev ${Number(
+                g.leverage || 0
+              ).toFixed(3)})`;
+              frag.appendChild(row);
             }
           }
         }
-        box.innerHTML = lines.join('');
+        box.replaceChildren(frag);
       });
 
       // Auto-load will be triggered after static data adapter loads

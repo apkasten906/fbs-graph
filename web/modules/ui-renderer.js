@@ -21,7 +21,7 @@ export function createUIRenderer(doc) {
 
   function renderSummary(state, pathSummary) {
     if (!pathSummary) return;
-    pathSummary.innerHTML = '';
+    pathSummary.replaceChildren();
 
     if (state.loading) {
       pathSummary.appendChild(createEmptyState('Loading leverage data…'));
@@ -120,7 +120,7 @@ export function createUIRenderer(doc) {
 
   function renderFilters(state, filters, getTeamsForScope, applyState) {
     if (!filters) return;
-    filters.innerHTML = '';
+    filters.replaceChildren();
 
     if (state.loading) {
       filters.appendChild(createEmptyState('Loading selections…'));
@@ -269,7 +269,7 @@ export function createUIRenderer(doc) {
 
   function renderTimeline(state, timeline) {
     if (!timeline) return;
-    timeline.innerHTML = '';
+    timeline.replaceChildren();
 
     if (state.loading) {
       timeline.appendChild(createEmptyState('Loading timeline…'));
@@ -400,7 +400,7 @@ export function createUIRenderer(doc) {
   function renderFileModeNotice() {
     if (!doc?.body) return;
     doc.body.classList.add('file-mode');
-    doc.body.innerHTML = '';
+    doc.body.replaceChildren();
     const wrapper = doc.createElement('div');
     wrapper.className = 'file-overlay';
 
@@ -413,7 +413,7 @@ export function createUIRenderer(doc) {
     const hint = doc.createElement('p');
     hint.innerHTML = 'Once the server is running, use this link to launch the full experience:';
 
-    const link = document.createElement('a');
+    const link = doc.createElement('a');
     link.href = './matchup-timeline.html';
     link.textContent = 'Open Matchup Timeline';
 
