@@ -38,6 +38,11 @@ function conferenceById(id: string): Conference | undefined {
   return conferences.find(c => c.id === id);
 }
 
+function getTeamConference(teamId: string): Conference | undefined {
+  const team = teamById(teamId);
+  return team && team.conferenceId ? conferenceById(team.conferenceId) : undefined;
+}
+
 function enrichGamesForSeason(season: number, ranking: PollType): Game[] {
   const apMap = buildAPRankMap(polls, season);
   const spNorm = buildNormalizedSpPlus(teamSeasons, season);
@@ -98,8 +103,8 @@ for (const season of seasons) {
     ...g,
     homeTeam: teamById(g.homeTeamId),
     awayTeam: teamById(g.awayTeamId),
-    homeConference: conferenceById(teamById(g.homeTeamId)?.conferenceId ?? ''),
-    awayConference: conferenceById(teamById(g.awayTeamId)?.conferenceId ?? ''),
+    homeConference: getTeamConference(g.homeTeamId),
+    awayConference: getTeamConference(g.awayTeamId),
   }));
 
   fs.writeFileSync(
@@ -117,8 +122,8 @@ for (const season of seasons) {
       ...g,
       homeTeam: teamById(g.homeTeamId),
       awayTeam: teamById(g.awayTeamId),
-      homeConference: conferenceById(teamById(g.homeTeamId)?.conferenceId ?? ''),
-      awayConference: conferenceById(teamById(g.awayTeamId)?.conferenceId ?? ''),
+      homeConference: getTeamConference(g.homeTeamId),
+      awayConference: getTeamConference(g.awayTeamId),
     }));
 
   fs.writeFileSync(

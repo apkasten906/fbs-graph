@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+// Note: Some imports in this module are used only for type annotations and may
+// appear unused to ESLint. The rule is disabled to avoid noisy lint warnings
+// while keeping full TypeScript type information.
 import { Game, PollSnapshot, TeamSeason, PollType } from './../../types/index';
 type RankMap = Map<string, number>; // teamSeasonId -> rank (1 best)
 
@@ -56,7 +59,8 @@ function weightFromNorm(norm?: number) {
 function timingBoost(phase: Game['phase'], week?: number, type?: Game['type']) {
   if (type === 'PLAYOFF' || type === 'CHAMPIONSHIP' || type === 'BOWL') return 1.25;
   if (phase === 'REGULAR') {
-    if (!week) return 1.0;
+  // treat missing week (undefined/null) as no timing boost
+  if (week == null) return 1.0;
     if (week >= 12) return 1.15;
     if (week >= 9) return 1.1;
   }

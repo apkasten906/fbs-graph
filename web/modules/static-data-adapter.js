@@ -9,6 +9,12 @@ export class StaticDataAdapter {
     this.cache = new Map();
   }
 
+  /**
+   * Load and cache a JSON file from the configured basePath.
+   * @param {string} filename - JSON file name relative to basePath (e.g. 'teams.json')
+   * @returns {Promise<any>} parsed JSON
+   * @throws {Error} when fetch fails or response is not ok
+   */
   async loadJSON(filename) {
     if (this.cache.has(filename)) {
       console.log(`[StaticDataAdapter] Loaded ${filename} from cache`);
@@ -54,6 +60,14 @@ export class StaticDataAdapter {
   async getConferenceConnectivity(season) {
     return this.loadJSON(`conference-connectivity-${season}.json`);
   }
+
+  /**
+   * Execute a GraphQL-like query string against the static data store.
+   * This keeps compatibility with the timeline explorer which issues GraphQL queries.
+   * @param {string} query - GraphQL query string (partial matching is used)
+   * @param {object} [variables] - optional variables object, e.g. { season }
+   * @returns {Promise<object>} GraphQL-like response object { data: { ... } }
+   */
 
   /**
    * Simulates GraphQL query for teams by filtering based on parameters
@@ -169,7 +183,11 @@ export class StaticDataAdapter {
     const season = variables?.season || new Date().getFullYear();
 
     // For the timeline explorer query
-    if (query.includes('teams(season:') && query.includes('games(season:')) {
+    if (
+      typeof query === 'string' &&
+      query.includes('teams(season:') &&
+      query.includes('games(season:')
+    ) {
       return this.queryGraph(season);
     }
 
@@ -183,7 +201,11 @@ export class StaticDataAdapter {
       };
     }
 
-    throw new Error('Unsupported query type');
+    // Provide helpful context to aid debugging in CI/production
+    const snippet = typeof query === 'string' ? query.substring(0, 200) : String(query);
+    throw new Error(
+      `Unsupported query type. Expected timeline or essentialMatchups queries. Received: ${snippet}...`
+    );
   }
 }
 

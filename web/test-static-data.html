@@ -31,10 +31,24 @@
         console.log('Games:', games.length, 'items');
         
         console.log('All tests passed!');
-        document.body.innerHTML = '<h1>Success!</h1><pre>' + JSON.stringify({ metadata, conferences: conferences.length, teams: teams.length, games: games.length }, null, 2) + '</pre>';
+        // Safely render results using textContent to avoid XSS
+        document.body.innerHTML = '';
+        const h1 = document.createElement('h1');
+        h1.textContent = 'Success!';
+        const pre = document.createElement('pre');
+        pre.textContent = JSON.stringify({ metadata, conferences: conferences.length, teams: teams.length, games: games.length }, null, 2);
+        document.body.appendChild(h1);
+        document.body.appendChild(pre);
       } catch (error) {
         console.error('Test failed:', error);
-        document.body.innerHTML = '<h1>Error!</h1><pre>' + error.message + '</pre>';
+        // Render error safely
+        document.body.innerHTML = '';
+        const eh1 = document.createElement('h1');
+        eh1.textContent = 'Error!';
+        const epre = document.createElement('pre');
+        epre.textContent = String(error?.message ?? error);
+        document.body.appendChild(eh1);
+        document.body.appendChild(epre);
       }
     }
     
