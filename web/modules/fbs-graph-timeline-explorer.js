@@ -149,7 +149,7 @@ function byName(a, b) {
 
 function applyConferenceLegend() {
   const container = document.getElementById('legend');
-  container.innerHTML = '';
+  container.replaceChildren();
   const seen = new Set();
   for (const team of state.graph.teams) {
     const conf = team.conference?.id || 'other';
@@ -180,8 +180,8 @@ function buildSelectors() {
   const srcSel = document.getElementById('srcSel');
   const dstSel = document.getElementById('dstSel');
   const opts = state.graph.teams.slice().sort(byName);
-  srcSel.innerHTML = '';
-  dstSel.innerHTML = '';
+  srcSel.replaceChildren();
+  dstSel.replaceChildren();
   for (const team of opts) {
     const o1 = document.createElement('option');
     o1.value = team.id;
@@ -252,7 +252,7 @@ function updateTimelineSummary() {
 
 function renderTimeline() {
   const grid = document.getElementById('weekGrid');
-  grid.innerHTML = '';
+  grid.replaceChildren();
   const games = state.connection ? state.connectionGames : state.filteredGames;
   if (!games.length) {
     document.getElementById('timelineEmpty').hidden = false;
@@ -322,6 +322,7 @@ function renderTimeline() {
 
       // Game result (score and winner) if played
       let result = '';
+      let resultEl = null;
       const played = typeof game.homePoints === 'number' && typeof game.awayPoints === 'number';
       if (played) {
         const homeScore = game.homePoints;
@@ -331,18 +332,26 @@ function renderTimeline() {
         else if (game.result === 'AWAY_WIN') winner = `✈️`;
         else if (game.result === 'TIE') winner = '🤝';
         else if (game.result === 'CANCELLED' || game.result === 'NO_CONTEST') winner = '🚫';
-        result = `<span class="game-result">${homeScore} - ${awayScore} ${winner}</span>`;
+        resultEl = document.createElement('span');
+        resultEl.className = 'game-result';
+        resultEl.textContent = `${homeScore} - ${awayScore} ${winner}`;
+        result = 'created';
       }
 
       const type = document.createElement('div');
       type.className = 'game-meta';
-      type.innerHTML = `<span>${formatType(game.type)}</span><span>${game.home?.conference?.shortName || ''} · ${game.away?.conference?.shortName || ''}</span>`;
+      const typeSpan = document.createElement('span');
+      typeSpan.textContent = formatType(game.type);
+      const confSpan = document.createElement('span');
+      confSpan.textContent = `${game.home?.conference?.shortName || ''} · ${game.away?.conference?.shortName || ''}`;
+      type.appendChild(typeSpan);
+      type.appendChild(confSpan);
 
       card.appendChild(meta);
       card.appendChild(teams);
-      if (result) {
+      if (result === 'created' && resultEl) {
         const resultDiv = document.createElement('div');
-        resultDiv.innerHTML = result;
+        resultDiv.appendChild(resultEl);
         card.appendChild(resultDiv);
       }
       card.appendChild(type);
@@ -355,26 +364,33 @@ function renderTimeline() {
 function renderPathInfo() {
   const box = document.getElementById('pathInfo');
   if (!state.connection) {
-    box.innerHTML = 'No connection selected.';
+    box.replaceChildren(document.createTextNode('No connection selected.'));
     return;
   }
   const teamsById = new Map(state.graph.teams.map(team => [team.id, team]));
-  const lines = [];
-  lines.push('<div class="small muted">Shortest chain by inverse leverage:</div>');
+  box.replaceChildren();
+  const header = document.createElement('div');
+  header.className = 'small muted';
+  header.textContent = 'Shortest chain by inverse leverage:';
+  box.appendChild(header);
   state.connection.nodes.forEach((id, idx) => {
     const team = teamsById.get(id);
-    lines.push(`<div>${team ? team.name : id}</div>`);
+    const row = document.createElement('div');
+    row.textContent = team ? team.name : id;
+    box.appendChild(row);
     if (idx < state.connection.edges.length) {
       const seg = state.connectionSegments[idx];
       const avg = seg.games.reduce((s, g) => s + (g.leverage || 0), 0) / seg.games.length;
-      lines.push(
-        `<div class="status" style="margin:6px 0 8px 8px; color:${seg.color}">↳ ${seg.games.length} game${
-          seg.games.length === 1 ? '' : 's'
-        } · avg leverage ${avg.toFixed(3)}</div>`
-      );
+      const stat = document.createElement('div');
+      stat.className = 'status';
+      stat.style.margin = '6px 0 8px 8px';
+      stat.style.color = seg.color;
+      stat.textContent = `↳ ${seg.games.length} game${seg.games.length === 1 ? '' : 's'} · avg leverage ${avg.toFixed(
+        3
+      )}`;
+      box.appendChild(stat);
     }
   });
-  box.innerHTML = lines.join('');
 }
 
 function renderConnectionLegend() {
@@ -622,7 +638,7 @@ async function load() {
     console.error(error);
     state.error = error instanceof Error ? error.message : String(error);
     updateStatus(`Error: ${state.error}`);
-    document.getElementById('weekGrid').innerHTML = '';
+    document.getElementById('weekGrid').replaceChildren();
     document.getElementById('timelineEmpty').hidden = false;
     state.connection = null;
     renderConnectionGraph();
@@ -644,11 +660,19 @@ function activatePath(src, dst) {
     renderConnectionGraph();
     const typeFilter = document.getElementById('typeFilter').value;
     if (typeFilter === 'CONFERENCE') {
-      document.getElementById('pathInfo').innerHTML =
-        '<span class="status">No Conference Connections Found / Available.</span>';
+      const pi = document.getElementById('pathInfo');
+      pi.replaceChildren();
+      const span = document.createElement('span');
+      span.className = 'status';
+      span.textContent = 'No Conference Connections Found / Available.';
+      pi.appendChild(span);
     } else {
-      document.getElementById('pathInfo').innerHTML =
-        '<span class="status">No path found with current filters.</span>';
+      const pi = document.getElementById('pathInfo');
+      pi.replaceChildren();
+      const span = document.createElement('span');
+      span.className = 'status';
+      span.textContent = 'No path found with current filters.';
+      pi.appendChild(span);
     }
     return;
   }
