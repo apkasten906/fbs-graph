@@ -145,12 +145,14 @@ query {
 
 ### GitHub Pages Deployment
 - `npm run generate:static` — Generate static JSON data files for GitHub Pages
-- `npm run build:pages` — Alias for `generate:static`, used by CI/CD pipeline
+- `npm run build:pages` — Build distribution folder with static data and web assets
 
 The GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) automatically:
 1. Generates static data files from the latest data
-2. Deploys the entire project to GitHub Pages
-3. Makes the interactive visualizations available at `https://apkasten906.github.io/fbs-graph/`
+2. Builds a clean distribution folder containing only web assets and data
+3. Deploys to GitHub Pages at `https://apkasten906.github.io/fbs-graph/`
+
+**Note:** The live site uses pre-generated static JSON files (no GraphQL server). This allows the visualizations to work entirely client-side on GitHub Pages.
 
 ---
 

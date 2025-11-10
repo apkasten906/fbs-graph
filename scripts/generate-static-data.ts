@@ -50,7 +50,13 @@ function enrichGamesForSeason(season: number, ranking: PollType): Game[] {
   return gamesRaw
     .filter(g => g.season === season)
     .filter(g => teams.some(t => t.id === g.homeTeamId) && teams.some(t => t.id === g.awayTeamId))
-    .map(g => computeLeverageForGame(g, teamSeasons, apMap, spNorm, eloNorm, ranking));
+    .map(g => {
+      // Skip leverage calculation for postseason games - leverage is only relevant during regular season
+      if (g.phase === 'POSTSEASON') {
+        return g;
+      }
+      return computeLeverageForGame(g, teamSeasons, apMap, spNorm, eloNorm, ranking);
+    });
 }
 
 function isConferenceGame(game: Game): boolean {

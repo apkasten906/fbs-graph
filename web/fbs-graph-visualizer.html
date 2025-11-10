@@ -584,7 +584,9 @@ query Graph($season: Int!) {
       // Load static data adapter first
       import { staticData } from './modules/static-data-adapter.js';
       window.staticDataAdapter = staticData;
-      console.log('[Visualizer] Static data adapter initialized');
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.log('[Visualizer] Static data adapter initialized');
+      }
       
       // Trigger the load function that was defined in the previous script
       load();

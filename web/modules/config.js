@@ -1,14 +1,13 @@
-// Conference map: id → { shortName, name }
-// Note: import assertions can cause parser issues in some ESLint/parser versions.
-// Use a plain import here to keep tooling happy.
-import conferencesData from '../../src/data/conferences.json';
-
-export const conferenceMap = Object.fromEntries(
-  conferencesData.map(c => [c.id, { shortName: c.shortName, name: c.name }])
-);
 /**
  * Configuration and constants for the FBS Timeline App
  */
+
+/**
+ * Conference map: id → { shortName, name }
+ * Note: This is populated by the static data adapter or GraphQL response.
+ * For standalone use, populate this object before using it in rendering.
+ */
+export const conferenceMap = {};
 
 export const tierLabels = {
   critical: 'Critical leverage',

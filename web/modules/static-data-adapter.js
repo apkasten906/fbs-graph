@@ -39,28 +39,55 @@ export class StaticDataAdapter {
     return data;
   }
 
+  /**
+   * Gets metadata about the static data set.
+   * @returns {Promise<object>} Metadata object with generation timestamp and other info
+   */
   async getMetadata() {
     return this.loadJSON('metadata.json');
   }
 
+  /**
+   * Gets all conferences.
+   * @returns {Promise<Array>} Array of all FBS conferences
+   */
   async getConferences() {
     return this.loadJSON('conferences.json');
   }
 
+  /**
+   * Gets all teams.
+   * @returns {Promise<Array>} Array of all FBS teams
+   */
   async getTeams() {
     return this.loadJSON('teams.json');
   }
 
+  /**
+   * Gets all games for a specific season.
+   * @param {number} season - Year of the season (e.g., 2025)
+   * @returns {Promise<Array>} Array of games with enriched data (teams, conferences, leverage scores)
+   */
   async getGames(season) {
     const s = this._validatedSeason(season);
     return this.loadJSON(`games-${s}.json`);
   }
 
+  /**
+   * Gets essential (high-leverage non-conference) matchups for a season.
+   * @param {number} season - Year of the season
+   * @returns {Promise<Array>} Array of top non-conference games sorted by leverage
+   */
   async getEssentialMatchups(season) {
     const s = this._validatedSeason(season);
     return this.loadJSON(`essential-matchups-${s}.json`);
   }
 
+  /**
+   * Gets conference connectivity data for a season.
+   * @param {number} season - Year of the season
+   * @returns {Promise<object>} Conference connectivity graph data
+   */
   async getConferenceConnectivity(season) {
     const s = this._validatedSeason(season);
     return this.loadJSON(`conference-connectivity-${s}.json`);
@@ -92,7 +119,10 @@ export class StaticDataAdapter {
    */
 
   /**
-   * Simulates GraphQL query for teams by filtering based on parameters
+   * Simulates GraphQL query for teams by filtering based on parameters.
+   * @param {object} [options={}] - Filter options
+   * @param {string} [options.conferenceId] - Filter by conference ID
+   * @returns {Promise<Array>} Filtered array of teams
    */
   async queryTeams(options = {}) {
     const teams = await this.getTeams();
@@ -108,7 +138,15 @@ export class StaticDataAdapter {
   }
 
   /**
-   * Simulates GraphQL query for games with filtering
+   * Simulates GraphQL query for games with filtering.
+   * @param {object} [options={}] - Filter options
+   * @param {number} [options.season] - Season year
+   * @param {number} [options.week] - Week number
+   * @param {string} [options.teamId] - Filter to games involving this team
+   * @param {string} [options.conferenceId] - Filter to games involving this conference
+   * @param {string} [options.type] - Game type (e.g., 'CONFERENCE', 'NON_CONFERENCE')
+   * @param {boolean} [options.playedOnly] - If true, exclude games with result 'TBD'
+   * @returns {Promise<Array>} Filtered array of games
    */
   async queryGames(options = {}) {
     const { season, week, teamId, conferenceId, type, playedOnly } = options;
@@ -142,7 +180,13 @@ export class StaticDataAdapter {
   }
 
   /**
-   * Simulates GraphQL essentialMatchups query
+   * Simulates GraphQL essentialMatchups query.
+   * @param {object} [options={}] - Query options
+   * @param {number} [options.season] - Season year
+   * @param {number} [options.week] - Filter to specific week
+   * @param {number} [options.limit=50] - Maximum number of matchups to return
+   * @param {boolean} [options.includeConferenceGames=true] - Whether to include conference games
+   * @returns {Promise<Array>} Array of high-leverage matchups
    */
   async queryEssentialMatchups(options = {}) {
     const { season, week, limit = 50, includeConferenceGames = true } = options;
@@ -162,7 +206,9 @@ export class StaticDataAdapter {
   }
 
   /**
-   * Simulates the full GraphQL query structure used by the timeline explorer
+   * Simulates the full GraphQL query structure used by the timeline explorer.
+   * @param {number} season - Season year
+   * @returns {Promise<object>} GraphQL-like response with teams, games, and conferences
    */
   async queryGraph(season) {
     const [teams, games, conferences] = await Promise.all([
@@ -174,7 +220,7 @@ export class StaticDataAdapter {
     // Transform to match GraphQL response structure
     return {
       data: {
-        teams: teams,
+        teams,
         games: games.map(g => ({
           ...g,
           home: g.homeTeam,
@@ -183,13 +229,17 @@ export class StaticDataAdapter {
           awayConference: g.awayConference,
           isConferenceGame: g.homeConference?.id === g.awayConference?.id,
         })),
-        conferences: conferences,
+        conferences,
       },
     };
   }
 
   /**
-   * Legacy compatibility method - converts static data query to GraphQL-like response
+   * Legacy compatibility method - converts static data query to GraphQL-like response.
+   * @param {string} query - GraphQL query string
+   * @param {object} [variables] - Query variables (e.g., { season: 2025 })
+   * @returns {Promise<object>} GraphQL-like response object
+   * @throws {Error} When query type is not recognized
    */
   async executeQuery(query, variables) {
     const season = this._validatedSeason(variables?.season);
@@ -204,7 +254,7 @@ export class StaticDataAdapter {
     }
 
     // For essential matchups query
-    if (query.includes('essentialMatchups')) {
+    if (typeof query === 'string' && query.includes('essentialMatchups')) {
       const matchups = await this.queryEssentialMatchups(variables);
       return {
         data: {
@@ -216,9 +266,7 @@ export class StaticDataAdapter {
     // Provide helpful context to aid debugging in CI/production
     const snippet = typeof query === 'string' ? query.substring(0, 200) : String(query);
     throw new Error(
-      'Unsupported query type. Expected timeline or essentialMatchups queries. Received: ' +
-        snippet +
-        '...'
+      `Unsupported query type. Expected queries containing 'teams(season:)' and 'games(season:)' for graph queries, or 'essentialMatchups' for matchup queries. Received: ${snippet}...`
     );
   }
 }

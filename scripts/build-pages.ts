@@ -1,0 +1,44 @@
+/**
+ * Build script for GitHub Pages deployment
+ * Copies only the necessary web assets to a dist folder
+ */
+
+import fs from 'node:fs';
+import path from 'node:path';
+
+const DIST_DIR = path.join(process.cwd(), 'dist');
+const WEB_DIR = path.join(process.cwd(), 'web');
+
+// Ensure dist directory exists and is clean
+if (fs.existsSync(DIST_DIR)) {
+  fs.rmSync(DIST_DIR, { recursive: true, force: true });
+}
+fs.mkdirSync(DIST_DIR, { recursive: true });
+
+// Copy web directory contents
+function copyDirectory(src: string, dest: string) {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
+
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+
+    if (entry.isDirectory()) {
+      copyDirectory(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
+console.log('Building GitHub Pages distribution...');
+
+// Copy web assets
+console.log('Copying web assets...');
+copyDirectory(WEB_DIR, DIST_DIR);
+
+console.log(`✓ Build complete! Distribution ready in ${DIST_DIR}`);

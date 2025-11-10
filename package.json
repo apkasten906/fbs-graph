@@ -30,7 +30,7 @@
     "fetch:all": "npm run fetch:confs; npm run fetch:teams; npm run seasons:make; npm run fetch:schedules; npm run fetch:ranks",
     "setup": "powershell.exe -ExecutionPolicy Bypass -File .\\scripts\\setup.ps1",
     "generate:static": "tsx scripts/generate-static-data.ts",
-    "build:pages": "npm run generate:static"
+    "build:pages": "npm run generate:static && tsx scripts/build-pages.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.10.0",
