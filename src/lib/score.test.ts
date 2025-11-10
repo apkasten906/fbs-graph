@@ -210,6 +210,7 @@ describe('Score and Leverage Calculations', () => {
       const game: Game = {
         id: 'game1',
         season: 2025,
+        week: 16, // Postseason week for timing boost calculation
         phase: 'POSTSEASON',
         type: 'PLAYOFF',
         homeTeamId: 'team1',

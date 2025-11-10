@@ -1,4 +1,6 @@
 // --- Helper functions for timeline explorer ---
+import { DEFAULT_GRAPHQL_ENDPOINT } from './config.js';
+
 function computePairs(games) {
   // Groups games by a unique key for each home/away pair (order-independent)
   const map = new Map();
@@ -117,8 +119,6 @@ const QUERY = `
 const CONFERENCES_QUERY = `
   query { conferences { id name shortName } }
 `;
-
-import { GRAPHQL_ENDPOINT } from './config.js';
 
 const state = {
   loading: false,
@@ -604,7 +604,8 @@ async function load() {
     } else {
       console.log('[Timeline Explorer] Static data adapter not available, using GraphQL');
       // Fallback to GraphQL if static data not available
-      const endpoint = document.getElementById('endpoint')?.value?.trim() || GRAPHQL_ENDPOINT;
+      const endpoint =
+        document.getElementById('endpoint')?.value?.trim() || DEFAULT_GRAPHQL_ENDPOINT;
       const [confRes, mainRes] = await Promise.all([
         POST(endpoint, { query: CONFERENCES_QUERY }),
         POST(endpoint, { query: QUERY, variables: { season } }),

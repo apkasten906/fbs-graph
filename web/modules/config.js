@@ -3,6 +3,13 @@
  */
 
 /**
+ * Default GraphQL endpoint URL for local development.
+ * Used as fallback when static data adapter is not available or when
+ * users haven't overridden the endpoint in the UI.
+ */
+export const DEFAULT_GRAPHQL_ENDPOINT = 'http://localhost:4100/graphql';
+
+/**
  * Conference map: id → { shortName, name }
  * Note: This is populated by the static data adapter or GraphQL response.
  * For standalone use, populate this object before using it in rendering.
@@ -50,8 +57,3 @@ export function determineTier(value) {
   if (value >= 0.85) return 'notable';
   return 'watch';
 }
-
-// Default GraphQL endpoint used when static adapter is not available or when
-// users haven't overridden the endpoint in the UI. Centralized here so the
-// same value is used across module and non-module pages (visualizer/timeline).
-export const GRAPHQL_ENDPOINT = 'http://localhost:4100/graphql';
