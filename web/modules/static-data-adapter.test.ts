@@ -9,7 +9,7 @@ describe('Static Data Adapter', () => {
     // Mock fetch for testing
     global.fetch = async (url: string | URL | Request) => {
       const urlStr = url.toString();
-      
+
       if (urlStr.includes('metadata.json')) {
         return {
           ok: true,
@@ -22,7 +22,7 @@ describe('Static Data Adapter', () => {
           }),
         } as Response;
       }
-      
+
       if (urlStr.includes('conferences.json')) {
         return {
           ok: true,
@@ -32,7 +32,7 @@ describe('Static Data Adapter', () => {
           ],
         } as Response;
       }
-      
+
       if (urlStr.includes('teams.json')) {
         return {
           ok: true,
@@ -42,7 +42,7 @@ describe('Static Data Adapter', () => {
           ],
         } as Response;
       }
-      
+
       return {
         ok: false,
         statusText: 'Not Found',
@@ -97,7 +97,7 @@ describe('Static Data Adapter', () => {
     it('should cache loaded data', async () => {
       const first = await adapter.getConferences();
       const second = await adapter.getConferences();
-      
+
       // Both calls should return the same cached data
       expect(first).toBe(second);
     });

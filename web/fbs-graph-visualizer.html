@@ -345,8 +345,8 @@ query Graph($season: Int!) {
       let conferenceMeta = [];
 
       function buildLegend() {
-  const container = document.getElementById('legend');
-  container.replaceChildren();
+        const container = document.getElementById('legend');
+        container.replaceChildren();
         const seen = new Set();
         // Collect all conferences present in the data
         for (const t of graphData.teams) {
@@ -380,8 +380,8 @@ query Graph($season: Int!) {
         const srcSel = document.getElementById('srcSel');
         const dstSel = document.getElementById('dstSel');
         const opts = graphData.teams.slice().sort((a, b) => a.name.localeCompare(b.name));
-  srcSel.replaceChildren();
-  dstSel.replaceChildren();
+        srcSel.replaceChildren();
+        dstSel.replaceChildren();
         for (const t of opts) {
           const o1 = document.createElement('option');
           o1.value = t.id;
@@ -394,7 +394,8 @@ query Graph($season: Int!) {
         }
         // Set default selections: OSU and Georgia
         // Try common IDs, fallback to first if not found
-        const osuId = opts.find(t => t.name.toLowerCase().includes('ohio state'))?.id || opts[0]?.id;
+        const osuId =
+          opts.find(t => t.name.toLowerCase().includes('ohio state'))?.id || opts[0]?.id;
         const ugaId = opts.find(t => t.name.toLowerCase().includes('georgia'))?.id || opts[1]?.id;
         if (osuId) srcSel.value = osuId;
         if (ugaId) dstSel.value = ugaId;
@@ -471,7 +472,7 @@ query Graph($season: Int!) {
 
       async function load() {
         const season = Number(document.getElementById('season').value);
-        
+
         // Use static data adapter if available, otherwise fall back to GraphQL
         if (window.staticDataAdapter) {
           try {
@@ -487,7 +488,8 @@ query Graph($season: Int!) {
           }
         } else {
           // Fallback to GraphQL if static data not available
-          const endpoint = document.getElementById('endpoint')?.value?.trim() || window.GRAPHQL_ENDPOINT;
+          const endpoint =
+            document.getElementById('endpoint')?.value?.trim() || window.GRAPHQL_ENDPOINT;
           const confRes = await POST(endpoint, { query: CONFERENCES_QUERY });
           if (confRes.errors) {
             alert('GraphQL error (conferences): ' + JSON.stringify(confRes.errors[0], null, 2));
@@ -501,7 +503,7 @@ query Graph($season: Int!) {
           }
           graphData = res.data;
         }
-        
+
         buildLegend();
         buildSelectors();
         applyFilters();
@@ -587,7 +589,7 @@ query Graph($season: Int!) {
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         console.log('[Visualizer] Static data adapter initialized');
       }
-      
+
       // Trigger the load function that was defined in the previous script
       load();
     </script>

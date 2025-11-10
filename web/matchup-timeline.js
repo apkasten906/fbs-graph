@@ -687,7 +687,7 @@ function createTimelineApp(options = {}) {
       'The interactive matchup explorer needs to load schedule data over HTTP. Start the local server with <code>npm run web:serve</code> from the repository root, then open the page from that address.';
 
     const hint = doc.createElement('p');
-    hint.innerHTML = 'Once the server is running, use this link to launch the full experience:';
+    hint.textContent = 'Once the server is running, use this link to launch the full experience:';
 
     const link = doc.createElement('a');
     link.href = './matchup-timeline.html';

@@ -136,6 +136,7 @@ query {
 ## 🧩 Useful Scripts
 
 ### Local Development
+
 - `npm run setup` — One-step data import and preparation
 - `npm run dev` — Start backend GraphQL server
 - `npm run web:serve` — Start static web server
@@ -144,10 +145,12 @@ query {
 - `npm run preview:playoff` — Run playoff preview query from CLI
 
 ### GitHub Pages Deployment
+
 - `npm run generate:static` — Generate static JSON data files for GitHub Pages
 - `npm run build:pages` — Build distribution folder with static data and web assets
 
 The GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) automatically:
+
 1. Generates static data files from the latest data
 2. Builds a clean distribution folder containing only web assets and data
 3. Deploys to GitHub Pages at `https://apkasten906.github.io/fbs-graph/`

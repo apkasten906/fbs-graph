@@ -30,7 +30,7 @@ describe('Data Loader Utilities', () => {
     });
 
     it('should handle names with dots', () => {
-      expect(idify('St. John\'s')).toBe('st-johns');
+      expect(idify("St. John's")).toBe('st-johns');
       expect(idify('U.S.C.')).toBe('usc');
     });
   });

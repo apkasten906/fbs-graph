@@ -1,5 +1,6 @@
 // .eslintrc.cjs (root)
 module.exports = {
+  root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',

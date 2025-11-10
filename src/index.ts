@@ -102,7 +102,7 @@ const resolvers = {
         week?: number;
         limit?: number;
         includeConferenceGames?: boolean;
-        ranking?: 'AP' | 'ELO' | 'SP_PLUS' | 'AVERAGE';        
+        ranking?: 'AP' | 'ELO' | 'SP_PLUS' | 'AVERAGE';
       }
     ) => {
       const ranking = args.ranking ?? 'AVERAGE';
@@ -174,7 +174,7 @@ const resolvers = {
   },
   TeamSeason: {
     team: (ts: TeamSeasonT) => teamById(ts.teamId),
-    polls: (ts: TeamSeasonT) => (polls).filter(p => p.teamSeasonId === ts.id),
+    polls: (ts: TeamSeasonT) => polls.filter(p => p.teamSeasonId === ts.id),
     games: (ts: TeamSeasonT) =>
       enrichGamesForSeason(ts.season, 'AVERAGE').filter(
         g => g.homeTeamId === ts.teamId || g.awayTeamId === ts.teamId

@@ -6,12 +6,7 @@
 import 'dotenv/config';
 import fs from 'node:fs';
 import path from 'node:path';
-import type {
-  Conference,
-  Team,
-  Game,
-  PollType,
-} from '../types/index.js';
+import type { Conference, Team, Game, PollType } from '../types/index.js';
 import {
   computeLeverageForGame,
   buildAPRankMap,
@@ -28,7 +23,13 @@ if (!fs.existsSync(OUTPUT_DIR)) {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
-const { conferences, teams, teamSeasons, games: gamesRaw, polls } = USE_CSV ? loadFromCSV() : loadFromJSON();
+const {
+  conferences,
+  teams,
+  teamSeasons,
+  games: gamesRaw,
+  polls,
+} = USE_CSV ? loadFromCSV() : loadFromJSON();
 
 function teamById(id: string): Team | undefined {
   return teams.find(t => t.id === id);

@@ -395,7 +395,7 @@ function renderPathInfo() {
 
 function renderConnectionLegend() {
   const legend = document.getElementById('connectionLegend');
-  legend.innerHTML = '';
+  legend.replaceChildren();
   if (!state.connection) return;
   state.connectionSegments.forEach(segment => {
     const fromTeam = state.graph.teams.find(t => t.id === segment.from);

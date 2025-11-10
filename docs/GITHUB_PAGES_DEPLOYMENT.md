@@ -50,6 +50,7 @@ npm run web:serve
 ```
 
 Verify that:
+
 - All pages load without errors
 - Data is displayed correctly
 - Navigation between pages works
@@ -68,6 +69,7 @@ To enable GitHub Pages:
 ### Required Permissions
 
 The workflow requires the following permissions (already configured in the workflow file):
+
 - `contents: read` - Read repository contents
 - `pages: write` - Deploy to GitHub Pages
 - `id-token: write` - Authenticate deployment
@@ -154,12 +156,14 @@ fbs-graph/
 The application supports both modes:
 
 **Local Development** (with GraphQL backend):
+
 ```bash
 npm run dev        # Start GraphQL server
 npm run web:serve  # Start web server
 ```
 
 **GitHub Pages** (static data):
+
 - Uses pre-generated JSON files
 - No backend server required
 - Automatically loads from `web/data/` directory

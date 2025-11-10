@@ -3,16 +3,19 @@
 ## ✅ Completed Tasks
 
 ### 1. GitHub Pages Configuration
+
 - Created `.nojekyll` file to disable Jekyll processing
 - Updated `.gitignore` to exclude generated data files but preserve directory structure
 - Added `web/data/.gitkeep` to maintain directory in git
 
 ### 2. GitHub Actions CI/CD Workflow
+
 - Created `.github/workflows/deploy-pages.yml` with automated deployment pipeline
 - Workflow triggers on push to `main` branch and manual dispatch
 - Steps include: checkout, Node.js setup, dependency installation, static data generation, and deployment
 
 ### 3. Static Data Generation
+
 - Created `scripts/generate-static-data.ts` to export GraphQL data as static JSON files
 - Generates the following files in `web/data/`:
   - `conferences.json` - All FBS conferences
@@ -24,12 +27,14 @@
 - Added npm scripts: `generate:static` and `build:pages`
 
 ### 4. Static Data Adapter Module
+
 - Created `web/modules/static-data-adapter.js` for loading pre-generated JSON files
 - Provides GraphQL-compatible API for backward compatibility
 - Implements caching to minimize network requests
 - Supports both static (GitHub Pages) and dynamic (local GraphQL) modes
 
 ### 5. Frontend Updates
+
 - Updated `web/fbs-graph-timeline-explorer.html`:
   - Removed GraphQL endpoint input field
   - Integrated static data adapter
@@ -46,6 +51,7 @@
   - `web/modules/ui-renderer.js` - Changed from localhost to relative paths
 
 ### 6. Documentation
+
 - Updated `README.md`:
   - Added live demo link section at the top
   - Expanded scripts section with deployment commands
@@ -64,12 +70,15 @@ Once deployed to GitHub Pages:
 ## 🚀 Deployment Process
 
 ### Automatic Deployment
+
 Push to `main` branch triggers GitHub Actions workflow which:
+
 1. Installs dependencies
 2. Generates static data files from source data
 3. Deploys entire project to GitHub Pages
 
 ### Manual Deployment
+
 1. Go to Actions tab in GitHub repository
 2. Select "Deploy to GitHub Pages" workflow
 3. Click "Run workflow"
@@ -122,12 +131,14 @@ fbs-graph/
 ## 🔄 Development vs Production
 
 **Local Development:**
+
 - Runs GraphQL server on port 4100
 - Web server on port 4173
 - Fetches data dynamically from GraphQL API
 - Requires `CFBD_KEY` for data import
 
 **GitHub Pages Production:**
+
 - No backend server required
 - Uses pre-generated static JSON files
 - All data loaded from `web/data/` directory
@@ -136,13 +147,17 @@ fbs-graph/
 ## ⚙️ Configuration
 
 ### GitHub Repository Settings
+
 To enable GitHub Pages:
+
 1. Go to Settings > Pages
 2. Source: "GitHub Actions"
 3. Save
 
 ### Workflow Permissions
+
 Already configured in workflow file:
+
 - `contents: read` - Read repository
 - `pages: write` - Deploy to Pages
 - `id-token: write` - Authenticate deployment
@@ -152,12 +167,14 @@ Already configured in workflow file:
 To complete the deployment:
 
 1. **Commit all changes:**
+
    ```bash
    git add .
    git commit -m "feat: Add GitHub Pages deployment support"
    ```
 
 2. **Push to GitHub:**
+
    ```bash
    git push origin feat/publish-on-github
    ```
@@ -180,6 +197,7 @@ To complete the deployment:
 ## ✨ Features Preserved
 
 All interactive features work on GitHub Pages:
+
 - ✅ FBS Schedule Timeline Explorer
 - ✅ Teams & Matchups Visualizer
 - ✅ Matchup Timeline (detailed view)
