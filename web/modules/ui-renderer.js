@@ -1,7 +1,13 @@
 /**
  * UI Rendering functions for the FBS Timeline App
  */
-import { tierLabels, tierColor, conferenceScopes, determineTier, conferenceMap } from './config.js';
+import {
+  tierLabels,
+  tierColor,
+  conferenceScopes,
+  determineTier,
+  getConferenceMap,
+} from './config.js';
 import {
   formatLeverage,
   formatDateTime,
@@ -93,7 +99,8 @@ export function createUIRenderer(doc) {
       let legendEntries = state.segments.map(segment => {
         // Try to extract conferenceId from segment label or data
         let confId = segment.from?.conferenceId || segment.to?.conferenceId || null;
-        let confInfo = confId && conferenceMap[confId] ? conferenceMap[confId] : null;
+        const confMap = getConferenceMap();
+        let confInfo = confId && confMap[confId] ? confMap[confId] : null;
         let confLabel = confInfo ? `${confInfo.name} (${confInfo.shortName})` : segment.label;
         return {
           color: segment.color,

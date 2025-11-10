@@ -11,10 +11,34 @@ export const DEFAULT_GRAPHQL_ENDPOINT = 'http://localhost:4100/graphql';
 
 /**
  * Conference map: id → { shortName, name }
- * Note: This is populated by the static data adapter or GraphQL response.
- * For standalone use, populate this object before using it in rendering.
+ * Private store populated by setConferenceMap() during data initialization.
  */
-export const conferenceMap = {};
+let conferenceMap = {};
+
+/**
+ * Populates the conference map from loaded data.
+ * Should be called once during application initialization after loading
+ * conference data from the static data adapter or GraphQL response.
+ *
+ * @param {Array<{id: string, shortName: string, name: string}>} conferences - Array of conference objects
+ */
+export function setConferenceMap(conferences) {
+  conferenceMap = {};
+  for (const conf of conferences) {
+    conferenceMap[conf.id] = {
+      shortName: conf.shortName,
+      name: conf.name,
+    };
+  }
+}
+
+/**
+ * Retrieves the current conference map.
+ * @returns {Object} Conference map (id → { shortName, name })
+ */
+export function getConferenceMap() {
+  return conferenceMap;
+}
 
 export const tierLabels = {
   critical: 'Critical leverage',

@@ -1,5 +1,5 @@
 // --- Helper functions for timeline explorer ---
-import { DEFAULT_GRAPHQL_ENDPOINT } from './config.js';
+import { DEFAULT_GRAPHQL_ENDPOINT, setConferenceMap } from './config.js';
 
 function computePairs(games) {
   // Groups games by a unique key for each home/away pair (order-independent)
@@ -600,6 +600,7 @@ async function load() {
         games: result.data?.games?.length,
       });
       state.conferenceMeta = conferences ?? [];
+      setConferenceMap(conferences ?? []);
       state.graph = result.data || { teams: [], games: [] };
     } else {
       console.log('[Timeline Explorer] Static data adapter not available, using GraphQL');
@@ -613,6 +614,7 @@ async function load() {
       if (confRes.errors) throw new Error(confRes.errors[0]?.message || 'Conference query failed');
       if (mainRes.errors) throw new Error(mainRes.errors[0]?.message || 'Graph query failed');
       state.conferenceMeta = confRes.data?.conferences ?? [];
+      setConferenceMap(confRes.data?.conferences ?? []);
       state.graph = mainRes.data || { teams: [], games: [] };
     }
     buildSelectors();

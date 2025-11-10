@@ -1,13 +1,58 @@
 <#
-check-gh-token2.ps1
-Simpler, robust script to validate GitHub token and list unresolved PR review threads.
+.SYNOPSIS
+Validates a GitHub token and lists unresolved PR review threads.
+
+.DESCRIPTION
+This script validates a GitHub token from environment variables or .env file,
+then queries the GitHub GraphQL API to retrieve unresolved review threads for
+a specified pull request.
+
+.PARAMETER Owner
+The GitHub repository owner (username or organization).
+
+.PARAMETER Repo
+The GitHub repository name.
+
+.PARAMETER PRNumber
+The pull request number to query.
+
+.PARAMETER TokenEnvName
+The environment variable name containing the GitHub token. Default is 'COPILOT_GRAPHQL_TOKEN'.
+
+.PARAMETER Interactive
+When specified, prompts for the GitHub token securely instead of reading from environment.
+
+.PARAMETER OutputFile
+Optional file path to save the results as JSON instead of displaying in the console.
+
+.EXAMPLE
+.\check-gh-token.ps1 -Owner apkasten906 -Repo fbs-graph -PRNumber 26
+
+.EXAMPLE
+.\check-gh-token.ps1 -Owner apkasten906 -Repo fbs-graph -PRNumber 26 -Interactive
+
+.EXAMPLE
+.\check-gh-token.ps1 -Owner apkasten906 -Repo fbs-graph -PRNumber 26 -OutputFile results.json
+
+.NOTES
+The script will NOT persist or echo the token. It validates the token against
+GitHub's REST API, then queries GraphQL for unresolved review threads.
 #>
+[CmdletBinding()]
 param(
-  [Parameter(Mandatory=$true)][string]$Owner,
-  [Parameter(Mandatory=$true)][string]$Repo,
-  [Parameter(Mandatory=$true)][int]$PRNumber,
+  [Parameter(Mandatory=$true)]
+  [string]$Owner,
+  
+  [Parameter(Mandatory=$true)]
+  [string]$Repo,
+  
+  [Parameter(Mandatory=$true)]
+  [int]$PRNumber,
+  
   [string]$TokenEnvName = 'COPILOT_GRAPHQL_TOKEN',
+  
   [switch]$Interactive,
+  
   [string]$OutputFile = ''
 )
 
