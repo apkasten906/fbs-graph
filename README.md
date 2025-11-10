@@ -283,12 +283,24 @@ Opening the file directly from disk will display instructions that remind you to
 
 ## Leverage formula (simplified)
 
-```
+**Important:** Leverage is only calculated for **regular season games**. Postseason games (playoffs, bowls, championships) do not have leverage scores because:
+
+- Playoff matchups are predetermined by the playoff bracket structure
+- These games don't affect playoff positioning - they ARE the playoff games
+- The leverage concept only applies to games that determine future playoff chances
+
+For regular season games:
+
+```text
 leverage = rankWeight(home) * rankWeight(away) * bridgeBoost * timingBoost
 ```
 
 - `rankWeight(team)`: from AP rank if present (1/rank scaled), else SP+ percentile.
 - `bridgeBoost`: 1.2 for non-conference, 1.1 for inter-division, else 1.0.
-- `timingBoost`: 1.0 early season → 1.15 late season (Week 12+), bowls/playoffs 1.25.
+- `timingBoost`: 1.0 early season → 1.15 late season (Week 12+).
 
-You can adjust in `src/lib/score.ts`.
+_Note: The timingBoost function includes values for postseason game types (1.25) for backward compatibility, but these are never used in production since postseason games skip leverage calculation entirely._
+
+You can adjust the calculation in `src/lib/score.ts` and see the skip logic in `scripts/generate-static-data.ts`.
+
+

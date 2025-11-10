@@ -52,7 +52,15 @@ function enrichGamesForSeason(season: number, ranking: PollType): Game[] {
     .filter(g => g.season === season)
     .filter(g => teams.some(t => t.id === g.homeTeamId) && teams.some(t => t.id === g.awayTeamId))
     .map(g => {
-      // Skip leverage calculation for postseason games - leverage is only relevant during regular season
+      // IMPORTANT: Skip leverage calculation for postseason games.
+      //
+      // Leverage measures how much a game affects playoff chances. Once teams are IN the playoffs
+      // (postseason phase), the matchups are predetermined by the playoff bracket structure.
+      // These games don't have "leverage" because they don't determine playoff positioning -
+      // they ARE the playoff games themselves.
+      //
+      // Only regular season games have leverage scores that help identify which matchups
+      // are most important for determining who makes the playoffs.
       if (g.phase === 'POSTSEASON') {
         return g;
       }

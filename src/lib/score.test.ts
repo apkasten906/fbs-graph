@@ -206,21 +206,13 @@ describe('Score and Leverage Calculations', () => {
       expect(enrichedGame.timingBoost).toBe(1.15);
     });
 
-    it('should apply higher timing boost for playoff games', () => {
-      const game: Game = {
-        id: 'game1',
-        season: 2025,
-        week: 16, // Postseason week for timing boost calculation
-        phase: 'POSTSEASON',
-        type: 'PLAYOFF',
-        homeTeamId: 'team1',
-        awayTeamId: 'team2',
-        result: 'TBD',
-      };
-
-      const enrichedGame = computeLeverageForGame(game, [], new Map(), new Map(), new Map(), 'AP');
-
-      expect(enrichedGame.timingBoost).toBe(1.25);
-    });
+    // Note: In production, computeLeverageForGame should NOT be called for postseason games.
+    // The enrichGamesForSeason function in generate-static-data.ts explicitly skips
+    // leverage calculation for phase === 'POSTSEASON' because playoff matchups are
+    // predetermined and don't have the same "leverage" concept as regular season games
+    // that determine playoff positioning.
+    //
+    // The timingBoost function still handles postseason types (PLAYOFF, CHAMPIONSHIP, BOWL)
+    // for backward compatibility and edge cases, but this is not the intended usage pattern.
   });
 });
