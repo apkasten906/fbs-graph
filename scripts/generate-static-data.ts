@@ -119,16 +119,19 @@ const FAIL_ON_MISSING_DATA = process.env.FAIL_ON_MISSING_DATA === '1';
 
 for (const season of seasons) {
   const enrichedGames = enrichGamesForSeason(season, 'AVERAGE');
-  
+
   if (!Array.isArray(enrichedGames) || enrichedGames.length === 0) {
     const message = `⚠️  No game data found for season ${season}.`;
     if (FAIL_ON_MISSING_DATA) {
       throw new Error(message + ' FAIL_ON_MISSING_DATA is set, aborting.');
     }
-    console.warn(message + ' Skipping generation for this season. To make this an error, set FAIL_ON_MISSING_DATA=1');
+    console.warn(
+      message +
+        ' Skipping generation for this season. To make this an error, set FAIL_ON_MISSING_DATA=1'
+    );
     continue;
   }
-  
+
   const gamesWithDetails: EnrichedGame[] = enrichedGames.map(g => ({
     ...g,
     homeTeam: teamById(g.homeTeamId),
@@ -169,7 +172,10 @@ for (const season of seasons) {
 const season = currentYear;
 const list = enrichGamesForSeason(season, 'AVERAGE');
 const key = (a: string, b: string) => (a < b ? `${a}__${b}` : `${b}__${a}`);
-const acc = new Map<string, { edges: number; totalLev: number; levCount: number; a: string; b: string }>();
+const acc = new Map<
+  string,
+  { edges: number; totalLev: number; levCount: number; a: string; b: string }
+>();
 
 for (const g of list) {
   const hc = teamById(g.homeTeamId)?.conferenceId;

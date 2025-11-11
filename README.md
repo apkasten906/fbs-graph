@@ -302,5 +302,3 @@ leverage = rankWeight(home) * rankWeight(away) * bridgeBoost * timingBoost
 _Note: The timingBoost function includes values for postseason game types (1.25) for backward compatibility, but these are never used in production since postseason games skip leverage calculation entirely._
 
 You can adjust the calculation in `src/lib/score.ts` and see the skip logic in `scripts/generate-static-data.ts`.
-
-

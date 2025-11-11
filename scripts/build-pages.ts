@@ -20,7 +20,7 @@ if (fs.existsSync(DIST_DIR)) {
   // Ensure the resolved path is inside the project directory and is the expected 'dist' folder.
   const cwd = process.cwd();
   const rel = path.relative(cwd, resolved);
-  if (rel.startsWith('..') || path.isAbsolute(rel) && !rel.includes('dist')) {
+  if (rel.startsWith('..') || (path.isAbsolute(rel) && !rel.includes('dist'))) {
     throw new Error(`Refusing to remove path outside project: ${resolved}`);
   }
   if (path.basename(resolved) !== 'dist') {

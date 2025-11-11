@@ -304,11 +304,7 @@ export class StaticDataAdapter {
     // user-controlled GraphQL strings. We only support two patterns currently:
     // - Graph queries that request teams(...) and games(...)
     // - essentialMatchups queries
-    const allowedQueryPatterns = [
-      /\bteams\s*\(/i,
-      /\bgames\s*\(/i,
-      /\bessentialMatchups\b/i,
-    ];
+    const allowedQueryPatterns = [/\bteams\s*\(/i, /\bgames\s*\(/i, /\bessentialMatchups\b/i];
     const isAllowedQueryString = q => allowedQueryPatterns.some(r => r.test(q));
 
     const looksLikeGraphQuery = /\bteams\s*\(/i.test(qstr) && /\bgames\s*\(/i.test(qstr);
