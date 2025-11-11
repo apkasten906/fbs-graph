@@ -48,6 +48,16 @@ coverage/
 # Generated JSON
 src/data/games.scored.*.json
 
+# GitHub Pages static data (generated on deployment)
+web/data/*.json
+!web/data/.gitkeep
+
+# Ignore favicons that are generated/modified by tooling or editors and
+# that we don't want tracked in commits. If you prefer to keep them
+# tracked, remove these lines and commit the files instead.
+/favicon.ico
+/web/favicon.svg
+
 # Others
 .idea/
 *.iml
@@ -60,7 +70,7 @@ src/data/games.scored.*.json
 *.tmp
 
 # Package lock
-package-lock.json
+# package-lock.json is tracked to enable CI caching (remove the comment to track it)
 
 # Ignore zip archives
 *.zip

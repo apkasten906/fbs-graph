@@ -1,7 +1,8 @@
 /**
  * UI Rendering functions for the FBS Timeline App
  */
-import { tierLabels, tierColor, conferenceScopes, determineTier, conferenceMap } from './config.js';
+import { tierLabels, tierColor, conferenceScopes, determineTier } from './config.js';
+import { getConferenceMap } from './conference-map.js';
 import {
   formatLeverage,
   formatDateTime,
@@ -21,7 +22,7 @@ export function createUIRenderer(doc) {
 
   function renderSummary(state, pathSummary) {
     if (!pathSummary) return;
-    pathSummary.innerHTML = '';
+    pathSummary.replaceChildren();
 
     if (state.loading) {
       pathSummary.appendChild(createEmptyState('Loading leverage data…'));
@@ -93,7 +94,8 @@ export function createUIRenderer(doc) {
       let legendEntries = state.segments.map(segment => {
         // Try to extract conferenceId from segment label or data
         let confId = segment.from?.conferenceId || segment.to?.conferenceId || null;
-        let confInfo = confId && conferenceMap[confId] ? conferenceMap[confId] : null;
+        const confMap = getConferenceMap();
+        let confInfo = confId && confMap[confId] ? confMap[confId] : null;
         let confLabel = confInfo ? `${confInfo.name} (${confInfo.shortName})` : segment.label;
         return {
           color: segment.color,
@@ -120,7 +122,7 @@ export function createUIRenderer(doc) {
 
   function renderFilters(state, filters, getTeamsForScope, applyState) {
     if (!filters) return;
-    filters.innerHTML = '';
+    filters.replaceChildren();
 
     if (state.loading) {
       filters.appendChild(createEmptyState('Loading selections…'));
@@ -269,7 +271,7 @@ export function createUIRenderer(doc) {
 
   function renderTimeline(state, timeline) {
     if (!timeline) return;
-    timeline.innerHTML = '';
+    timeline.replaceChildren();
 
     if (state.loading) {
       timeline.appendChild(createEmptyState('Loading timeline…'));
@@ -397,10 +399,10 @@ export function createUIRenderer(doc) {
     return card;
   }
 
-  function renderFileModeNotice(location) {
+  function renderFileModeNotice() {
     if (!doc?.body) return;
     doc.body.classList.add('file-mode');
-    doc.body.innerHTML = '';
+    doc.body.replaceChildren();
     const wrapper = doc.createElement('div');
     wrapper.className = 'file-overlay';
 
@@ -411,11 +413,11 @@ export function createUIRenderer(doc) {
       'The interactive matchup explorer needs to load schedule data over HTTP. Start the local server with <code>npm run web:serve</code> from the repository root, then open the page from that address.';
 
     const hint = doc.createElement('p');
-    hint.innerHTML = 'Once the server is running, use this link to launch the full experience:';
+    hint.textContent = 'Once the server is running, use this link to launch the full experience:';
 
     const link = doc.createElement('a');
-    link.href = 'http://localhost:4173/web/matchup-timeline.html';
-    link.textContent = 'Open http://localhost:4173/web/matchup-timeline.html';
+    link.href = './matchup-timeline.html';
+    link.textContent = 'Open Matchup Timeline';
 
     wrapper.append(heading, copy, hint, link);
     doc.body.appendChild(wrapper);

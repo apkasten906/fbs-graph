@@ -66,7 +66,9 @@ header h1 {
 }
 .controls button {
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 .controls button:hover {
   background: rgba(37, 99, 235, 0.32);

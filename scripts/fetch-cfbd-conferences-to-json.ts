@@ -7,7 +7,7 @@ if (!API_KEY) {
 }
 type CFBDConf = { id: number; name: string; abbreviation?: string; classification?: string };
 function mapConference(name: string, abbr?: string) {
-    // TODO: add conferences to types or an own csv
+  // TODO: add conferences to types or an own csv
   const norm = new Map<string, { id: string; shortName: string }>([
     ['SEC', { id: 'sec', shortName: 'SEC' }],
     ['Big Ten', { id: 'b1g', shortName: 'B1G' }],

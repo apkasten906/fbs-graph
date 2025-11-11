@@ -179,7 +179,7 @@ function createTimelineApp(options = {}) {
 
   function renderSummary() {
     if (!pathSummary) return;
-    pathSummary.innerHTML = '';
+    pathSummary.replaceChildren();
     if (state.loading) {
       pathSummary.appendChild(createEmptyState('Loading leverage data…'));
       return;
@@ -261,7 +261,7 @@ function createTimelineApp(options = {}) {
 
   function renderFilters() {
     if (!filters) return;
-    filters.innerHTML = '';
+    filters.replaceChildren();
     if (state.loading) {
       filters.appendChild(createEmptyState('Loading selections…'));
       return;
@@ -397,7 +397,7 @@ function createTimelineApp(options = {}) {
 
   function renderTimeline() {
     if (!timeline) return;
-    timeline.innerHTML = '';
+    timeline.replaceChildren();
     if (state.loading) {
       timeline.appendChild(createEmptyState('Loading timeline…'));
       return;
@@ -451,7 +451,12 @@ function createTimelineApp(options = {}) {
         dateLabel.className = 'timeline-date';
         const tierSet = new Set(gamesOnDate.map(game => tierLabels[determineTier(game.leverage)]));
         const tierText = Array.from(tierSet).join(' • ');
-        dateLabel.innerHTML = `${formatDateGroup(dateKey)} <span>${tierText}</span>`;
+        // Build date label safely
+        const dateText = doc.createTextNode(formatDateGroup(dateKey) + ' ');
+        const tierSpan = doc.createElement('span');
+        tierSpan.textContent = tierText;
+        dateLabel.appendChild(dateText);
+        dateLabel.appendChild(tierSpan);
         item.appendChild(dateLabel);
 
         gamesOnDate
@@ -478,7 +483,12 @@ function createTimelineApp(options = {}) {
             segmentTag.className = 'segment-tag';
             segmentTag.style.borderColor = `${game.color}55`;
             segmentTag.style.background = `${game.color}22`;
-            segmentTag.innerHTML = `<span>Edge</span>${game.segmentLabel}`;
+            // Build segment tag content safely
+            const edgeLabel = doc.createElement('span');
+            edgeLabel.textContent = 'Edge';
+            const segText = doc.createTextNode(String(game.segmentLabel || ''));
+            segmentTag.appendChild(edgeLabel);
+            segmentTag.appendChild(segText);
 
             const timestamp = doc.createElement('span');
             timestamp.className = 'timestamp';
@@ -491,12 +501,34 @@ function createTimelineApp(options = {}) {
             meta.className = 'meta';
             const homeConf = game.homeTeam?.conference?.shortName ?? '—';
             const awayConf = game.awayTeam?.conference?.shortName ?? '—';
-            meta.innerHTML = `
-              <span><strong>Conference</strong> ${homeConf} • ${awayConf}</span>
-              <span><strong>Week</strong> ${game.week ?? 'TBD'}</span>
-              <span><strong>Type</strong> ${formatGameType(game.type)}</span>
-              <span><strong>Leverage</strong> ${formatLeverage(game.leverage)}</span>
-            `;
+            // Conference
+            const confSpan = doc.createElement('span');
+            const confStrong = doc.createElement('strong');
+            confStrong.textContent = 'Conference';
+            confSpan.appendChild(confStrong);
+            confSpan.appendChild(doc.createTextNode(' ' + homeConf + ' • ' + awayConf));
+            // Week
+            const weekSpan = doc.createElement('span');
+            const weekStrong = doc.createElement('strong');
+            weekStrong.textContent = 'Week';
+            weekSpan.appendChild(weekStrong);
+            weekSpan.appendChild(doc.createTextNode(' ' + (game.week ?? 'TBD')));
+            // Type
+            const typeSpan = doc.createElement('span');
+            const typeStrong = doc.createElement('strong');
+            typeStrong.textContent = 'Type';
+            typeSpan.appendChild(typeStrong);
+            typeSpan.appendChild(doc.createTextNode(' ' + formatGameType(game.type)));
+            // Leverage
+            const levSpan = doc.createElement('span');
+            const levStrong = doc.createElement('strong');
+            levStrong.textContent = 'Leverage';
+            levSpan.appendChild(levStrong);
+            levSpan.appendChild(doc.createTextNode(' ' + formatLeverage(game.leverage)));
+            meta.appendChild(confSpan);
+            meta.appendChild(weekSpan);
+            meta.appendChild(typeSpan);
+            meta.appendChild(levSpan);
 
             const details = doc.createElement('details');
             const summary = doc.createElement('summary');
@@ -644,7 +676,7 @@ function createTimelineApp(options = {}) {
   function renderFileModeNotice() {
     if (!doc?.body) return;
     doc.body.classList.add('file-mode');
-    doc.body.innerHTML = '';
+    doc.body.replaceChildren();
     const wrapper = doc.createElement('div');
     wrapper.className = 'file-overlay';
 
@@ -655,11 +687,11 @@ function createTimelineApp(options = {}) {
       'The interactive matchup explorer needs to load schedule data over HTTP. Start the local server with <code>npm run web:serve</code> from the repository root, then open the page from that address.';
 
     const hint = doc.createElement('p');
-    hint.innerHTML = 'Once the server is running, use this link to launch the full experience:';
+    hint.textContent = 'Once the server is running, use this link to launch the full experience:';
 
     const link = doc.createElement('a');
-    link.href = 'http://localhost:4173/web/matchup-timeline.html';
-    link.textContent = 'Open http://localhost:4173/web/matchup-timeline.html';
+    link.href = './matchup-timeline.html';
+    link.textContent = 'Open Matchup Timeline';
 
     wrapper.append(heading, copy, hint, link);
     doc.body.appendChild(wrapper);

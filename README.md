@@ -2,6 +2,12 @@
 
 This project models FBS college football teams and schedules as a graph, exposing rich data and analytics via a GraphQL API and interactive web UI.
 
+## 🌐 Live Demo
+
+**[View the live interactive web app on GitHub Pages](https://apkasten906.github.io/fbs-graph/)**
+
+The GitHub Pages deployment provides a fully static version of the visualization tools, pre-generated with the latest FBS schedule data.
+
 ## 🚀 Getting Started
 
 ### 1. Install dependencies
@@ -129,12 +135,27 @@ query {
 
 ## 🧩 Useful Scripts
 
+### Local Development
+
 - `npm run setup` — One-step data import and preparation
 - `npm run dev` — Start backend GraphQL server
 - `npm run web:serve` — Start static web server
 - `npm run fetch:all` — Fetch all data (conferences, teams, schedules, polls, ratings)
 - `npm run import:csv` — Import/transform CSV data
 - `npm run preview:playoff` — Run playoff preview query from CLI
+
+### GitHub Pages Deployment
+
+- `npm run generate:static` — Generate static JSON data files for GitHub Pages
+- `npm run build:pages` — Build distribution folder with static data and web assets
+
+The GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) automatically:
+
+1. Generates static data files from the latest data
+2. Builds a clean distribution folder containing only web assets and data
+3. Deploys to GitHub Pages at `https://apkasten906.github.io/fbs-graph/`
+
+**Note:** The live site uses pre-generated static JSON files (no GraphQL server). This allows the visualizations to work entirely client-side on GitHub Pages.
 
 ---
 
@@ -262,12 +283,22 @@ Opening the file directly from disk will display instructions that remind you to
 
 ## Leverage formula (simplified)
 
-```
+**Important:** Leverage is only calculated for **regular season games**. Postseason games (playoffs, bowls, championships) do not have leverage scores because:
+
+- Playoff matchups are predetermined by the playoff bracket structure
+- These games don't affect playoff positioning - they ARE the playoff games
+- The leverage concept only applies to games that determine future playoff chances
+
+For regular season games:
+
+```text
 leverage = rankWeight(home) * rankWeight(away) * bridgeBoost * timingBoost
 ```
 
 - `rankWeight(team)`: from AP rank if present (1/rank scaled), else SP+ percentile.
 - `bridgeBoost`: 1.2 for non-conference, 1.1 for inter-division, else 1.0.
-- `timingBoost`: 1.0 early season → 1.15 late season (Week 12+), bowls/playoffs 1.25.
+- `timingBoost`: 1.0 early season → 1.15 late season (Week 12+).
 
-You can adjust in `src/lib/score.ts`.
+_Note: The timingBoost function includes values for postseason game types (1.25) for backward compatibility, but these are never used in production since postseason games skip leverage calculation entirely._
+
+You can adjust the calculation in `src/lib/score.ts` and see the skip logic in `scripts/generate-static-data.ts`.
