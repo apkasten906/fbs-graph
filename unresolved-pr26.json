@@ -1,0 +1,20 @@
+﻿[
+  {
+    "Path": "web/modules/static-data-adapter.js",
+    "Author": "copilot-pull-request-reviewer",
+    "CreatedAt": "2025-11-11T17:44:09Z",
+    "BodySnippet": "The condition `!variables` is insufficient to determine if a variables object exists. An empty object `{}` is truthy but has no meaningful variables. This could allow unsafe query strings with empty variables objects. Use `!hasSeasonVariable` or check `Object.keys(variables).length === 0` instead."
+  },
+  {
+    "Path": "scripts/generate-static-data.ts",
+    "Author": "copilot-pull-request-reviewer",
+    "CreatedAt": "2025-11-11T17:44:09Z",
+    "BodySnippet": "Use `Number.isFinite()` instead of global `isFinite()` for type-safe checking. The global `isFinite()` coerces values to numbers which can hide bugs. \n```suggestion \n  if (typeof g.leverage === \u0027number\u0027 \u0026\u0026 Number.isFinite(g.leverage)) { \n```"
+  },
+  {
+    "Path": "scripts/check-gh-token.ps1",
+    "Author": "copilot-pull-request-reviewer",
+    "CreatedAt": "2025-11-11T17:44:09Z",
+    "BodySnippet": "Converting SecureString to plain text using `PtrToStringAuto` leaves the token in unmanaged memory. Use `PtrToStringUni` with explicit `ZeroFreeBSTR` cleanup to securely clear the unmanaged memory after use. \n```suggestion \n  $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureToken) \n  try {"
+  }
+]

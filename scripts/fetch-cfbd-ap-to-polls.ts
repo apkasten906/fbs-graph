@@ -1,6 +1,9 @@
 import fs from 'node:fs';
 import localenv from 'dotenv';
-const API_KEY = process.env.CFBD_KEY || process.env.COLLEGE_FOOTBALL_API_KEY || localenv.config().parsed?.CFBD_KEY;
+const API_KEY =
+  process.env.CFBD_KEY ||
+  process.env.COLLEGE_FOOTBALL_API_KEY ||
+  localenv.config().parsed?.CFBD_KEY;
 if (!API_KEY) {
   console.error('Missing CFBD_KEY');
   process.exit(1);

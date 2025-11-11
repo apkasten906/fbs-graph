@@ -1,4 +1,3 @@
-
 # Database Field Documentation
 
 This document describes the fields for each main database entity (JSON file) in the FBS Graph solution. All field types and relationships are based on the current canonical data files. Use this as the source of truth for onboarding, development, and data integration.

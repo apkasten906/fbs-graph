@@ -144,7 +144,7 @@ type Query {
     season: Int!
     week: Int
     limit: Int = 50
-    includeConferenceGames: Boolean = true    
+    includeConferenceGames: Boolean = true
   ): [Game!]!
   conferenceConnectivity(season: Int!): [ConferenceConnectivity!]!
   playoffPreview(

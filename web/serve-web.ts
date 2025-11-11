@@ -48,7 +48,7 @@ async function resolvePath(requestPath: string) {
   let stats;
   try {
     stats = await fs.stat(candidate);
-  } catch (error) {
+  } catch {
     return null;
   }
   if (stats.isDirectory()) {
@@ -56,7 +56,7 @@ async function resolvePath(requestPath: string) {
     try {
       await fs.access(indexPath);
       return indexPath;
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -65,9 +65,7 @@ async function resolvePath(requestPath: string) {
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
-  const filePath = await resolvePath(
-    url.pathname === '/' ? '/web/index.html' : url.pathname
-  );
+  const filePath = await resolvePath(url.pathname === '/' ? '/web/index.html' : url.pathname);
   if (!filePath) {
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Not found');

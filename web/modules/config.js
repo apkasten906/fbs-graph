@@ -1,12 +1,29 @@
-// Conference map: id → { shortName, name }
-import conferencesData from '../../src/data/conferences.json' assert { type: 'json' };
-
-export const conferenceMap = Object.fromEntries(
-  conferencesData.map(c => [c.id, { shortName: c.shortName, name: c.name }])
-);
 /**
  * Configuration and constants for the FBS Timeline App
  */
+
+/**
+ * Default GraphQL endpoint URL for local development.
+ * Used as fallback when static data adapter is not available or when
+ * users haven't overridden the endpoint in the UI.
+ */
+export const DEFAULT_GRAPHQL_ENDPOINT = 'http://localhost:4100/graphql';
+
+/**
+ * Conference map: id → { shortName, name }
+ * Private store populated by setConferenceMap() during data initialization.
+ */
+// Internal frozen snapshot kept for backward compatibility with existing
+// consumers that call `setConferenceMap()` once during initialization and
+// later call `getConferenceMap()` with no args. Prefer calling
+// `createConferenceMap(conferences)` or `getConferenceMap(conferences)` to
+// avoid relying on module-level mutable state in tests or concurrent runs.
+// Conference map implementation moved to its own module for clearer
+// separation of concerns. We re-export the API here for compatibility
+// so existing imports from './config.js' continue to work.
+import { createConferenceMap, setConferenceMap, getConferenceMap } from './conference-map.js';
+
+export { createConferenceMap, setConferenceMap, getConferenceMap };
 
 export const tierLabels = {
   critical: 'Critical leverage',

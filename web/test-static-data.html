@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Static Data Adapter Test</title>
+    <script type="module">
+      import { staticData } from './modules/static-data-adapter.js';
+
+      window.staticDataAdapter = staticData;
+
+      console.log('Static data adapter loaded:', window.staticDataAdapter);
+
+      // Test loading data
+      async function testLoad() {
+        try {
+          console.log('Testing metadata load...');
+          const metadata = await window.staticDataAdapter.getMetadata();
+          console.log('Metadata:', metadata);
+
+          console.log('Testing conferences load...');
+          const conferences = await window.staticDataAdapter.getConferences();
+          console.log('Conferences:', conferences.length, 'items');
+
+          console.log('Testing teams load...');
+          const teams = await window.staticDataAdapter.getTeams();
+          console.log('Teams:', teams.length, 'items');
+
+          console.log('Testing games load...');
+          const games = await window.staticDataAdapter.getGames(2025);
+          console.log('Games:', games.length, 'items');
+
+          console.log('All tests passed!');
+          // Safely render results using textContent to avoid XSS
+          const h1 = document.createElement('h1');
+          h1.textContent = 'Success!';
+          const pre = document.createElement('pre');
+          pre.textContent = JSON.stringify(
+            { metadata, conferences: conferences.length, teams: teams.length, games: games.length },
+            null,
+            2
+          );
+          // Replace children atomically to avoid temporarily exposing cleared HTML
+          document.body.replaceChildren(h1, pre);
+        } catch (error) {
+          console.error('Test failed:', error);
+          // Render error safely
+          const eh1 = document.createElement('h1');
+          eh1.textContent = 'Error!';
+          const epre = document.createElement('pre');
+          epre.textContent = String(error?.message ?? error);
+          document.body.replaceChildren(eh1, epre);
+        }
+      }
+
+      // Run test after page loads
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', testLoad);
+      } else {
+        testLoad();
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Loading...</h1>
+  </body>
+</html>

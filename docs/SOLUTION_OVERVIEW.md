@@ -1,4 +1,3 @@
-
 # FBS Schedule Graph: Solution Overview
 
 ## Project Purpose
