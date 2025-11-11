@@ -317,12 +317,14 @@ export class StaticDataAdapter {
     // Consider a variables object present if any of the known variables are non-null/defined
     // (we compute this first so callers that pass an empty `{}` do not bypass
     // the allowlist check accidentally).
+    // `variables` is normalized to an object earlier in this function, so
+    // checking its truthiness is redundant. Consider the variables present
+    // if any of the known fields are non-null/defined.
     const hasSeasonVariable =
-      variables &&
-      (variables.season != null ||
-        variables.owner != null ||
-        variables.pr != null ||
-        variables.name != null);
+      variables.season != null ||
+      variables.owner != null ||
+      variables.pr != null ||
+      variables.name != null;
 
     // If the caller provided a free-form query string that doesn't match our
     // allowlist, refuse to execute it. This prevents future accidental
