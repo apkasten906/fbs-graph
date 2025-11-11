@@ -1,5 +1,6 @@
 // --- Helper functions for timeline explorer ---
-import { DEFAULT_GRAPHQL_ENDPOINT, setConferenceMap } from './config.js';
+import { DEFAULT_GRAPHQL_ENDPOINT } from './config.js';
+import { setConferenceMap } from './conference-map.js';
 
 function computePairs(games) {
   // Groups games by a unique key for each home/away pair (order-independent)

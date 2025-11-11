@@ -1,13 +1,8 @@
 /**
  * UI Rendering functions for the FBS Timeline App
  */
-import {
-  tierLabels,
-  tierColor,
-  conferenceScopes,
-  determineTier,
-  getConferenceMap,
-} from './config.js';
+import { tierLabels, tierColor, conferenceScopes, determineTier } from './config.js';
+import { getConferenceMap } from './conference-map.js';
 import {
   formatLeverage,
   formatDateTime,
