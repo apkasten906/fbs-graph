@@ -52,6 +52,12 @@ src/data/games.scored.*.json
 web/data/*.json
 !web/data/.gitkeep
 
+# Ignore favicons that are generated/modified by tooling or editors and
+# that we don't want tracked in commits. If you prefer to keep them
+# tracked, remove these lines and commit the files instead.
+/favicon.ico
+/web/favicon.svg
+
 # Others
 .idea/
 *.iml
