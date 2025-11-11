@@ -49,6 +49,9 @@ param(
   [Parameter(Mandatory=$true)]
   [int]$PRNumber,
   
+  [switch]$DryRun,
+  [switch]$CaptureRaw,
+
   [string]$TokenEnvName = 'COPILOT_GRAPHQL_TOKEN',
   
   [switch]$Interactive,
@@ -92,6 +95,56 @@ if (-not (Test-GitHubName -Name $Repo -Type 'Repo')) {
 if ($PRNumber -lt 1) {
   Write-Host "Error: PRNumber must be a positive integer" -ForegroundColor Red
   exit 1
+}
+
+# If requested, build the GraphQL query and JSON body and print them without requiring a token.
+if ($DryRun) {
+  $query = 'query($owner:String!,$name:String!,$pr:Int!){ repository(owner:$owner, name:$name) { pullRequest(number:$pr) { reviewThreads(first: 100) { nodes { isResolved comments(first: 50) { nodes { author { login } body createdAt path } } } } } } }'
+  $variables = @{ owner = $Owner; name = $Repo; pr = $PRNumber }
+  $body = @{ query = $query; variables = $variables } | ConvertTo-Json -Depth 10
+  Write-Host 'DRYRUN: GraphQL query (with variables):' -ForegroundColor Yellow
+  Write-Host $query
+  Write-Host 'DRYRUN: Variables:' -ForegroundColor Yellow
+  Write-Host ($variables | ConvertTo-Json -Depth 5)
+  Write-Host 'DRYRUN: JSON body to POST:' -ForegroundColor Yellow
+  Write-Host $body
+  exit 0
+}
+
+# If requested, print the raw UTF-8 bytes and headers that would be sent to GitHub (no token printed)
+if ($CaptureRaw) {
+  $query = 'query($owner:String!,$name:String!,$pr:Int!){ repository(owner:$owner, name:$name) { pullRequest(number:$pr) { reviewThreads(first: 100) { nodes { isResolved comments(first: 50) { nodes { author { login } body createdAt path } } } } } } }'
+  $variables = @{ owner = $Owner; name = $Repo; pr = $PRNumber }
+  $body = @{ query = $query; variables = $variables } | ConvertTo-Json -Depth 10
+
+  # Prepare UTF8 bytes (no BOM)
+  $utf8 = [System.Text.Encoding]::UTF8
+  $bytes = $utf8.GetBytes($body)
+
+  Write-Host 'CAPTURERAW: JSON body (string):' -ForegroundColor Yellow
+  Write-Host $body
+  Write-Host 'CAPTURERAW: UTF-8 bytes (length:' ($bytes.Length) '):' -ForegroundColor Yellow
+  # Print first 512 bytes as hex and decimal for inspection
+  $preview = $bytes[0..([Math]::Min($bytes.Length-1,511))]
+  $hex = ($preview | ForEach-Object { $_.ToString('x2') }) -join ' '
+  Write-Host $hex
+
+  # Print any non-printable characters positions (if any)
+  $nonPrintable = @()
+  for ($i=0; $i -lt $bytes.Length; $i++) {
+    $b = $bytes[$i]
+    if ($b -lt 0x20 -and $b -ne 0x09 -and $b -ne 0x0a -and $b -ne 0x0d) { $nonPrintable += $i }
+  }
+  if ($nonPrintable.Count -gt 0) {
+    Write-Host 'CAPTURERAW: Non-printable byte indexes:' -ForegroundColor Yellow
+    Write-Host ($nonPrintable -join ', ')
+  } else {
+    Write-Host 'CAPTURERAW: No suspicious non-printable bytes found.' -ForegroundColor Green
+  }
+
+  Write-Host 'CAPTURERAW: Content-Type: application/json; charset=utf-8' -ForegroundColor Yellow
+  Write-Host 'CAPTURERAW: Authorization: (not printed)'
+  exit 0
 }
 
 function Read-TokenFromDotEnv([string]$path, [string]$name) {
@@ -147,12 +200,14 @@ try {
   exit 3
 }
 
-# build inline query (no GraphQL variables to avoid PowerShell parsing issues)
-$query = 'query { repository(owner: "' + $Owner + '", name: "' + $Repo + '") { pullRequest(number: ' + $PRNumber + ') { reviewThreads(first: 100) { nodes { isResolved comments(first: 50) { nodes { author { login } body createdAt path } } } } } }'
-$body = @{ query = $query } | ConvertTo-Json -Depth 10
+ # build query using GraphQL variables to avoid quoting issues
+ $query = 'query($owner:String!,$name:String!,$pr:Int!){ repository(owner:$owner, name:$name) { pullRequest(number:$pr) { reviewThreads(first: 100) { nodes { isResolved comments(first: 50) { nodes { author { login } body createdAt path } } } } } } }'
+ $variables = @{ owner = $Owner; name = $Repo; pr = $PRNumber }
+ $body = @{ query = $query; variables = $variables } | ConvertTo-Json -Depth 10
 
 try {
-  $gql = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Headers @{ Authorization = "bearer $token"; 'User-Agent' = 'check-gh-token' } -Body $body -ContentType 'application/json' -ErrorAction Stop
+  $headersGql = @{ Authorization = "bearer $token"; 'User-Agent' = 'check-gh-token' ; 'Content-Type' = 'application/json' }
+  $gql = Invoke-RestMethod -Uri 'https://api.github.com/graphql' -Method Post -Headers $headersGql -Body $body -ErrorAction Stop
 } catch {
   Write-Host "GraphQL request failed: $($_.Exception.Message)" -ForegroundColor Red
   exit 4

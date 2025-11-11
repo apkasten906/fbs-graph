@@ -276,17 +276,19 @@ export class StaticDataAdapter {
   async executeQuery(query, variables) {
     const season = this._validatedSeason(variables?.season);
 
-    // For the timeline explorer query
-    if (
-      typeof query === 'string' &&
-      query.includes('teams(season:') &&
-      query.includes('games(season:')
-    ) {
+    // Accept both inline queries and variables-based queries.
+    // If variables contains a season and the query references teams/games (or the calling code used variables), treat as graph query.
+    const qstr = typeof query === 'string' ? query : String(query);
+    const looksLikeGraphQuery = qstr.includes('teams') && qstr.includes('games');
+    const hasSeasonVariable =
+      variables && (variables.season || variables.owner || variables.pr || variables.name);
+
+    if (looksLikeGraphQuery || hasSeasonVariable) {
       return this.queryGraph(season);
     }
 
     // For essential matchups query
-    if (typeof query === 'string' && query.includes('essentialMatchups')) {
+    if (qstr.includes('essentialMatchups')) {
       const matchups = await this.queryEssentialMatchups(variables);
       return {
         data: {
@@ -296,10 +298,12 @@ export class StaticDataAdapter {
     }
 
     // Provide helpful context to aid debugging in CI/production
-    const snippet =
-      typeof query === 'string'
-        ? query.substring(0, 200) + (query.length > 200 ? '...' : '')
-        : String(query);
+    const snippet = (() => {
+      if (typeof query === 'string') {
+        return query.length > 200 ? query.slice(0, 200) + '...' : query;
+      }
+      return String(query);
+    })();
     throw new Error(
       `Unsupported query type. Expected queries containing 'teams(season:)' and 'games(season:)' for graph queries, or 'essentialMatchups' for matchup queries. Received: ${snippet}`
     );

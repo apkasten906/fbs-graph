@@ -169,17 +169,23 @@ for (const g of list) {
   const k = key(hc, ac);
   const e = acc.get(k) ?? { edges: 0, totalLev: 0, a: hc, b: ac };
   e.edges += 1;
-  e.totalLev += g.leverage ?? 0;
+  // Some games may not have leverage computed (e.g., postseason or missing data).
+  // Only accumulate numeric leverage values to avoid polluting averages.
+  const lev = typeof g.leverage === 'number' && isFinite(g.leverage) ? g.leverage : 0;
+  e.totalLev += lev;
   acc.set(k, e);
 }
 
-const connectivityData = Array.from(acc.values()).map(e => ({
-  season,
-  conferenceA: conferenceById(e.a),
-  conferenceB: conferenceById(e.b),
-  edges: e.edges,
-  averageLeverage: Number((e.totalLev / e.edges).toFixed(4)),
-}));
+// Only include connections that have at least one recorded edge.
+const connectivityData = Array.from(acc.values())
+  .filter(e => e.edges > 0)
+  .map(e => ({
+    season,
+    conferenceA: conferenceById(e.a),
+    conferenceB: conferenceById(e.b),
+    edges: e.edges,
+    averageLeverage: e.edges > 0 ? Number((e.totalLev / e.edges).toFixed(4)) : 0,
+  }));
 
 fs.writeFileSync(
   path.join(OUTPUT_DIR, `conference-connectivity-${season}.json`),

@@ -11,7 +11,18 @@ const WEB_DIR = path.join(process.cwd(), 'web');
 
 // Ensure dist directory exists and is clean
 if (fs.existsSync(DIST_DIR)) {
-  fs.rmSync(DIST_DIR, { recursive: true, force: true });
+  // Safety guard: do not allow accidental removal of filesystem root or the project root
+  const resolved = path.resolve(DIST_DIR);
+  const root = path.parse(resolved).root;
+  if (resolved === root || resolved === path.resolve('/')) {
+    throw new Error(`Refusing to remove root path: ${resolved}`);
+  }
+  try {
+    fs.rmSync(DIST_DIR, { recursive: true, force: true });
+  } catch (err) {
+    console.error(`Failed to remove ${DIST_DIR}:`, err);
+    throw err;
+  }
 }
 fs.mkdirSync(DIST_DIR, { recursive: true });
 
