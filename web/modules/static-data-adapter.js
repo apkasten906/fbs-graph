@@ -153,7 +153,8 @@ export class StaticDataAdapter {
     const teams = await this.getTeams();
     let filtered = teams;
 
-    if (options.conferenceId !== undefined) {
+    // Treat null/undefined conferenceId as "no filter"
+    if (options.conferenceId != null) {
       // Validate conferenceId is a non-empty string
       if (typeof options.conferenceId !== 'string' || options.conferenceId.trim() === '') {
         console.warn(
@@ -280,8 +281,13 @@ export class StaticDataAdapter {
     // If variables contains a season and the query references teams/games (or the calling code used variables), treat as graph query.
     const qstr = typeof query === 'string' ? query : String(query);
     const looksLikeGraphQuery = qstr.includes('teams') && qstr.includes('games');
+    // Consider a variables object present if any of the known variables are non-null/defined
     const hasSeasonVariable =
-      variables && (variables.season || variables.owner || variables.pr || variables.name);
+      variables &&
+      (variables.season != null ||
+        variables.owner != null ||
+        variables.pr != null ||
+        variables.name != null);
 
     if (looksLikeGraphQuery || hasSeasonVariable) {
       return this.queryGraph(season);

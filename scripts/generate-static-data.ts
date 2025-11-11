@@ -115,7 +115,7 @@ const seasons = [currentYear]; // Can add more seasons: [2024, 2025]
 for (const season of seasons) {
   const enrichedGames = enrichGamesForSeason(season, 'AVERAGE');
   
-  if (!enrichedGames || enrichedGames.length === 0) {
+  if (!Array.isArray(enrichedGames) || enrichedGames.length === 0) {
     console.warn(`⚠️  No game data found for season ${season}. Skipping generation for this season.`);
     continue;
   }
