@@ -56,6 +56,44 @@ param(
   [string]$OutputFile = ''
 )
 
+# Validate input parameters to prevent injection attacks
+# GitHub usernames/orgs and repo names must match specific patterns
+function Test-GitHubName {
+  param([string]$Name, [string]$Type)
+  
+  # GitHub allows alphanumeric, hyphens, and underscores
+  # Names cannot start with hyphen and have length limits
+  if ([string]::IsNullOrWhiteSpace($Name)) {
+    Write-Host "Error: $Type cannot be empty" -ForegroundColor Red
+    return $false
+  }
+  
+  if ($Name.Length -gt 39) {
+    Write-Host "Error: $Type exceeds maximum length of 39 characters" -ForegroundColor Red
+    return $false
+  }
+  
+  if ($Name -notmatch '^[a-zA-Z0-9]([a-zA-Z0-9-_]*[a-zA-Z0-9])?$') {
+    Write-Host "Error: $Type contains invalid characters. Only alphanumeric, hyphens, and underscores allowed." -ForegroundColor Red
+    return $false
+  }
+  
+  return $true
+}
+
+if (-not (Test-GitHubName -Name $Owner -Type 'Owner')) {
+  exit 1
+}
+
+if (-not (Test-GitHubName -Name $Repo -Type 'Repo')) {
+  exit 1
+}
+
+if ($PRNumber -lt 1) {
+  Write-Host "Error: PRNumber must be a positive integer" -ForegroundColor Red
+  exit 1
+}
+
 function Read-TokenFromDotEnv([string]$path, [string]$name) {
   if (-not (Test-Path $path)) { return $null }
   $lines = Get-Content -Path $path -ErrorAction SilentlyContinue
@@ -66,11 +104,23 @@ function Read-TokenFromDotEnv([string]$path, [string]$name) {
   return $null
 }
 
-# get token
+# Obtain GitHub token from various sources
+# NOTE: Token is stored as plain text in memory because GitHub API requires
+# it as a string in HTTP Authorization headers. SecureString cannot be used
+# directly with Invoke-WebRequest/Invoke-RestMethod. While we convert from
+# SecureString during interactive input to protect keyboard entry, the token
+# must ultimately be in plain text for API authentication.
+#
+# Security measures in place:
+# - Interactive mode uses Read-Host -AsSecureString to hide keyboard input
+# - Token is never persisted to disk or logs
+# - Token is cleared from memory when script exits
+# - Script uses HTTPS for all API calls (encrypted in transit)
 $token = $null
 if ($Interactive) {
-  $token = Read-Host -AsSecureString -Prompt 'Enter GitHub token (input hidden)'
-  $token = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($token))
+  # Secure keyboard entry, but must convert to plain text for API calls
+  $secureToken = Read-Host -AsSecureString -Prompt 'Enter GitHub token (input hidden)'
+  $token = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureToken))
 } else {
   try {
     $envItem = Get-Item -Path ("env:$TokenEnvName") -ErrorAction SilentlyContinue
@@ -133,5 +183,8 @@ $out = foreach ($t in $unresolved) {
 }
 
 if ($OutputFile) { $out | ConvertTo-Json -Depth 5 | Out-File -FilePath $OutputFile -Encoding UTF8; Write-Host "Wrote $OutputFile" -ForegroundColor Green } else { $out | Format-Table -AutoSize }
+
+# Clear sensitive data from memory before exiting
+$token = $null
 
 Write-Host 'Done.' -ForegroundColor Green

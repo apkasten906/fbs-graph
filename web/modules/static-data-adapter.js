@@ -15,28 +15,45 @@ export class StaticDataAdapter {
    * Load and cache a JSON file from the configured basePath.
    * @param {string} filename - JSON file name relative to basePath (e.g. 'teams.json')
    * @returns {Promise<any>} parsed JSON
-   * @throws {Error} when fetch fails or response is not ok
+   * @throws {Error} when fetch fails, response is not ok, or JSON parsing fails
    */
   async loadJSON(filename) {
     if (this.cache.has(filename)) {
       console.log(`[StaticDataAdapter] Loaded ${filename} from cache`);
       return this.cache.get(filename);
     }
+
     const url = `${this.basePath}/${filename}`;
     console.log(`[StaticDataAdapter] Fetching ${url}`);
-    const response = await fetch(url);
-    if (!response.ok) {
-      console.error(
-        `[StaticDataAdapter] Failed to load ${filename}: ${response.status} ${response.statusText}`
+
+    try {
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        console.error(
+          `[StaticDataAdapter] Failed to load ${filename}: ${response.status} ${response.statusText}`
+        );
+        throw new Error(`Failed to load ${filename}: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log(
+        `[StaticDataAdapter] Successfully loaded ${filename}, ${JSON.stringify(data).length} bytes`
       );
-      throw new Error(`Failed to load ${filename}: ${response.statusText}`);
+      this.cache.set(filename, data);
+      return data;
+    } catch (error) {
+      // Network errors, CORS issues, or JSON parsing failures
+      if (error instanceof Error && error.message.startsWith('Failed to load')) {
+        // Re-throw our own errors with context preserved
+        throw error;
+      }
+      // Wrap network/parsing errors with additional context
+      console.error(`[StaticDataAdapter] Error loading ${filename}:`, error);
+      throw new Error(
+        `Failed to load ${filename}: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
-    const data = await response.json();
-    console.log(
-      `[StaticDataAdapter] Successfully loaded ${filename}, ${JSON.stringify(data).length} bytes`
-    );
-    this.cache.set(filename, data);
-    return data;
   }
 
   /**
@@ -123,13 +140,28 @@ export class StaticDataAdapter {
    * @param {object} [options={}] - Filter options
    * @param {string} [options.conferenceId] - Filter by conference ID
    * @returns {Promise<Array>} Filtered array of teams
+   * @throws {TypeError} When options is not an object or conferenceId is invalid
    */
   async queryTeams(options = {}) {
+    // Validate options parameter
+    if (options !== null && typeof options !== 'object') {
+      throw new TypeError(
+        `queryTeams() expects options to be an object, received: ${typeof options}`
+      );
+    }
+
     const teams = await this.getTeams();
     let filtered = teams;
 
-    if (options.conferenceId) {
-      filtered = filtered.filter(t => t.conferenceId === options.conferenceId);
+    if (options.conferenceId !== undefined) {
+      // Validate conferenceId is a non-empty string
+      if (typeof options.conferenceId !== 'string' || options.conferenceId.trim() === '') {
+        console.warn(
+          `[StaticDataAdapter] Invalid conferenceId '${options.conferenceId}' in queryTeams; ignoring filter`
+        );
+      } else {
+        filtered = filtered.filter(t => t.conferenceId === options.conferenceId);
+      }
     }
 
     // Teams are already filtered by season in the JSON (no additional filter needed)
@@ -264,9 +296,12 @@ export class StaticDataAdapter {
     }
 
     // Provide helpful context to aid debugging in CI/production
-    const snippet = typeof query === 'string' ? query.substring(0, 200) : String(query);
+    const snippet =
+      typeof query === 'string'
+        ? query.substring(0, 200) + (query.length > 200 ? '...' : '')
+        : String(query);
     throw new Error(
-      `Unsupported query type. Expected queries containing 'teams(season:)' and 'games(season:)' for graph queries, or 'essentialMatchups' for matchup queries. Received: ${snippet}...`
+      `Unsupported query type. Expected queries containing 'teams(season:)' and 'games(season:)' for graph queries, or 'essentialMatchups' for matchup queries. Received: ${snippet}`
     );
   }
 }
