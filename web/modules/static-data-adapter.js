@@ -300,7 +300,27 @@ export class StaticDataAdapter {
     // for the function-like usages `teams(` and `games(` which are much
     // less likely to collide with unrelated text.
     const qstr = typeof query === 'string' ? query : String(query);
+    // Simple allowlist for supported query types to avoid executing arbitrary
+    // user-controlled GraphQL strings. We only support two patterns currently:
+    // - Graph queries that request teams(...) and games(...)
+    // - essentialMatchups queries
+    const allowedQueryPatterns = [
+      /\bteams\s*\(/i,
+      /\bgames\s*\(/i,
+      /\bessentialMatchups\b/i,
+    ];
+    const isAllowedQueryString = q => allowedQueryPatterns.some(r => r.test(q));
+
     const looksLikeGraphQuery = /\bteams\s*\(/i.test(qstr) && /\bgames\s*\(/i.test(qstr);
+
+    // If the caller provided a free-form query string that doesn't match our
+    // allowlist, refuse to execute it. This prevents future accidental
+    // usage where a user-controlled string could be used to induce unsafe
+    // behavior. Variables-based requests (hasSeasonVariable) are still
+    // allowed because they are constrained by known variable names.
+    if (!isAllowedQueryString(qstr) && !variables) {
+      throw new Error('Refusing to execute unsupported or potentially unsafe query string.');
+    }
 
     // Consider a variables object present if any of the known variables are non-null/defined
     const hasSeasonVariable =

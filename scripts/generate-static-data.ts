@@ -112,11 +112,20 @@ console.log(`✓ Generated teams.json (${teamsData.length} teams)`);
 const currentYear = new Date().getFullYear();
 const seasons = [currentYear]; // Can add more seasons: [2024, 2025]
 
+// Behavior configuration: when running in CI you may want the build to fail
+// if expected data is missing. Set FAIL_ON_MISSING_DATA=1 in the environment
+// to turn warnings into hard failures.
+const FAIL_ON_MISSING_DATA = process.env.FAIL_ON_MISSING_DATA === '1';
+
 for (const season of seasons) {
   const enrichedGames = enrichGamesForSeason(season, 'AVERAGE');
   
   if (!Array.isArray(enrichedGames) || enrichedGames.length === 0) {
-    console.warn(`⚠️  No game data found for season ${season}. Skipping generation for this season.`);
+    const message = `⚠️  No game data found for season ${season}.`;
+    if (FAIL_ON_MISSING_DATA) {
+      throw new Error(message + ' FAIL_ON_MISSING_DATA is set, aborting.');
+    }
+    console.warn(message + ' Skipping generation for this season. To make this an error, set FAIL_ON_MISSING_DATA=1');
     continue;
   }
   
