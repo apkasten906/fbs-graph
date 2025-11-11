@@ -41,8 +41,19 @@ async function resolvePath(requestPath: string) {
   try {
     stats = await fs.stat(candidate);
   } catch (error) {
-    console.error(`Error accessing path "${candidate}":`, error);
-    return null;
+    // If the requested path doesn't exist at the repository root, try
+    // resolving it relative to the `web` folder. This allows pages that
+    // use either `/common-theme.css` (dist-root layout) or
+    // `/web/common-theme.css` (development server layout) to work.
+    const fallback = path.normalize(path.join(projectRoot, 'web', decoded.replace(/^\//, '')));
+    try {
+      stats = await fs.stat(fallback);
+      // Use the fallback candidate if it exists and is inside the project
+      if (isPathInside(projectRoot, fallback)) return fallback;
+    } catch (err2) {
+      console.error(`Error accessing path "${candidate}":`, error);
+      return null;
+    }
   }
   if (stats.isDirectory()) {
     const indexPath = path.join(candidate, 'index.html');
