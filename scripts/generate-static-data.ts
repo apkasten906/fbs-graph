@@ -186,7 +186,7 @@ for (const g of list) {
   e.edges += 1;
   // Some games may not have leverage computed (e.g., postseason or missing data).
   // Only accumulate numeric leverage values and count them for accurate averaging.
-  if (typeof g.leverage === 'number' && isFinite(g.leverage)) {
+  if (typeof g.leverage === 'number' && Number.isFinite(g.leverage)) {
     e.totalLev += g.leverage;
     e.levCount += 1;
   }

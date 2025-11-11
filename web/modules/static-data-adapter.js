@@ -314,22 +314,25 @@ export class StaticDataAdapter {
 
     const looksLikeGraphQuery = /\bteams\s*\(/i.test(qstr) && /\bgames\s*\(/i.test(qstr);
 
-    // If the caller provided a free-form query string that doesn't match our
-    // allowlist, refuse to execute it. This prevents future accidental
-    // usage where a user-controlled string could be used to induce unsafe
-    // behavior. Variables-based requests (hasSeasonVariable) are still
-    // allowed because they are constrained by known variable names.
-    if (!isAllowedQueryString(qstr) && !variables) {
-      throw new Error('Refusing to execute unsupported or potentially unsafe query string.');
-    }
-
     // Consider a variables object present if any of the known variables are non-null/defined
+    // (we compute this first so callers that pass an empty `{}` do not bypass
+    // the allowlist check accidentally).
     const hasSeasonVariable =
       variables &&
       (variables.season != null ||
         variables.owner != null ||
         variables.pr != null ||
         variables.name != null);
+
+    // If the caller provided a free-form query string that doesn't match our
+    // allowlist, refuse to execute it. This prevents future accidental
+    // usage where a user-controlled string could be used to induce unsafe
+    // behavior. Require a meaningful variables object (hasSeasonVariable)
+    // rather than relying on the truthiness of `variables` (an empty object
+    // is truthy and would previously bypass this check).
+    if (!isAllowedQueryString(qstr) && !hasSeasonVariable) {
+      throw new Error('Refusing to execute unsupported or potentially unsafe query string.');
+    }
 
     if (looksLikeGraphQuery || hasSeasonVariable) {
       return this.queryGraph(season);

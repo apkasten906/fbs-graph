@@ -180,9 +180,18 @@ function Read-TokenFromDotEnv([string]$path, [string]$name) {
 # - Script uses HTTPS for all API calls (encrypted in transit)
 $token = $null
 if ($Interactive) {
-  # Secure keyboard entry, but must convert to plain text for API calls
+  # Secure keyboard entry: convert SecureString to a Unicode BSTR and extract
+  # a managed string with PtrToStringUni. Always ensure the unmanaged BSTR
+  # is zeroed and freed via ZeroFreeBSTR to avoid leaving the token in
+  # unmanaged memory.
   $secureToken = Read-Host -AsSecureString -Prompt 'Enter GitHub token (input hidden)'
-  $token = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureToken))
+  $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureToken)
+  try {
+    $token = [Runtime.InteropServices.Marshal]::PtrToStringUni($bstr)
+  } finally {
+    # Zero and free the unmanaged BSTR regardless of success/failure
+    [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
+  }
 } else {
   try {
     $envItem = Get-Item -Path ("env:$TokenEnvName") -ErrorAction SilentlyContinue
