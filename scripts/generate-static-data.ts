@@ -205,6 +205,15 @@ const connectivityData = Array.from(acc.values())
     averageLeverage: e.levCount > 0 ? Number((e.totalLev / e.levCount).toFixed(4)) : 0,
   }));
 
+// Warn about per-connection issues where edges exist but no leverage values were recorded.
+for (const entry of Array.from(acc.values())) {
+  if (entry.edges > 0 && entry.levCount === 0) {
+    console.warn(
+      `⚠️  Conference connection ${entry.a} <-> ${entry.b} has ${entry.edges} games but no numeric leverage values; averageLeverage will be 0. Verify input data or leverage computation.`
+    );
+  }
+}
+
 if (connectivityData.length === 0) {
   console.warn(`⚠️  No conference connectivity data generated for season ${season}.`);
 } else {

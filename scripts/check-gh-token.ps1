@@ -76,9 +76,18 @@ function Test-GitHubName {
     return $false
   }
   
-  if ($Name -notmatch '^[a-zA-Z0-9]([a-zA-Z0-9-_]*[a-zA-Z0-9])?$') {
-    Write-Host "Error: $Type contains invalid characters. Only alphanumeric, hyphens, and underscores allowed." -ForegroundColor Red
-    return $false
+  # Repository names do not allow underscores; usernames/orgs historically allow hyphens
+  # and alphanumeric characters. Use a slightly different pattern for repos.
+  if ($Type -eq 'Repo') {
+    if ($Name -notmatch '^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$') {
+      Write-Host "Error: $Type contains invalid characters. Only alphanumeric and hyphens allowed for repository names." -ForegroundColor Red
+      return $false
+    }
+  } else {
+    if ($Name -notmatch '^[a-zA-Z0-9]([a-zA-Z0-9-_]*[a-zA-Z0-9])?$') {
+      Write-Host "Error: $Type contains invalid characters. Only alphanumeric, hyphens, and underscores allowed." -ForegroundColor Red
+      return $false
+    }
   }
   
   return $true

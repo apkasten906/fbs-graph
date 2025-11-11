@@ -116,9 +116,14 @@ export class StaticDataAdapter {
    * @returns {number} validated season
    */
   _validatedSeason(season) {
+    // Treat null/undefined uniformly: coerce early to short-circuit and
+    // return the default season. This avoids subtle differences between
+    // `null` and `undefined` further down in the logic.
+    if (season == null) return this.defaultSeason;
+
     if (typeof season === 'number' && Number.isFinite(season) && season > 1900 && season < 3000)
       return season;
-    if (season == null) return this.defaultSeason;
+
     const parsed = Number(season);
     if (Number.isFinite(parsed) && parsed > 1900 && parsed < 3000) return parsed;
     console.warn(
