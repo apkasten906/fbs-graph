@@ -280,12 +280,28 @@ export class StaticDataAdapter {
    * @throws {Error} When query type is not recognized
    */
   async executeQuery(query, variables) {
-    const season = this._validatedSeason(variables?.season);
+    // Normalize and validate variables parameter. Treat null/undefined as {}
+    // to keep behavior predictable and avoid runtime TypeErrors when callers
+    // accidentally pass a non-object (e.g. a string). If a non-object is
+    // provided, throw a clear TypeError so the problem is surfaced to the
+    // caller instead of causing obscure runtime failures.
+    if (variables == null) {
+      variables = {};
+    } else if (typeof variables !== 'object') {
+      throw new TypeError(
+        `executeQuery() expects variables to be an object when provided, received: ${typeof variables}`
+      );
+    }
 
-    // Accept both inline queries and variables-based queries.
-    // If variables contains a season and the query references teams/games (or the calling code used variables), treat as graph query.
+    const season = this._validatedSeason(variables.season);
+
+    // Accept both inline queries and variables-based queries. Use more
+    // precise checks for GraphQL fields to avoid false positives. We look
+    // for the function-like usages `teams(` and `games(` which are much
+    // less likely to collide with unrelated text.
     const qstr = typeof query === 'string' ? query : String(query);
-    const looksLikeGraphQuery = qstr.includes('teams') && qstr.includes('games');
+    const looksLikeGraphQuery = /\bteams\s*\(/i.test(qstr) && /\bgames\s*\(/i.test(qstr);
+
     // Consider a variables object present if any of the known variables are non-null/defined
     const hasSeasonVariable =
       variables &&
