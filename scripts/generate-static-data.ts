@@ -160,19 +160,21 @@ for (const season of seasons) {
 const season = currentYear;
 const list = enrichGamesForSeason(season, 'AVERAGE');
 const key = (a: string, b: string) => (a < b ? `${a}__${b}` : `${b}__${a}`);
-const acc = new Map<string, { edges: number; totalLev: number; a: string; b: string }>();
+const acc = new Map<string, { edges: number; totalLev: number; levCount: number; a: string; b: string }>();
 
 for (const g of list) {
   const hc = teamById(g.homeTeamId)?.conferenceId;
   const ac = teamById(g.awayTeamId)?.conferenceId;
   if (!hc || !ac || hc === ac) continue;
   const k = key(hc, ac);
-  const e = acc.get(k) ?? { edges: 0, totalLev: 0, a: hc, b: ac };
+  const e = acc.get(k) ?? { edges: 0, totalLev: 0, levCount: 0, a: hc, b: ac };
   e.edges += 1;
   // Some games may not have leverage computed (e.g., postseason or missing data).
-  // Only accumulate numeric leverage values to avoid polluting averages.
-  const lev = typeof g.leverage === 'number' && isFinite(g.leverage) ? g.leverage : 0;
-  e.totalLev += lev;
+  // Only accumulate numeric leverage values and count them for accurate averaging.
+  if (typeof g.leverage === 'number' && isFinite(g.leverage)) {
+    e.totalLev += g.leverage;
+    e.levCount += 1;
+  }
   acc.set(k, e);
 }
 
@@ -181,11 +183,18 @@ const connectivityData = Array.from(acc.values())
   .filter(e => e.edges > 0)
   .map(e => ({
     season,
-    conferenceA: conferenceById(e.a),
-    conferenceB: conferenceById(e.b),
+    conferenceA: conferenceById(e.a) ?? { id: e.a, name: e.a },
+    conferenceB: conferenceById(e.b) ?? { id: e.b, name: e.b },
     edges: e.edges,
-    averageLeverage: e.edges > 0 ? Number((e.totalLev / e.edges).toFixed(4)) : 0,
+    // Use levCount to compute average only over games with numeric leverage.
+    averageLeverage: e.levCount > 0 ? Number((e.totalLev / e.levCount).toFixed(4)) : 0,
   }));
+
+if (connectivityData.length === 0) {
+  console.warn(`⚠️  No conference connectivity data generated for season ${season}.`);
+} else {
+  console.log(`✓ Computed ${connectivityData.length} conference connections for season ${season}`);
+}
 
 fs.writeFileSync(
   path.join(OUTPUT_DIR, `conference-connectivity-${season}.json`),

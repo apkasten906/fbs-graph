@@ -50,6 +50,18 @@ console.log('Building GitHub Pages distribution...');
 
 // Copy web assets
 console.log('Copying web assets...');
-copyDirectory(WEB_DIR, DIST_DIR);
+if (!fs.existsSync(WEB_DIR)) {
+  console.error(`Web source directory does not exist: ${WEB_DIR}`);
+  process.exitCode = 1;
+  throw new Error(`Web directory not found: ${WEB_DIR}`);
+}
+
+try {
+  copyDirectory(WEB_DIR, DIST_DIR);
+} catch (err) {
+  console.error('Failed while copying web assets:', err);
+  process.exitCode = 2;
+  throw err;
+}
 
 console.log(`✓ Build complete! Distribution ready in ${DIST_DIR}`);
