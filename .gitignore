@@ -64,7 +64,7 @@ web/data/*.json
 *.tmp
 
 # Package lock
-package-lock.json
+# package-lock.json is tracked to enable CI caching (remove the comment to track it)
 
 # Ignore zip archives
 *.zip
