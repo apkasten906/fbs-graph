@@ -178,6 +178,13 @@ function Read-TokenFromDotEnv([string]$path, [string]$name) {
 # - Token is never persisted to disk or logs
 # - Token is cleared from memory when script exits
 # - Script uses HTTPS for all API calls (encrypted in transit)
+#
+# Security note: after converting the SecureString to a managed string using
+# PtrToStringUni the token will reside in managed memory for the remainder of
+# the script's execution (it is no longer protected by SecureString). We do
+# zero and free the unmanaged BSTR via ZeroFreeBSTR to avoid leaving a copy
+# there, but the managed string is required for HTTP headers and cannot be
+# avoided while making API calls.
 $token = $null
 if ($Interactive) {
   # Secure keyboard entry: convert SecureString to a Unicode BSTR and extract
