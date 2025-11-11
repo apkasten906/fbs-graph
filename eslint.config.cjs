@@ -8,7 +8,7 @@ const compat = new FlatCompat({
 });
 
 module.exports = [
-  { ignores: ['**/dist/**', '**/node_modules/**', '**/*.d.ts'] },
+  { ignores: ['**/dist/**', '**/*.d.ts'] },
 
   // Import legacy .eslintrc.cjs config using FlatCompat
   ...compat.extends('./.eslintrc.cjs'),

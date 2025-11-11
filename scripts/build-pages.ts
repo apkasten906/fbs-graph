@@ -14,7 +14,7 @@ if (fs.existsSync(DIST_DIR)) {
   // Safety guard: do not allow accidental removal of filesystem root or the project root
   const resolved = path.resolve(DIST_DIR);
   const root = path.parse(resolved).root;
-  if (resolved === root || resolved === path.resolve('/')) {
+  if (resolved === root) {
     throw new Error(`Refusing to remove root path: ${resolved}`);
   }
   try {

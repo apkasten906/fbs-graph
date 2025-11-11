@@ -143,8 +143,13 @@ export class StaticDataAdapter {
    * @throws {TypeError} When options is not an object or conferenceId is invalid
    */
   async queryTeams(options = {}) {
-    // Validate options parameter
-    if (options !== null && typeof options !== 'object') {
+    // Normalize options: treat null/undefined as an empty options object.
+    // This matches the function signature `options = {}` and prevents callers
+    // who pass `null` from causing a runtime TypeError when we access
+    // properties like `options.conferenceId` below.
+    if (options == null) {
+      options = {};
+    } else if (typeof options !== 'object') {
       throw new TypeError(
         `queryTeams() expects options to be an object, received: ${typeof options}`
       );
