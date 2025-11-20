@@ -61,8 +61,8 @@ if (-not (npm run fetch:schedules)) { Write-Error "fetch:schedules failed"; exit
 
 
 
-Write-Host "[DEBUG] Starting fetch:ap"
-if (-not (npm run fetch:ap)) { Write-Error "fetch:ap failed"; exit 1 }
+Write-Host "[DEBUG] Starting fetch:all-ranks"
+if (-not (npm run fetch:all-ranks)) { Write-Error "fetch:all-ranks failed"; exit 1 }
 Write-Host "[DEBUG] Starting fetch:elo"
 if (-not (npm run fetch:elo)) { Write-Error "fetch:elo failed"; exit 1 }
 Write-Host "[DEBUG] Starting fetch:sp"

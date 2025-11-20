@@ -6,9 +6,33 @@ import { Game, PollSnapshot, TeamSeason, PollType } from './../../types/index';
 type RankMap = Map<string, number>; // teamSeasonId -> rank (1 best)
 
 export function buildAPRankMap(polls: PollSnapshot[], season: number): RankMap {
+  return buildLatestRankMap(polls, season, 'AP');
+}
+
+// Backwards-compatible alias used by older callers (e.g. `src/server.ts`).
+// Historically this function was named `buildLatestAPRankMap` and accepted
+// an extra `teamSeasons` argument which wasn't used in the computation. Export
+// a thin wrapper to maintain compatibility without changing existing callers.
+export function buildLatestAPRankMap(
+  polls: PollSnapshot[],
+  season: number,
+  _teamSeasons?: TeamSeason[]
+): RankMap {
+  return buildAPRankMap(polls, season);
+}
+
+/**
+ * Build a map of the latest ranking for each teamSeasonId for a given poll type.
+ * Returns an empty map if no snapshots are present for the requested poll.
+ */
+export function buildLatestRankMap(
+  polls: PollSnapshot[],
+  season: number,
+  pollType: PollType
+): RankMap {
   const latestByTeam = new Map<string, PollSnapshot>();
   for (const p of polls) {
-    if (p.poll !== 'AP') continue;
+    if (p.poll !== pollType) continue;
     const cur = latestByTeam.get(p.teamSeasonId);
     if (!cur || new Date(p.date) > new Date(cur.date) || p.week > cur.week)
       latestByTeam.set(p.teamSeasonId, p);
@@ -103,6 +127,9 @@ export function computeLeverageForGame(
   eloNorm: Map<string, number>,
   ranking: PollType
 ): Game {
+  // Debug guard: log apRanks when it is unexpectedly undefined to aid recovery
+  // Print basic info about apRanks for debugging (will show in CLI logs)
+  // No-op: leave debug logging out of production path.
   const homeTS = teamSeasons.find(ts => ts.teamId === g.homeTeamId && ts.season === g.season);
   const awayTS = teamSeasons.find(ts => ts.teamId === g.awayTeamId && ts.season === g.season);
 

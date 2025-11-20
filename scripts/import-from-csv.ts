@@ -69,7 +69,8 @@ const games: Game[] = gameRows.map((r: any) => ({
   awayPoints: r.awayPoints ? Number(r.awayPoints) : null,
 }));
 
-const polls: PollSnapshot[] = pollRows.map((r: any) => ({
+// Normalize polls and deduplicate: keep the latest snapshot for each (poll, teamSeasonId)
+const rawPolls: PollSnapshot[] = pollRows.map((r: any) => ({
   teamSeasonId: `${idify(r.team)}-${r.season}`,
   poll: r.poll,
   week: Number(r.week),
@@ -77,11 +78,30 @@ const polls: PollSnapshot[] = pollRows.map((r: any) => ({
   date: r.date,
 }));
 
+const pollsMap = new Map<string, PollSnapshot>();
+for (const p of rawPolls) {
+  const key = `${p.poll}::${p.teamSeasonId}`;
+  const existing = pollsMap.get(key);
+  if (!existing) {
+    pollsMap.set(key, p);
+    continue;
+  }
+  // choose latest by ISO date; if equal, prefer higher week
+  const dNew = p.date ? new Date(p.date).getTime() : 0;
+  const dExisting = existing.date ? new Date(existing.date).getTime() : 0;
+  if (dNew > dExisting) {
+    pollsMap.set(key, p);
+  } else if (dNew === dExisting && (p.week || 0) > (existing.week || 0)) {
+    pollsMap.set(key, p);
+  }
+}
+const polls: PollSnapshot[] = Array.from(pollsMap.values());
+
 fs.writeFileSync(path.join(DATA_DIR, 'teams.json'), JSON.stringify(teams, null, 2));
 fs.writeFileSync(path.join(DATA_DIR, 'teamSeasons.json'), JSON.stringify(teamSeasons, null, 2));
 fs.writeFileSync(path.join(DATA_DIR, 'games.json'), JSON.stringify(games, null, 2));
 fs.writeFileSync(path.join(DATA_DIR, 'polls.json'), JSON.stringify(polls, null, 2));
 
 console.log(
-  `Imported: ${teams.length} teams, ${teamSeasons.length} team seasons, ${games.length} games, ${polls.length} polls`
+  `Imported: ${teams.length} teams, ${teamSeasons.length} team seasons, ${games.length} games, ${polls.length} polls (deduped)`
 );

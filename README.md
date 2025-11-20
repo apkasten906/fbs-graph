@@ -26,6 +26,8 @@ npm run setup
 
 > **Note:** The setup script uses PowerShell. On macOS/Linux, run the equivalent commands in your shell or adapt as needed.
 
+> **Quality control:** `npm run setup` now runs `npm run validate:data` first to ensure team/poll ids are consistent before importing data.
+
 ### 3. Start the backend GraphQL server
 
 ```bash or ps
@@ -138,11 +140,13 @@ query {
 ### Local Development
 
 - `npm run setup` — One-step data import and preparation
+ - `npm run validate:data` — Quick data-id consistency check (teams, teamSeasons, polls)
 - `npm run dev` — Start backend GraphQL server
 - `npm run web:serve` — Start static web server
 - `npm run fetch:all` — Fetch all data (conferences, teams, schedules, polls, ratings)
 - `npm run import:csv` — Import/transform CSV data
 - `npm run preview:playoff` — Run playoff preview query from CLI
+ - `npm run fetch:all-ranks` — Fetch AP/CFP/Coaches rankings and computed ratings (ELO/SP+). This replaces the old `fetch:ap` script; use `npm run fetch:rankings` to fetch only poll snapshots or `npm run fetch:ratings` to fetch ELO/SP+.
 
 ### GitHub Pages Deployment
 
