@@ -218,7 +218,7 @@ for (const a of argv) {
 
 generate(
   opts.season ?? 2025,
-  opts.limit ?? 8,
+  opts.limit ?? 12,
   opts.gameLimit ?? 6,
   opts.leverageThreshold ?? 0.75
 ).catch(err => {
