@@ -152,6 +152,7 @@ type Query {
     limit: Int = 12
     gameLimit: Int = 12
     leverageThreshold: Float = 0.75
+    onlyCfpRanked: Boolean = false
   ): PlayoffPreview!
 }
 

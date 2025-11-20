@@ -202,7 +202,14 @@ const resolvers = {
         limit = 12,
         gameLimit = 12,
         leverageThreshold = 0.75,
-      }: { season: number; limit?: number; gameLimit?: number; leverageThreshold?: number }
+        onlyCfpRanked = false,
+        }: {
+          season: number;
+          limit?: number;
+          gameLimit?: number;
+          leverageThreshold?: number;
+          onlyCfpRanked?: boolean;
+        }
     ) => {
       const games = enrichGamesForSeason(season);
       const upcomingGames = games.filter(g => g.result === 'TBD');
@@ -233,14 +240,44 @@ const resolvers = {
 
       // Prefer CFP -> COACHES -> AP rankings for playoff-related calculations.
       // Fall back in that order if a given poll type has no snapshots.
+      let chosenPollType: 'CFP' | 'COACHES' | 'AP' = 'CFP';
       let rankMap = buildLatestRankMap(polls, season, 'CFP');
       if (!rankMap || rankMap.size === 0) {
+        chosenPollType = 'COACHES';
         rankMap = buildLatestRankMap(polls, season, 'COACHES');
       }
       if (!rankMap || rankMap.size === 0) {
+        chosenPollType = 'AP';
         rankMap = buildLatestRankMap(polls, season, 'AP');
       }
       const apMap = rankMap;
+      // If CFP was selected, prefer teams that have a rank in the latest CFP week.
+      // This ensures display/filtering aligns with the committee's most recent week.
+      let cfpLatestWeekMap: Map<string, number> | null = null;
+      if (chosenPollType === 'CFP') {
+        const weeks: number[] = [];
+        for (const p of polls) {
+          if (p.poll === 'CFP' && p.teamSeasonId && p.teamSeasonId.endsWith(`-${season}`) && typeof p.week === 'number') {
+            weeks.push(p.week as number);
+          }
+        }
+        if (weeks.length > 0) {
+          const latestWeek = Math.max(...weeks);
+          cfpLatestWeekMap = new Map();
+          // Choose the latest snapshot per team for that CFP week (tie-break by date)
+          for (const p of polls) {
+            if (p.poll !== 'CFP') continue;
+            if (!p.teamSeasonId || !p.teamSeasonId.endsWith(`-${season}`)) continue;
+            if (p.week !== latestWeek) continue;
+            const cur = cfpLatestWeekMap.get(p.teamSeasonId);
+            if (!cur || new Date(p.date) > new Date((cur as any).__date)) {
+              // store rank and date for tie-breaking; hide __date when reading
+              (p as any).__date = p.date;
+              cfpLatestWeekMap.set(p.teamSeasonId, p.rank as number);
+            }
+          }
+        }
+      }
       if (!apMap || typeof (apMap as any).get !== 'function') {
         console.error('DEBUG: apMap is invalid in playoffPreview', apMap);
       }
@@ -248,7 +285,13 @@ const resolvers = {
       const skipped: PlayoffContenderT[] = [];
       const relevantSeasons = teamSeasons.filter(ts => ts.season === season);
       for (const ts of relevantSeasons) {
-        const rank = apMap.get(ts.id);
+        // If we have a CFP latest-week map, prefer ranks from that map so only
+        // teams ranked in the most recent CFP week are treated as ranked.
+        const rank = cfpLatestWeekMap ? cfpLatestWeekMap.get(ts.id) ?? undefined : apMap.get(ts.id);
+          // When requested, exclude teams that are not ranked in the latest CFP week.
+          if (onlyCfpRanked && chosenPollType === 'CFP') {
+            if (!cfpLatestWeekMap || !cfpLatestWeekMap.has(ts.id)) continue;
+          }
         const upcomingForTeam = sortByDateAscending(
           upcomingGames.filter(g => g.homeTeamId === ts.teamId || g.awayTeamId === ts.teamId)
         );

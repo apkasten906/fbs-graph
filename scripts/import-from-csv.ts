@@ -5,7 +5,16 @@ import type { Game, Team, TeamSeason, PollSnapshot } from '../src/types/index.js
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 const CSV_DIR = path.join(process.cwd(), 'csv');
-const idify = (s: string) => s.toLowerCase().replace(/[.&]/g, '').replace(/\s+/g, '-');
+const idify = (s: string) => {
+  // Keep apostrophes, convert parentheses to dashes, remove & and periods, convert spaces to dashes
+  return s
+    .toLowerCase()
+    .replace(/[&.]/g, '') // Remove & and periods
+    .replace(/[()]/g, '-') // Convert parentheses to dashes
+    .replace(/\s+/g, '-') // Convert spaces to dashes
+    .replace(/-+/g, '-') // Collapse multiple dashes
+    .replace(/^-|-$/g, ''); // Trim leading/trailing dashes
+};
 
 const read = (p: string) => fs.readFileSync(p, 'utf-8');
 const teamRows = parse(read(path.join(CSV_DIR, 'teams.csv')), {
@@ -39,6 +48,12 @@ const teams: Team[] = teamRows.map((r: any) => ({
   conferenceId: r.conferenceId,
 }));
 
+// Build set of all team IDs and FBS-only team IDs
+const allTeamIds = new Set(teams.map(t => t.id));
+// FBS teams are those in known FBS conferences or independents
+const fbsConferences = new Set(['sec', 'b1g', 'b12', 'acc', 'aac', 'mwc', 'mac', 'sbc', 'cusa', 'pac12', 'ind']);
+const fbsTeamIds = new Set(teams.filter(t => fbsConferences.has(t.conferenceId)).map(t => t.id));
+
 const teamSeasons: TeamSeason[] = seasonRows.map((r: any) => ({
   id: `${idify(r.teamId)}-${r.season}`,
   teamId: idify(r.teamId),
@@ -55,43 +70,53 @@ const teamSeasons: TeamSeason[] = seasonRows.map((r: any) => ({
   },
 }));
 
-const games: Game[] = gameRows.map((r: any) => ({
-  id: r.id || `${r.season}-w${r.week}-${idify(r.home)}-${idify(r.away)}`,
-  season: Number(r.season),
-  week: r.week ? Number(r.week) : undefined,
-  phase: (r.phase || 'REGULAR') as Game['phase'],
-  date: r.date || undefined,
-  type: (r.type || (r.conferenceGame === 'true' ? 'CONFERENCE' : 'NON_CONFERENCE')) as Game['type'],
-  homeTeamId: idify(r.home),
-  awayTeamId: idify(r.away),
-  result: (r.result || 'TBD') as Game['result'],
-  homePoints: r.homePoints ? Number(r.homePoints) : null,
-  awayPoints: r.awayPoints ? Number(r.awayPoints) : null,
-}));
+const games: Game[] = gameRows
+  .map((r: any) => ({
+    id: r.id || `${r.season}-w${r.week}-${idify(r.home)}-${idify(r.away)}`,
+    season: Number(r.season),
+    week: r.week ? Number(r.week) : undefined,
+    phase: (r.phase || 'REGULAR') as Game['phase'],
+    date: r.date || undefined,
+    type: (r.type || (r.conferenceGame === 'true' ? 'CONFERENCE' : 'NON_CONFERENCE')) as Game['type'],
+    homeTeamId: idify(r.home),
+    awayTeamId: idify(r.away),
+    result: (r.result || 'TBD') as Game['result'],
+    homePoints: r.homePoints ? Number(r.homePoints) : null,
+    awayPoints: r.awayPoints ? Number(r.awayPoints) : null,
+  }))
+  .filter((g: Game) => allTeamIds.has(g.homeTeamId) && allTeamIds.has(g.awayTeamId));
 
-// Normalize polls and deduplicate: keep the latest snapshot for each (poll, teamSeasonId)
-const rawPolls: PollSnapshot[] = pollRows.map((r: any) => ({
-  teamSeasonId: `${idify(r.team)}-${r.season}`,
-  poll: r.poll,
-  week: Number(r.week),
-  rank: Number(r.rank),
-  date: r.date,
-}));
+// Normalize polls and deduplicate: keep the latest snapshot for each (poll, week, rank)
+// Filter to only FBS teams
+const rawPolls: PollSnapshot[] = pollRows
+  .map((r: any) => {
+    const teamId = idify(r.team);
+    return {
+      teamSeasonId: `${teamId}-${r.season}`,
+      poll: r.poll,
+      week: Number(r.week),
+      rank: Number(r.rank),
+      date: r.date,
+    };
+  })
+  .filter((p: PollSnapshot) => {
+    const teamId = p.teamSeasonId.split('-').slice(0, -1).join('-');
+    return fbsTeamIds.has(teamId);
+  });
 
 const pollsMap = new Map<string, PollSnapshot>();
 for (const p of rawPolls) {
-  const key = `${p.poll}::${p.teamSeasonId}`;
+  // Deduplicate by poll, week, and rank (natural key for poll data)
+  const key = `${p.poll}::${p.week}::${p.rank}`;
   const existing = pollsMap.get(key);
   if (!existing) {
     pollsMap.set(key, p);
     continue;
   }
-  // choose latest by ISO date; if equal, prefer higher week
+  // If duplicate, prefer latest by date
   const dNew = p.date ? new Date(p.date).getTime() : 0;
   const dExisting = existing.date ? new Date(existing.date).getTime() : 0;
   if (dNew > dExisting) {
-    pollsMap.set(key, p);
-  } else if (dNew === dExisting && (p.week || 0) > (existing.week || 0)) {
     pollsMap.set(key, p);
   }
 }

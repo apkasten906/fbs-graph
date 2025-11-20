@@ -60,8 +60,12 @@ function abbrev(t: Team) {
   });
   if (!res.ok) throw new Error(`CFBD /teams HTTP ${res.status}`);
   const all = (await res.json()) as Team[];
-  const fbs = all.filter(t => (t.classification || '').toLowerCase() === 'fbs');
-  const rows = fbs.map(t => ({
+  // Include both FBS and FCS teams (for cross-division games)
+  const teams = all.filter(t => {
+    const cls = (t.classification || '').toLowerCase();
+    return cls === 'fbs' || cls === 'fcs';
+  });
+  const rows = teams.map(t => ({
     name: t.school,
     shortName: abbrev(t),
     conferenceId: mapConferenceId(
@@ -70,7 +74,7 @@ function abbrev(t: Team) {
   }));
   const out = path.join('csv', 'teams.csv');
   writeCSV(rows, out);
-  console.log(`Wrote ${rows.length} FBS teams -> ${out}`);
+  console.log(`Wrote ${rows.length} teams (FBS + FCS) -> ${out}`);
 })().catch(e => {
   console.error(e);
   process.exit(1);

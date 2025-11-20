@@ -30,13 +30,42 @@ export function buildLatestRankMap(
   season: number,
   pollType: PollType
 ): RankMap {
+  // Choose the latest snapshot per `teamSeasonId` for the requested poll type
+  // Preference order:
+  // 1) Highest numeric `week` (if present)
+  // 2) If neither snapshot has `week`, pick the latest by `date`
   const latestByTeam = new Map<string, PollSnapshot>();
   for (const p of polls) {
     if (p.poll !== pollType) continue;
+    // `PollSnapshot` doesn't include a season field; derive season from teamSeasonId
+    if (!p.teamSeasonId || !p.teamSeasonId.endsWith(`-${season}`)) continue;
     const cur = latestByTeam.get(p.teamSeasonId);
-    if (!cur || new Date(p.date) > new Date(cur.date) || p.week > cur.week)
+    if (!cur) {
       latestByTeam.set(p.teamSeasonId, p);
+      continue;
+    }
+
+    const pHasWeek = typeof p.week === 'number';
+    const curHasWeek = typeof cur.week === 'number';
+
+    if (pHasWeek && curHasWeek) {
+      if ((p.week as number) > (cur.week as number)) {
+        latestByTeam.set(p.teamSeasonId, p);
+      } else if (p.week === cur.week) {
+        // tie-breaker: later date wins
+        if (new Date(p.date) > new Date(cur.date)) latestByTeam.set(p.teamSeasonId, p);
+      }
+    } else if (pHasWeek && !curHasWeek) {
+      // prefer snapshots that include a numeric week
+      latestByTeam.set(p.teamSeasonId, p);
+    } else if (!pHasWeek && curHasWeek) {
+      // keep cur (it has a week while p does not)
+    } else {
+      // neither has week: fall back to date ordering
+      if (new Date(p.date) > new Date(cur.date)) latestByTeam.set(p.teamSeasonId, p);
+    }
   }
+
   const out: RankMap = new Map();
   for (const [id, snap] of latestByTeam) out.set(id, snap.rank);
   return out;

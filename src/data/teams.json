@@ -1,5 +1,11 @@
 [
   {
+    "id": "abilene-christian",
+    "name": "Abilene Christian",
+    "shortName": "ACU",
+    "conferenceId": "uac"
+  },
+  {
     "id": "air-force",
     "name": "Air Force",
     "shortName": "AF",
@@ -16,6 +22,24 @@
     "name": "Alabama",
     "shortName": "ALA",
     "conferenceId": "sec"
+  },
+  {
+    "id": "alabama-am",
+    "name": "Alabama A&M",
+    "shortName": "AAMU",
+    "conferenceId": "swac"
+  },
+  {
+    "id": "alabama-state",
+    "name": "Alabama State",
+    "shortName": "ALST",
+    "conferenceId": "swac"
+  },
+  {
+    "id": "alcorn-state",
+    "name": "Alcorn State",
+    "shortName": "ALCN",
+    "conferenceId": "swac"
   },
   {
     "id": "app-state",
@@ -42,6 +66,12 @@
     "conferenceId": "sec"
   },
   {
+    "id": "arkansas-pine-bluff",
+    "name": "Arkansas-Pine Bluff",
+    "shortName": "UAPB",
+    "conferenceId": "swac"
+  },
+  {
     "id": "arkansas-state",
     "name": "Arkansas State",
     "shortName": "ARST",
@@ -60,6 +90,12 @@
     "conferenceId": "sec"
   },
   {
+    "id": "austin-peay",
+    "name": "Austin Peay",
+    "shortName": "APSU",
+    "conferenceId": "uac"
+  },
+  {
     "id": "ball-state",
     "name": "Ball State",
     "shortName": "BALL",
@@ -70,6 +106,12 @@
     "name": "Baylor",
     "shortName": "BAY",
     "conferenceId": "b12"
+  },
+  {
+    "id": "bethune-cookman",
+    "name": "Bethune-Cookman",
+    "shortName": "BCU",
+    "conferenceId": "swac"
   },
   {
     "id": "boise-state",
@@ -90,10 +132,34 @@
     "conferenceId": "mac"
   },
   {
+    "id": "brown",
+    "name": "Brown",
+    "shortName": "BRWN",
+    "conferenceId": "ivy"
+  },
+  {
+    "id": "bryant",
+    "name": "Bryant",
+    "shortName": "BRY",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "bucknell",
+    "name": "Bucknell",
+    "shortName": "BUCK",
+    "conferenceId": "patriot"
+  },
+  {
     "id": "buffalo",
     "name": "Buffalo",
     "shortName": "BUF",
     "conferenceId": "mac"
+  },
+  {
+    "id": "butler",
+    "name": "Butler",
+    "shortName": "BUT",
+    "conferenceId": "pioneer"
   },
   {
     "id": "byu",
@@ -108,16 +174,52 @@
     "conferenceId": "acc"
   },
   {
+    "id": "cal-poly",
+    "name": "Cal Poly",
+    "shortName": "CP",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "campbell",
+    "name": "Campbell",
+    "shortName": "CAM",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "central-arkansas",
+    "name": "Central Arkansas",
+    "shortName": "CARK",
+    "conferenceId": "uac"
+  },
+  {
+    "id": "central-connecticut",
+    "name": "Central Connecticut",
+    "shortName": "CCSU",
+    "conferenceId": "nec"
+  },
+  {
     "id": "central-michigan",
     "name": "Central Michigan",
     "shortName": "CMU",
     "conferenceId": "mac"
   },
   {
+    "id": "charleston-southern",
+    "name": "Charleston Southern",
+    "shortName": "CHSO",
+    "conferenceId": "bigsouthovc"
+  },
+  {
     "id": "charlotte",
     "name": "Charlotte",
     "shortName": "CLT",
     "conferenceId": "aac"
+  },
+  {
+    "id": "chattanooga",
+    "name": "Chattanooga",
+    "shortName": "UTC",
+    "conferenceId": "southern"
   },
   {
     "id": "cincinnati",
@@ -138,6 +240,12 @@
     "conferenceId": "sbc"
   },
   {
+    "id": "colgate",
+    "name": "Colgate",
+    "shortName": "COLG",
+    "conferenceId": "patriot"
+  },
+  {
     "id": "colorado",
     "name": "Colorado",
     "shortName": "COLO",
@@ -150,10 +258,52 @@
     "conferenceId": "mwc"
   },
   {
+    "id": "columbia",
+    "name": "Columbia",
+    "shortName": "COLU",
+    "conferenceId": "ivy"
+  },
+  {
+    "id": "cornell",
+    "name": "Cornell",
+    "shortName": "COR",
+    "conferenceId": "ivy"
+  },
+  {
+    "id": "dartmouth",
+    "name": "Dartmouth",
+    "shortName": "DART",
+    "conferenceId": "ivy"
+  },
+  {
+    "id": "davidson",
+    "name": "Davidson",
+    "shortName": "DAV",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "dayton",
+    "name": "Dayton",
+    "shortName": "DAY",
+    "conferenceId": "pioneer"
+  },
+  {
     "id": "delaware",
     "name": "Delaware",
     "shortName": "DEL",
     "conferenceId": "cusa"
+  },
+  {
+    "id": "delaware-state",
+    "name": "Delaware State",
+    "shortName": "DSU",
+    "conferenceId": "meac"
+  },
+  {
+    "id": "drake",
+    "name": "Drake",
+    "shortName": "DRKE",
+    "conferenceId": "pioneer"
   },
   {
     "id": "duke",
@@ -162,10 +312,28 @@
     "conferenceId": "acc"
   },
   {
+    "id": "duquesne",
+    "name": "Duquesne",
+    "shortName": "DUQ",
+    "conferenceId": "nec"
+  },
+  {
     "id": "east-carolina",
     "name": "East Carolina",
     "shortName": "ECU",
     "conferenceId": "aac"
+  },
+  {
+    "id": "eastern-illinois",
+    "name": "Eastern Illinois",
+    "shortName": "EIU",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "eastern-kentucky",
+    "name": "Eastern Kentucky",
+    "shortName": "EKU",
+    "conferenceId": "uac"
   },
   {
     "id": "eastern-michigan",
@@ -174,10 +342,40 @@
     "conferenceId": "mac"
   },
   {
+    "id": "eastern-washington",
+    "name": "Eastern Washington",
+    "shortName": "EWU",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "east-tennessee-state",
+    "name": "East Tennessee State",
+    "shortName": "ETSU",
+    "conferenceId": "southern"
+  },
+  {
+    "id": "east-texas-am",
+    "name": "East Texas A&M",
+    "shortName": "ETAM",
+    "conferenceId": "southland"
+  },
+  {
+    "id": "elon",
+    "name": "Elon",
+    "shortName": "ELON",
+    "conferenceId": "caa"
+  },
+  {
     "id": "florida",
     "name": "Florida",
     "shortName": "FLA",
     "conferenceId": "sec"
+  },
+  {
+    "id": "florida-am",
+    "name": "Florida A&M",
+    "shortName": "FAMU",
+    "conferenceId": "swac"
   },
   {
     "id": "florida-atlantic",
@@ -198,10 +396,34 @@
     "conferenceId": "acc"
   },
   {
+    "id": "fordham",
+    "name": "Fordham",
+    "shortName": "FOR",
+    "conferenceId": "patriot"
+  },
+  {
     "id": "fresno-state",
     "name": "Fresno State",
     "shortName": "FRES",
     "conferenceId": "mwc"
+  },
+  {
+    "id": "furman",
+    "name": "Furman",
+    "shortName": "FUR",
+    "conferenceId": "southern"
+  },
+  {
+    "id": "gardner-webb",
+    "name": "Gardner-Webb",
+    "shortName": "GWEB",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "georgetown",
+    "name": "Georgetown",
+    "shortName": "GTWN",
+    "conferenceId": "patriot"
   },
   {
     "id": "georgia",
@@ -228,10 +450,34 @@
     "conferenceId": "acc"
   },
   {
+    "id": "grambling",
+    "name": "Grambling",
+    "shortName": "GRAM",
+    "conferenceId": "swac"
+  },
+  {
+    "id": "hampton",
+    "name": "Hampton",
+    "shortName": "HAMP",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "harvard",
+    "name": "Harvard",
+    "shortName": "HARV",
+    "conferenceId": "ivy"
+  },
+  {
     "id": "hawai'i",
     "name": "Hawai'i",
     "shortName": "HAW",
     "conferenceId": "mwc"
+  },
+  {
+    "id": "holy-cross",
+    "name": "Holy Cross",
+    "shortName": "HC",
+    "conferenceId": "patriot"
   },
   {
     "id": "houston",
@@ -240,16 +486,58 @@
     "conferenceId": "b12"
   },
   {
+    "id": "houston-christian",
+    "name": "Houston Christian",
+    "shortName": "HCU",
+    "conferenceId": "southland"
+  },
+  {
+    "id": "howard",
+    "name": "Howard",
+    "shortName": "HOW",
+    "conferenceId": "meac"
+  },
+  {
+    "id": "idaho",
+    "name": "Idaho",
+    "shortName": "IDHO",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "idaho-state",
+    "name": "Idaho State",
+    "shortName": "IDST",
+    "conferenceId": "bigsky"
+  },
+  {
     "id": "illinois",
     "name": "Illinois",
     "shortName": "ILL",
     "conferenceId": "b1g"
   },
   {
+    "id": "illinois-state",
+    "name": "Illinois State",
+    "shortName": "ILST",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "incarnate-word",
+    "name": "Incarnate Word",
+    "shortName": "UIW",
+    "conferenceId": "southland"
+  },
+  {
     "id": "indiana",
     "name": "Indiana",
     "shortName": "IU",
     "conferenceId": "b1g"
+  },
+  {
+    "id": "indiana-state",
+    "name": "Indiana State",
+    "shortName": "INST",
+    "conferenceId": "mvfc"
   },
   {
     "id": "iowa",
@@ -262,6 +550,12 @@
     "name": "Iowa State",
     "shortName": "ISU",
     "conferenceId": "b12"
+  },
+  {
+    "id": "jackson-state",
+    "name": "Jackson State",
+    "shortName": "JKST",
+    "conferenceId": "swac"
   },
   {
     "id": "jacksonville-state",
@@ -306,10 +600,40 @@
     "conferenceId": "sec"
   },
   {
+    "id": "lafayette",
+    "name": "Lafayette",
+    "shortName": "LAF",
+    "conferenceId": "patriot"
+  },
+  {
+    "id": "lamar",
+    "name": "Lamar",
+    "shortName": "LAM",
+    "conferenceId": "southland"
+  },
+  {
+    "id": "lehigh",
+    "name": "Lehigh",
+    "shortName": "LEH",
+    "conferenceId": "patriot"
+  },
+  {
     "id": "liberty",
     "name": "Liberty",
     "shortName": "LIB",
     "conferenceId": "cusa"
+  },
+  {
+    "id": "lindenwood",
+    "name": "Lindenwood",
+    "shortName": "LIN",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "long-island-university",
+    "name": "Long Island University",
+    "shortName": "LIU",
+    "conferenceId": "nec"
   },
   {
     "id": "louisiana",
@@ -336,6 +660,18 @@
     "conferenceId": "sec"
   },
   {
+    "id": "maine",
+    "name": "Maine",
+    "shortName": "ME",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "marist",
+    "name": "Marist",
+    "shortName": "MRST",
+    "conferenceId": "pioneer"
+  },
+  {
     "id": "marshall",
     "name": "Marshall",
     "shortName": "MRSH",
@@ -354,10 +690,34 @@
     "conferenceId": "mac"
   },
   {
+    "id": "mcneese",
+    "name": "McNeese",
+    "shortName": "MCN",
+    "conferenceId": "southland"
+  },
+  {
     "id": "memphis",
     "name": "Memphis",
     "shortName": "MEM",
     "conferenceId": "aac"
+  },
+  {
+    "id": "mercer",
+    "name": "Mercer",
+    "shortName": "MER",
+    "conferenceId": "southern"
+  },
+  {
+    "id": "mercyhurst",
+    "name": "Mercyhurst",
+    "shortName": "MERC",
+    "conferenceId": "nec"
+  },
+  {
+    "id": "merrimack",
+    "name": "Merrimack",
+    "shortName": "MRMK",
+    "conferenceId": "fcsindependents"
   },
   {
     "id": "miami",
@@ -366,7 +726,7 @@
     "conferenceId": "acc"
   },
   {
-    "id": "miami-(oh)",
+    "id": "miami-oh",
     "name": "Miami (OH)",
     "shortName": "M-OH",
     "conferenceId": "mac"
@@ -402,6 +762,12 @@
     "conferenceId": "sec"
   },
   {
+    "id": "mississippi-valley-state",
+    "name": "Mississippi Valley State",
+    "shortName": "MVSU",
+    "conferenceId": "swac"
+  },
+  {
     "id": "missouri",
     "name": "Missouri",
     "shortName": "MIZ",
@@ -412,6 +778,42 @@
     "name": "Missouri State",
     "shortName": "MOST",
     "conferenceId": "cusa"
+  },
+  {
+    "id": "monmouth",
+    "name": "Monmouth",
+    "shortName": "MONM",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "montana",
+    "name": "Montana",
+    "shortName": "MONT",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "montana-state",
+    "name": "Montana State",
+    "shortName": "MTST",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "morehead-state",
+    "name": "Morehead State",
+    "shortName": "MORE",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "morgan-state",
+    "name": "Morgan State",
+    "shortName": "MORG",
+    "conferenceId": "meac"
+  },
+  {
+    "id": "murray-state",
+    "name": "Murray State",
+    "shortName": "MUR",
+    "conferenceId": "mvfc"
   },
   {
     "id": "navy",
@@ -438,6 +840,18 @@
     "conferenceId": "mwc"
   },
   {
+    "id": "new-hampshire",
+    "name": "New Hampshire",
+    "shortName": "UNH",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "new-haven",
+    "name": "New Haven",
+    "shortName": "NHVN",
+    "conferenceId": "nec"
+  },
+  {
     "id": "new-mexico",
     "name": "New Mexico",
     "shortName": "UNM",
@@ -450,16 +864,76 @@
     "conferenceId": "cusa"
   },
   {
+    "id": "nicholls",
+    "name": "Nicholls",
+    "shortName": "NICH",
+    "conferenceId": "southland"
+  },
+  {
+    "id": "norfolk-state",
+    "name": "Norfolk State",
+    "shortName": "NORF",
+    "conferenceId": "meac"
+  },
+  {
+    "id": "north-alabama",
+    "name": "North Alabama",
+    "shortName": "UNA",
+    "conferenceId": "uac"
+  },
+  {
     "id": "north-carolina",
     "name": "North Carolina",
     "shortName": "UNC",
     "conferenceId": "acc"
   },
   {
+    "id": "north-carolina-at",
+    "name": "North Carolina A&T",
+    "shortName": "NCAT",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "north-carolina-central",
+    "name": "North Carolina Central",
+    "shortName": "NCCU",
+    "conferenceId": "meac"
+  },
+  {
+    "id": "north-dakota",
+    "name": "North Dakota",
+    "shortName": "UND",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "north-dakota-state",
+    "name": "North Dakota State",
+    "shortName": "NDSU",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "northern-arizona",
+    "name": "Northern Arizona",
+    "shortName": "NAU",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "northern-colorado",
+    "name": "Northern Colorado",
+    "shortName": "UNCO",
+    "conferenceId": "bigsky"
+  },
+  {
     "id": "northern-illinois",
     "name": "Northern Illinois",
     "shortName": "NIU",
     "conferenceId": "mac"
+  },
+  {
+    "id": "northern-iowa",
+    "name": "Northern Iowa",
+    "shortName": "UNI",
+    "conferenceId": "mvfc"
   },
   {
     "id": "north-texas",
@@ -472,6 +946,12 @@
     "name": "Northwestern",
     "shortName": "NU",
     "conferenceId": "b1g"
+  },
+  {
+    "id": "northwestern-state",
+    "name": "Northwestern State",
+    "shortName": "NWST",
+    "conferenceId": "southland"
   },
   {
     "id": "notre-dame",
@@ -534,10 +1014,40 @@
     "conferenceId": "b1g"
   },
   {
+    "id": "pennsylvania",
+    "name": "Pennsylvania",
+    "shortName": "PENN",
+    "conferenceId": "ivy"
+  },
+  {
     "id": "pittsburgh",
     "name": "Pittsburgh",
     "shortName": "PITT",
     "conferenceId": "acc"
+  },
+  {
+    "id": "portland-state",
+    "name": "Portland State",
+    "shortName": "PRST",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "prairie-view-am",
+    "name": "Prairie View A&M",
+    "shortName": "PV",
+    "conferenceId": "swac"
+  },
+  {
+    "id": "presbyterian",
+    "name": "Presbyterian",
+    "shortName": "PRES",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "princeton",
+    "name": "Princeton",
+    "shortName": "PRIN",
+    "conferenceId": "ivy"
   },
   {
     "id": "purdue",
@@ -546,10 +1056,28 @@
     "conferenceId": "b1g"
   },
   {
+    "id": "rhode-island",
+    "name": "Rhode Island",
+    "shortName": "URI",
+    "conferenceId": "caa"
+  },
+  {
     "id": "rice",
     "name": "Rice",
     "shortName": "RICE",
     "conferenceId": "aac"
+  },
+  {
+    "id": "richmond",
+    "name": "Richmond",
+    "shortName": "RICH",
+    "conferenceId": "patriot"
+  },
+  {
+    "id": "robert-morris",
+    "name": "Robert Morris",
+    "shortName": "RMU",
+    "conferenceId": "nec"
   },
   {
     "id": "rutgers",
@@ -558,10 +1086,34 @@
     "conferenceId": "b1g"
   },
   {
+    "id": "sacramento-state",
+    "name": "Sacramento State",
+    "shortName": "SAC",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "sacred-heart",
+    "name": "Sacred Heart",
+    "shortName": "SHU",
+    "conferenceId": "fcsindependents"
+  },
+  {
+    "id": "samford",
+    "name": "Samford",
+    "shortName": "SAM",
+    "conferenceId": "southern"
+  },
+  {
     "id": "sam-houston",
     "name": "Sam Houston",
     "shortName": "SHSU",
     "conferenceId": "cusa"
+  },
+  {
+    "id": "san-diego",
+    "name": "San Diego",
+    "shortName": "USD",
+    "conferenceId": "pioneer"
   },
   {
     "id": "san-diego-state",
@@ -574,6 +1126,12 @@
     "name": "San José State",
     "shortName": "SJSU",
     "conferenceId": "mwc"
+  },
+  {
+    "id": "se-louisiana",
+    "name": "SE Louisiana",
+    "shortName": "SELA",
+    "conferenceId": "southland"
   },
   {
     "id": "smu",
@@ -594,10 +1152,52 @@
     "conferenceId": "sec"
   },
   {
+    "id": "south-carolina-state",
+    "name": "South Carolina State",
+    "shortName": "SCST",
+    "conferenceId": "meac"
+  },
+  {
+    "id": "south-dakota",
+    "name": "South Dakota",
+    "shortName": "SDAK",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "south-dakota-state",
+    "name": "South Dakota State",
+    "shortName": "SDST",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "southeast-missouri-state",
+    "name": "Southeast Missouri State",
+    "shortName": "SEMO",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "southern",
+    "name": "Southern",
+    "shortName": "SOU",
+    "conferenceId": "swac"
+  },
+  {
+    "id": "southern-illinois",
+    "name": "Southern Illinois",
+    "shortName": "SIU",
+    "conferenceId": "mvfc"
+  },
+  {
     "id": "southern-miss",
     "name": "Southern Miss",
     "shortName": "USM",
     "conferenceId": "sbc"
+  },
+  {
+    "id": "southern-utah",
+    "name": "Southern Utah",
+    "shortName": "SUU",
+    "conferenceId": "uac"
   },
   {
     "id": "south-florida",
@@ -612,10 +1212,52 @@
     "conferenceId": "acc"
   },
   {
+    "id": "stephen-f-austin",
+    "name": "Stephen F. Austin",
+    "shortName": "SFA",
+    "conferenceId": "southland"
+  },
+  {
+    "id": "stetson",
+    "name": "Stetson",
+    "shortName": "STET",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "st-francis-pa",
+    "name": "St. Francis (PA)",
+    "shortName": "SFPA",
+    "conferenceId": "nec"
+  },
+  {
+    "id": "stonehill",
+    "name": "Stonehill",
+    "shortName": "STO",
+    "conferenceId": "nec"
+  },
+  {
+    "id": "stony-brook",
+    "name": "Stony Brook",
+    "shortName": "STBK",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "st-thomas-mn",
+    "name": "St. Thomas (MN)",
+    "shortName": "STMN",
+    "conferenceId": "pioneer"
+  },
+  {
     "id": "syracuse",
     "name": "Syracuse",
     "shortName": "SYR",
     "conferenceId": "acc"
+  },
+  {
+    "id": "tarleton-state",
+    "name": "Tarleton State",
+    "shortName": "TAR",
+    "conferenceId": "uac"
   },
   {
     "id": "tcu",
@@ -636,6 +1278,18 @@
     "conferenceId": "sec"
   },
   {
+    "id": "tennessee-state",
+    "name": "Tennessee State",
+    "shortName": "TNST",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "tennessee-tech",
+    "name": "Tennessee Tech",
+    "shortName": "TNTC",
+    "conferenceId": "bigsouthovc"
+  },
+  {
     "id": "texas",
     "name": "Texas",
     "shortName": "TEX",
@@ -646,6 +1300,12 @@
     "name": "Texas A&M",
     "shortName": "TA&M",
     "conferenceId": "sec"
+  },
+  {
+    "id": "texas-southern",
+    "name": "Texas Southern",
+    "shortName": "TXSO",
+    "conferenceId": "swac"
   },
   {
     "id": "texas-state",
@@ -660,10 +1320,22 @@
     "conferenceId": "b12"
   },
   {
+    "id": "the-citadel",
+    "name": "The Citadel",
+    "shortName": "CIT",
+    "conferenceId": "southern"
+  },
+  {
     "id": "toledo",
     "name": "Toledo",
     "shortName": "TOL",
     "conferenceId": "mac"
+  },
+  {
+    "id": "towson",
+    "name": "Towson",
+    "shortName": "TOW",
+    "conferenceId": "caa"
   },
   {
     "id": "troy",
@@ -688,6 +1360,18 @@
     "name": "UAB",
     "shortName": "UAB",
     "conferenceId": "aac"
+  },
+  {
+    "id": "ualbany",
+    "name": "UAlbany",
+    "shortName": "UALB",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "uc-davis",
+    "name": "UC Davis",
+    "shortName": "UCD",
+    "conferenceId": "bigsky"
   },
   {
     "id": "ucf",
@@ -738,10 +1422,28 @@
     "conferenceId": "mwc"
   },
   {
+    "id": "utah-tech",
+    "name": "Utah Tech",
+    "shortName": "UTU",
+    "conferenceId": "uac"
+  },
+  {
     "id": "utep",
     "name": "UTEP",
     "shortName": "UTEP",
     "conferenceId": "cusa"
+  },
+  {
+    "id": "ut-martin",
+    "name": "UT Martin",
+    "shortName": "UTM",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "ut-rio-grande-valley",
+    "name": "UT Rio Grande Valley",
+    "shortName": "RGV",
+    "conferenceId": "southland"
   },
   {
     "id": "utsa",
@@ -750,10 +1452,22 @@
     "conferenceId": "aac"
   },
   {
+    "id": "valparaiso",
+    "name": "Valparaiso",
+    "shortName": "VAL",
+    "conferenceId": "pioneer"
+  },
+  {
     "id": "vanderbilt",
     "name": "Vanderbilt",
     "shortName": "VAN",
     "conferenceId": "sec"
+  },
+  {
+    "id": "villanova",
+    "name": "Villanova",
+    "shortName": "VILL",
+    "conferenceId": "caa"
   },
   {
     "id": "virginia",
@@ -766,6 +1480,18 @@
     "name": "Virginia Tech",
     "shortName": "VT",
     "conferenceId": "acc"
+  },
+  {
+    "id": "vmi",
+    "name": "VMI",
+    "shortName": "VMI",
+    "conferenceId": "southern"
+  },
+  {
+    "id": "wagner",
+    "name": "Wagner",
+    "shortName": "WAG",
+    "conferenceId": "nec"
   },
   {
     "id": "wake-forest",
@@ -786,6 +1512,24 @@
     "conferenceId": "pac12"
   },
   {
+    "id": "weber-state",
+    "name": "Weber State",
+    "shortName": "WEB",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "western-carolina",
+    "name": "Western Carolina",
+    "shortName": "WCU",
+    "conferenceId": "southern"
+  },
+  {
+    "id": "western-illinois",
+    "name": "Western Illinois",
+    "shortName": "WIU",
+    "conferenceId": "bigsouthovc"
+  },
+  {
     "id": "western-kentucky",
     "name": "Western Kentucky",
     "shortName": "WKU",
@@ -798,10 +1542,22 @@
     "conferenceId": "mac"
   },
   {
+    "id": "west-georgia",
+    "name": "West Georgia",
+    "shortName": "WGA",
+    "conferenceId": "uac"
+  },
+  {
     "id": "west-virginia",
     "name": "West Virginia",
     "shortName": "WVU",
     "conferenceId": "b12"
+  },
+  {
+    "id": "william-mary",
+    "name": "William & Mary",
+    "shortName": "W&M",
+    "conferenceId": "caa"
   },
   {
     "id": "wisconsin",
@@ -810,9 +1566,27 @@
     "conferenceId": "b1g"
   },
   {
+    "id": "wofford",
+    "name": "Wofford",
+    "shortName": "WOF",
+    "conferenceId": "southern"
+  },
+  {
     "id": "wyoming",
     "name": "Wyoming",
     "shortName": "WYO",
     "conferenceId": "mwc"
+  },
+  {
+    "id": "yale",
+    "name": "Yale",
+    "shortName": "YALE",
+    "conferenceId": "ivy"
+  },
+  {
+    "id": "youngstown-state",
+    "name": "Youngstown State",
+    "shortName": "YSU",
+    "conferenceId": "mvfc"
   }
 ]

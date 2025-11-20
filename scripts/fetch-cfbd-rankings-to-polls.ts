@@ -30,7 +30,7 @@ type RankingWeek = {
 function normalizePollName(raw: string): string | null {
   const s = (raw || '').toString().toLowerCase();
   if (s.includes('ap')) return 'AP';
-  if (s.includes('cfp')) return 'CFP';
+  if (s.includes('playoff committee rankings')) return 'CFP';
   if (s.includes('coach') || s.includes('usa') || s.includes('coaches')) return 'COACHES';
   return null;
 }
@@ -65,26 +65,33 @@ function shouldInclude(pollLabel: string) {
 
   fs.mkdirSync('csv', { recursive: true });
   const outPath = 'csv/polls.csv';
-  // Merge with existing CSV (avoid exact duplicates)
+  
+  // Parse existing CSV and new data, dedupe by (team, season, poll, week, rank)
   const existing = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf-8').split(/\r?\n/) : [];
-  const existingSet = new Set(existing.filter(Boolean));
-  const merged = [header];
-  // include existing unique rows
+  const recordMap = new Map<string, string>();
+  
+  // Process existing rows (skip header)
   for (const line of existing) {
-    if (!line) continue;
-    // ensure header not duplicated
-    if (line.trim().toLowerCase() === header.toLowerCase()) continue;
-    merged.push(line);
+    if (!line || line.trim().toLowerCase() === header.toLowerCase()) continue;
+    const parts = line.split(',');
+    if (parts.length < 5) continue;
+    const [team, season, poll, week, rank] = parts;
+    const key = `${team}|${season}|${poll}|${week}|${rank}`;
+    recordMap.set(key, line); // Keep existing (preserves original date)
   }
-  // add new lines if not present
-  let added = 0;
+  
+  // Process new rows (overwrite with fresh data and current timestamp)
   for (const nl of newLines) {
-    if (existingSet.has(nl)) continue;
-    merged.push(nl);
-    added++;
+    const parts = nl.split(',');
+    if (parts.length < 5) continue;
+    const [team, season, poll, week, rank] = parts;
+    const key = `${team}|${season}|${poll}|${week}|${rank}`;
+    recordMap.set(key, nl); // Update with fresh data
   }
+  
+  const merged = [header, ...Array.from(recordMap.values())];
   fs.writeFileSync(outPath, merged.join('\n') + '\n', 'utf-8');
-  console.log(`Wrote ${outPath} (+${added} new rows)`);
+  console.log(`Wrote ${outPath} (${recordMap.size} unique records)`);
   if (POLL_TYPE !== 'ALL') console.log(`Filtered pollType=${POLL_TYPE}`);
 })().catch(e => {
   console.error(e);

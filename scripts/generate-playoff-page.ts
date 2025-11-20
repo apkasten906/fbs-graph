@@ -49,11 +49,21 @@ async function generate(season = 2025, limit = 12, gameLimit = 6, leverageThresh
     process.exitCode = 1;
     return;
   }
+  // Load local data to support client-side filtering (weeks and poll snapshots)
+  const DATA_DIR = path.join(process.cwd(), 'src', 'data');
+  const teamSeasons: any[] = JSON.parse(
+    fs.readFileSync(path.join(DATA_DIR, 'teamSeasons.json'), 'utf-8')
+  );
+  const teams: any[] = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'teams.json'), 'utf-8'));
+  const polls: any[] = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'polls.json'), 'utf-8'));
+  const conferences: any[] = JSON.parse(
+    fs.readFileSync(path.join(DATA_DIR, 'conferences.json'), 'utf-8')
+  );
 
   const outDir = path.join(process.cwd(), 'web');
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
-  const html = renderHTML(data);
+  const html = renderHTML(data, { polls, teams, teamSeasons, conferences });
   fs.writeFileSync(path.join(outDir, 'playoff-preview.html'), html, 'utf-8');
   console.log('Wrote web/playoff-preview.html');
 }
@@ -73,10 +83,16 @@ async function supplementContendersIfNeeded(data: any, limit: number, season: nu
       fs.readFileSync(path.join(DATA_DIR, 'conferences.json'), 'utf-8')
     );
     const polls: any[] = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'polls.json'), 'utf-8'));
-    // lazy import of helper to build AP rank map
-    const { buildLatestAPRankMap } = await import('../src/lib/score.js');
+    // lazy import of helper to build rank maps; prefer CFP -> COACHES -> AP
+    const { buildLatestRankMap } = await import('../src/lib/score.js');
 
-    const apMap = buildLatestAPRankMap(polls, season, teamSeasons);
+    let rankMap = buildLatestRankMap(polls, season, 'CFP');
+    if (!rankMap || rankMap.size === 0) {
+      rankMap = buildLatestRankMap(polls, season, 'COACHES');
+    }
+    if (!rankMap || rankMap.size === 0) {
+      rankMap = buildLatestRankMap(polls, season, 'AP');
+    }
 
     // normalize spPlus for fallback resume score
     const spVals = teamSeasons
@@ -111,7 +127,7 @@ async function supplementContendersIfNeeded(data: any, limit: number, season: nu
     const candidates = teamSeasons
       .filter(ts => ts.season === season)
       .map(ts => {
-        const rank = apMap.get(ts.id);
+        const rank = rankMap.get(ts.id);
         const resume = computeResumeScore(rank, ts);
         const team = teams.find(t => t.id === ts.teamId);
         const conf = conferences.find(c => c.id === team?.conferenceId);
@@ -149,18 +165,135 @@ async function supplementContendersIfNeeded(data: any, limit: number, season: nu
   }
 }
 
-function renderHTML(data: any) {
-  const gamesHtml = (data.remainingHighLeverageGames || [])
-    .map(
-      (g: any) =>
-        `<li>${new Date(g.date).toISOString().slice(0, 10)} — ${escapeHtml(g.home.name)} vs ${escapeHtml(g.away.name)} (lev: ${g.leverage})</li>`
-    )
+function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: any[]; conferences: any[] }) {
+  // Prefer grouping by the existing `week` field on Game, falling back to ISO week-start from the date.
+  const games = (data.remainingHighLeverageGames || []).map((g: any) => ({
+    ...g,
+    dateObj: g.date ? new Date(g.date) : undefined,
+  }));
+
+  // Build poll -> week -> rank -> teamSeasonId map for client-side filtering
+  const pollsData = ctx.polls || [];
+  const pollTypes = ['CFP', 'COACHES', 'AP'];
+  // Structure: ranksByPollWeek[poll][week][rank] = teamSeasonId
+  const ranksByPollWeek: Record<string, Record<string, Record<string, string>>> = {};
+  for (const pt of pollTypes) ranksByPollWeek[pt] = {};
+  for (const p of pollsData) {
+    const poll = (p.poll || '').toString();
+    if (!pollTypes.includes(poll)) continue;
+    const week = typeof p.week === 'number' ? String(p.week) : 'unknown';
+    ranksByPollWeek[poll][week] = ranksByPollWeek[poll][week] || {};
+    if (p.teamSeasonId && typeof p.rank === 'number') ranksByPollWeek[poll][week][String(p.rank)] = String(p.teamSeasonId);
+  }
+
+  // Build set of FBS teamSeason IDs for the season so we can prune non-FBS entries
+  // Build mapping teamName -> teamSeasonId for the season using teams + teamSeasons
+  const teamNameToSeasonId: Record<string, string> = {};
+  const season = data.season;
+  // Build set of FBS teamSeason IDs for the season so we can prune non-FBS entries
+  const fbsTeamSeasonIds = new Set<string>();
+  // Determine which teams are FBS by looking up each team's conference
+  const conferences = ctx.conferences || [];
+  const fbsTeamIds = new Set<string>();
+  for (const t of ctx.teams || []) {
+    const conf = conferences.find((c: any) => c.id === t.conferenceId);
+    if (conf && String(conf.division).toUpperCase() === 'FBS') fbsTeamIds.add(t.id);
+  }
+  // Populate teamNameToSeasonId only for FBS teamSeasons
+  for (const ts of ctx.teamSeasons || []) {
+    if (ts.season !== season) continue;
+    if (!fbsTeamIds.has(ts.teamId)) continue;
+    const team = (ctx.teams || []).find((t: any) => t.id === ts.teamId);
+    if (team && team.name) teamNameToSeasonId[team.name] = ts.id;
+    fbsTeamSeasonIds.add(ts.id);
+  }
+
+  // Prune ranksByPollWeek to only include FBS teamSeasonIds. Also remove empty ranks/weeks.
+  for (const poll of Object.keys(ranksByPollWeek)) {
+    const weeks = Object.keys(ranksByPollWeek[poll] || {});
+    for (const w of weeks) {
+      const rankMap = ranksByPollWeek[poll][w] || {};
+      for (const rk of Object.keys(rankMap)) {
+        const tsid = rankMap[rk];
+        if (!fbsTeamSeasonIds.has(tsid)) {
+          delete rankMap[rk];
+        }
+      }
+      // if rankMap is now empty, remove the week
+      if (Object.keys(rankMap).length === 0) delete ranksByPollWeek[poll][w];
+    }
+    // if poll has no weeks left, ensure it's an empty object
+    if (Object.keys(ranksByPollWeek[poll]).length === 0) ranksByPollWeek[poll] = {};
+  }
+
+  function weekStartIso(d: Date) {
+    const dt = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+    const day = dt.getUTCDay();
+    const diff = (day + 6) % 7; // days since Monday
+    dt.setUTCDate(dt.getUTCDate() - diff);
+    dt.setUTCHours(0, 0, 0, 0);
+    return dt.toISOString().slice(0, 10);
+  }
+
+  const gamesByWeek: Record<string, any[]> = {};
+  for (const g of games) {
+    const weekLabel = typeof g.week === 'number' ? `Week ${g.week}` : g.dateObj ? `Week of ${weekStartIso(g.dateObj)}` : 'Unscheduled';
+    if (!gamesByWeek[weekLabel]) gamesByWeek[weekLabel] = [];
+    gamesByWeek[weekLabel].push(g);
+  }
+
+  // Sort weeks naturally: try numeric week numbers first, then ISO dates, then others
+  const sortedWeeks = Object.keys(gamesByWeek).sort((a, b) => {
+    const numA = a.match(/^Week (\d+)$/)?.[1];
+    const numB = b.match(/^Week (\d+)$/)?.[1];
+    if (numA && numB) return Number(numA) - Number(numB);
+    if (numA) return -1;
+    if (numB) return 1;
+    // compare ISO date strings if present
+    const dateA = a.match(/^Week of (\d{4}-\d{2}-\d{2})$/)?.[1];
+    const dateB = b.match(/^Week of (\d{4}-\d{2}-\d{2})$/)?.[1];
+    if (dateA && dateB) return dateA.localeCompare(dateB);
+    return a.localeCompare(b);
+  });
+
+  const gamesHtml = sortedWeeks
+    .map(week => {
+      const rows = gamesByWeek[week]
+        .sort((a, b) => (b.leverage ?? 0) - (a.leverage ?? 0))
+        .map(
+          (g: any) =>
+            `<li>${g.date ? new Date(g.date).toISOString().slice(0, 10) + ' — ' : ''}${escapeHtml(
+              g.home.name
+            )} vs ${escapeHtml(g.away.name)} (lev: ${g.leverage})</li>`
+        )
+        .join('\n');
+      return `<li><strong>${escapeHtml(week)}</strong><ul>${rows}</ul></li>`;
+    })
     .join('\n');
-  const contendersHtml = (data.contenders || [])
-    .map(
-      (c: any) =>
-        `<li>${escapeHtml(c.team.name)} (${escapeHtml(c.team.conference.shortName)}), rank: ${c.rank ?? '—'}, resume: ${c.resumeScore}, idx: ${c.leverageIndex}</li>`
-    )
+  // Filter server-returned contenders to FBS teams only
+  const fbsContenders = (data.contenders || []).filter((c: any) => {
+    // If we can map the team name to a teamSeasonId that belonged to FBS, keep it
+    const tsId = teamNameToSeasonId[c.team?.name];
+    return Boolean(tsId);
+  });
+
+  // If server returned no contenders (or filtered them all out), fall back to using teamNameToSeasonId order
+  const contendersToRender = fbsContenders.length
+    ? fbsContenders
+    : (data.contenders || []).filter((c: any) => {
+        // keep only those whose teamSeason exists in FBS set (try to derive teamSeason from known mapping too)
+        const tsId = teamNameToSeasonId[c.team?.name];
+        return Boolean(tsId);
+      });
+
+  const contendersHtml = contendersToRender
+    .map((c: any) => {
+      const tsId = teamNameToSeasonId[c.team?.name] || '';
+      return `
+        <li data-teamseason="${escapeHtml(tsId)}" data-resume="${c.resumeScore}" data-idx="${c.leverageIndex}">
+          ${escapeHtml(c.team.name)} (${escapeHtml(c.team.conference.shortName)}), CFP Rank: ${c.rank ?? '—'}, resume: ${c.resumeScore}, idx: ${c.leverageIndex}
+        </li>`;
+    })
     .join('\n');
 
   return `<!doctype html>
@@ -184,11 +317,154 @@ function renderHTML(data: any) {
     </section>
 
     <section>
-      <h2 style="text-align:left">Top Contenders</h2>
-      <ol style="text-align:left">
-        ${contendersHtml}
-      </ol>
+      <h2 style="text-align:left">Top 25 Rankings</h2>
+      <div style="margin-bottom:0.5rem">
+        <label for="pollSelect">Poll:</label>
+        <select id="pollSelect">
+          <option>CFP</option>
+          <option>COACHES</option>
+          <option>AP</option>
+        </select>
+        <label for="weekSelect" style="margin-left:1rem">Week:</label>
+        <select id="weekSelect"></select>
+      </div>
+      <div style="overflow-x:auto">
+        <table id="rankingsTable" style="width:100%; border-collapse:collapse; text-align:left">
+          <!-- Populated by JavaScript from poll data -->
+        </table>
+      </div>
     </section>
+
+    <script>
+      // Embed ranksByPollWeek, team mappings, and team season data
+      const ranksByPollWeek = ${JSON.stringify(ranksByPollWeek)};
+      const teamNameToSeasonId = ${JSON.stringify(teamNameToSeasonId)};
+      const teamSeasonIdToName = ${JSON.stringify(
+        Object.fromEntries(Object.entries(teamNameToSeasonId).map(([k, v]) => [v, k]))
+      )};
+      const teamSeasonData = ${JSON.stringify(
+        Object.fromEntries(ctx.teamSeasons.filter((ts: any) => ts.season === data.season).map((ts: any) => [ts.id, ts]))
+      )};
+      const season = ${data.season};
+
+      function renderRankings() {
+        const poll = document.getElementById('pollSelect').value || 'AP';
+        const week = document.getElementById('weekSelect').value;
+        const table = document.getElementById('rankingsTable');
+        
+        if (!week || week === 'select') {
+          table.innerHTML = '<tr><td style="color:var(--muted)">Select a week to view rankings</td></tr>';
+          return;
+        }
+
+        const rankMap = (ranksByPollWeek[poll] && ranksByPollWeek[poll][week]) || {};
+        const ranks = Object.keys(rankMap).map(Number).sort((a,b)=>a-b);
+        
+        if (ranks.length === 0) {
+          table.innerHTML = '<tr><td style="color:var(--muted)">No rankings available for this poll/week</td></tr>';
+          return;
+        }
+
+        // Build table header
+        let html = \`
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border)">
+              <th style="padding: 0.5rem">Rank</th>
+              <th style="padding: 0.5rem">Team</th>
+              <th style="padding: 0.5rem">Record</th>
+              <th style="padding: 0.5rem">SP+</th>
+            </tr>
+          </thead>
+          <tbody>
+        \`;
+        
+        // Build table rows
+        for (const rank of ranks) {
+          const tsId = rankMap[String(rank)];
+          const teamName = teamSeasonIdToName[tsId] || tsId;
+          const ts = teamSeasonData[tsId] || {};
+          const record = ts.record || {};
+          const recordStr = \`\${record.wins || 0}-\${record.losses || 0}\${record.ties ? \`-\${record.ties}\` : ''}\`;
+          const spPlus = ts.spPlus != null ? ts.spPlus.toFixed(1) : '—';
+          
+          html += \`
+            <tr style="border-bottom: 1px solid var(--border)">
+              <td style="padding: 0.5rem"><strong>#\${rank}</strong></td>
+              <td style="padding: 0.5rem">\${teamName}</td>
+              <td style="padding: 0.5rem">\${recordStr}</td>
+              <td style="padding: 0.5rem">\${spPlus}</td>
+            </tr>
+          \`;
+        }
+        
+        html += '</tbody>';
+        table.innerHTML = html;
+      }
+
+      function populateWeekOptionsForPoll(poll) {
+        const weekSelect = document.getElementById('weekSelect');
+        weekSelect.innerHTML = '';
+        const weekSet = new Set();
+        for (const w of Object.keys(ranksByPollWeek[poll] || {})) weekSet.add(w);
+        const pollWeeks = Array.from(weekSet).sort((a,b)=>{ 
+          if (a==='unknown') return 1; 
+          if (b==='unknown') return -1; 
+          return Number(a)-Number(b); 
+        });
+        
+        const selectOpt = document.createElement('option');
+        selectOpt.value = 'select';
+        selectOpt.text = '-- Select Week --';
+        weekSelect.appendChild(selectOpt);
+        
+        for (const w of pollWeeks) {
+          const opt = document.createElement('option');
+          opt.value = w;
+          opt.text = w==='unknown' ? 'Unknown' : 'Week ' + w;
+          weekSelect.appendChild(opt);
+        }
+        return pollWeeks;
+      }
+
+      // Initialize: pick first poll that has data (CFP -> COACHES -> AP)
+      (function init(){
+        const pollSelect = document.getElementById('pollSelect');
+        const pollOrder = ['CFP','COACHES','AP'];
+        let defaultPoll = 'AP';
+        for (const p of pollOrder) {
+          if (Object.keys(ranksByPollWeek[p] || {}).length > 0) { 
+            defaultPoll = p; 
+            break; 
+          }
+        }
+        pollSelect.value = defaultPoll;
+
+        const pollWeeks = populateWeekOptionsForPoll(defaultPoll);
+        // choose latest numeric week from the chosen poll if available
+        const numericWeeks = Object.keys(ranksByPollWeek[defaultPoll] || {})
+          .filter(w=>w!=='unknown')
+          .map(Number)
+          .sort((a,b)=>b-a);
+        const defaultWeek = numericWeeks.length ? String(numericWeeks[0]) : (pollWeeks[0] || 'select');
+        document.getElementById('weekSelect').value = defaultWeek;
+
+        pollSelect.addEventListener('change', ()=>{
+          const newPollWeeks = populateWeekOptionsForPoll(pollSelect.value);
+          const newNumericWeeks = Object.keys(ranksByPollWeek[pollSelect.value] || {})
+            .filter(w=>w!=='unknown')
+            .map(Number)
+            .sort((a,b)=>b-a);
+          const newDefaultWeek = newNumericWeeks.length ? String(newNumericWeeks[0]) : (newPollWeeks[0] || 'select');
+          document.getElementById('weekSelect').value = newDefaultWeek;
+          renderRankings();
+        });
+        
+        document.getElementById('weekSelect').addEventListener('change', renderRankings);
+        
+        // Render initial rankings
+        renderRankings();
+      })();
+    </script>
 
     <footer style="margin-top:1.25rem; color:var(--muted); font-size:0.85rem">Generated by fbs-graph</footer>
   </div>
