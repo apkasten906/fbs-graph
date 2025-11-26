@@ -227,8 +227,10 @@
       window.createLayoutConfig = createLayoutConfig;
     </script>
     <script>
-      // Use COLORS from builder module
-      const COLORS = window.BUILDER_COLORS;
+      // Helper function to get COLORS (waits for module to load)
+      function getColors() {
+        return window.BUILDER_COLORS || {};
+      }
 
       const QUERY = `
 query Graph($season: Int!) {
@@ -342,6 +344,7 @@ query Graph($season: Int!) {
           seen.add(conf);
         }
         // Map to full names, filter, and sort
+        const COLORS = getColors();
         const legendEntries = Array.from(seen)
           .map(id => {
             const meta = conferenceMeta.find(c => c.id === id);
