@@ -9,19 +9,51 @@
  * Conference color mapping for nodes
  */
 export const COLORS = {
+  // Current Power Conferences
   acc: '#00539F',
   b1g: '#CC0000',
   b12: '#003594',
   sec: '#0033A0',
-  pac12: '#8C1515',
-  mwc: '#003366',
+  
+  // Current Group of 5
   aac: '#003087',
-  sbc: '#90CAF9',
   cusa: '#FF9E00',
   mac: '#FFD166',
+  mwc: '#003366',
+  sbc: '#90CAF9',
+  
+  // Independents and Other Active
   ind: '#666666',
   wac: '#80ED99',
+  
+  // Historical Major Conferences
   be: '#9CCC65', // Big East
+  pac12: '#8C1515',
+  pac10: '#8C1515',
+  pac8: '#8C1515',
+  swc: '#FF6B35', // Southwest Conference
+  big8: '#FF9E00',
+  big7: '#FFA500',
+  big6: '#FFB84D',
+  
+  // Historical Minor/Regional Conferences
+  ivy: '#0B4F1E',
+  southland: '#7CB342',
+  bw: '#26C6DA', // Big West
+  pcaa: '#4DD0E1', // PCAA (became Big West)
+  aawu: '#AB47BC', // AAWU (became Pac-8)
+  pcc: '#BA68C8', // Pacific Coast Conference
+  swac: '#D4AF37', // SWAC
+  mvc: '#8D6E63', // Missouri Valley
+  mviaa: '#A1887F', // Missouri Valley (earlier)
+  skyline: '#78909C',
+  biaa: '#90A4AE', // Border Conference
+  western: '#BCAAA4',
+  southern: '#B0BEC5',
+  rmc: '#CFD8DC', // Rocky Mountain
+  msac: '#E0E0E0', // Mountain State
+  
+  // Fallback
   other: '#444444',
 };
 
