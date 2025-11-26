@@ -226,6 +226,9 @@
         buildSelectors as uiBuildSelectors,
       } from './modules/graph-ui.js';
 
+      // Import data loading functions
+      import { loadAllData } from './modules/graph-data.js';
+
       // Expose builder functions to non-module scripts
       window.BUILDER_COLORS = BUILDER_COLORS;
       window.buildGraphElements = buildGraphElements;
@@ -237,31 +240,15 @@
       window.uiShowEdgeGames = uiShowEdgeGames;
       window.uiBuildLegend = uiBuildLegend;
       window.uiBuildSelectors = uiBuildSelectors;
+
+      // Expose data loading function to non-module scripts
+      window.loadAllData = loadAllData;
     </script>
     <script>
       // Helper function to get COLORS (waits for module to load)
       function getColors() {
         return window.BUILDER_COLORS || {};
       }
-
-      const QUERY = `
-query Graph($season: Int!) {
-  teams(season: $season) {
-    id name shortName conference { id shortName }
-  }
-  games(season: $season) {
-    id type leverage date
-    home { id name conference { id shortName } }
-    away { id name conference { id shortName } }
-  }
-}`;
-
-      const POST = (url, body) =>
-        fetch(url, {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(body),
-        }).then(r => r.json());
 
       let cy;
       let graphData = { teams: [], games: [] };
@@ -318,8 +305,34 @@ query Graph($season: Int!) {
         cy.layout(window.createLayoutConfig(pathFilter, width, height)).run();
       }
 
-      // Conference metadata cache (populated from GraphQL)
+      // Conference metadata cache (populated from data loader)
       let conferenceMeta = [];
+
+      async function load() {
+        if (!window.loadAllData) {
+          console.error('loadAllData not loaded from module yet');
+          return;
+        }
+
+        const season = Number(document.getElementById('season').value);
+
+        try {
+          const result = await window.loadAllData(season, {
+            staticAdapter: window.staticDataAdapter,
+            graphqlEndpoint: document.getElementById('endpoint')?.value?.trim() || window.GRAPHQL_ENDPOINT,
+          });
+
+          conferenceMeta = result.conferences || [];
+          graphData = result.graphData;
+        } catch (error) {
+          alert('Error loading data: ' + (error instanceof Error ? error.message : String(error)));
+          return;
+        }
+
+        buildLegend();
+        buildSelectors();
+        applyFilters();
+      }
 
       // Adapter functions that call the UI module functions
       function showEdgeGames(data) {
@@ -352,8 +365,7 @@ query Graph($season: Int!) {
         });
       }
 
-      // Adapter functions that call the imported module functions with correct parameters
-      // Use different names to avoid collision with window.* properties
+      // Adapter functions that call path-finding module functions
       function _shortestPath(srcId, dstId, typeFilter, minLev) {
         if (!window.shortestPathByInverseLeverage) {
           console.error('shortestPathByInverseLeverage not loaded from module yet');
@@ -374,7 +386,6 @@ query Graph($season: Int!) {
           console.error('findNodesWithinDegrees not loaded from module yet');
           return { nodes: [], edges: [], nodesByDegree: new Map(), source: startNodes[0], destination: startNodes[1] };
         }
-        // Module signature: findNodesWithinDegrees(startNodes, maxDegrees, pairGames, teams, typeFilter, minLev, shortestPath)
         return window.findNodesWithinDegrees(
           startNodes,
           maxDegrees,
@@ -384,49 +395,6 @@ query Graph($season: Int!) {
           minLev,
           shortestPath
         );
-      }
-
-      const CONFERENCES_QUERY = `
-        query { conferences { id name shortName } }
-      `;
-
-      async function load() {
-        const season = Number(document.getElementById('season').value);
-
-        // Use static data adapter if available, otherwise fall back to GraphQL
-        if (window.staticDataAdapter) {
-          try {
-            const [conferences, result] = await Promise.all([
-              window.staticDataAdapter.getConferences(),
-              window.staticDataAdapter.queryGraph(season),
-            ]);
-            conferenceMeta = conferences || [];
-            graphData = result.data;
-          } catch (error) {
-            alert('Error loading static data: ' + error.message);
-            return;
-          }
-        } else {
-          // Fallback to GraphQL if static data not available
-          const endpoint =
-            document.getElementById('endpoint')?.value?.trim() || window.GRAPHQL_ENDPOINT;
-          const confRes = await POST(endpoint, { query: CONFERENCES_QUERY });
-          if (confRes.errors) {
-            alert('GraphQL error (conferences): ' + JSON.stringify(confRes.errors[0], null, 2));
-            return;
-          }
-          conferenceMeta = confRes.data.conferences || [];
-          const res = await POST(endpoint, { query: QUERY, variables: { season } });
-          if (res.errors) {
-            alert('GraphQL error: ' + JSON.stringify(res.errors[0], null, 2));
-            return;
-          }
-          graphData = res.data;
-        }
-
-        buildLegend();
-        buildSelectors();
-        applyFilters();
       }
 
       function applyFilters() {
