@@ -618,9 +618,9 @@ query Graph($season: Int!) {
         return positions;
       }
 
-      // Wrapper functions that call the imported module functions
-      // These are defined as functions so they execute at call-time (when window.* is available)
-      function shortestPathByInverseLeverage(srcId, dstId, typeFilter, minLev) {
+      // Adapter functions that call the imported module functions with correct parameters
+      // Use different names to avoid collision with window.* properties
+      function _shortestPath(srcId, dstId, typeFilter, minLev) {
         if (!window.shortestPathByInverseLeverage) {
           console.error('shortestPathByInverseLeverage not loaded from module yet');
           return null;
@@ -635,7 +635,7 @@ query Graph($season: Int!) {
         );
       }
 
-      function findNodesWithinDegrees(startNodes, maxDegrees, typeFilter, minLev, shortestPath) {
+      function _findNodesWithinDegrees(startNodes, maxDegrees, typeFilter, minLev, shortestPath) {
         if (!window.findNodesWithinDegrees) {
           console.error('findNodesWithinDegrees not loaded from module yet');
           return { nodes: [], edges: [], nodesByDegree: new Map(), source: startNodes[0], destination: startNodes[1] };
@@ -723,7 +723,7 @@ query Graph($season: Int!) {
         }
 
         // First, find the shortest path to determine the minimum degrees needed
-        const shortestPath = shortestPathByInverseLeverage(src, dst, typeFilter, minLev);
+        const shortestPath = _shortestPath(src, dst, typeFilter, minLev);
 
         if (!shortestPath || shortestPath.nodes.length === 0) {
           box.textContent = 'No path found between these teams (maybe filters are too strict).';
@@ -748,7 +748,7 @@ query Graph($season: Int!) {
 
         // Find all nodes within N degrees of both selected teams
         // Pass the shortest path to ensure it's always included
-        const res = findNodesWithinDegrees(
+        const res = _findNodesWithinDegrees(
           [src, dst],
           degrees,
           typeFilter,
