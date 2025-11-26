@@ -227,12 +227,14 @@ describe('cytoscape-builder', () => {
 
       const nodes = elements.filter((e: any) => e.group === 'nodes');
       const osuNode = nodes.find((n: any) => n.data.id === 'ohio-state');
-      expect(osuNode.classes).toBe('b1g');
-      expect(osuNode.data.conf).toBe('b1g');
+      expect(osuNode).toBeDefined();
+      expect(osuNode?.classes).toBe('b1g');
+      expect(osuNode?.data.conf).toBe('b1g');
 
       const ndNode = nodes.find((n: any) => n.data.id === 'notre-dame');
-      expect(ndNode.classes).toBe('other');
-      expect(ndNode.data.conf).toBe('other');
+      expect(ndNode).toBeDefined();
+      expect(ndNode?.classes).toBe('other');
+      expect(ndNode?.data.conf).toBe('other');
     });
 
     it('should color edges based on degree when pathFilter has nodesByDegree', () => {
@@ -291,6 +293,8 @@ describe('cytoscape-builder', () => {
         ]),
         source: 'ohio-state',
         destination: 'michigan',
+        nodes: ['ohio-state', 'michigan'],
+        edges: [],
       };
 
       const positions = calculateDegreePositions(pathFilter, 800, 600);
@@ -310,6 +314,8 @@ describe('cytoscape-builder', () => {
         ]),
         source: 'ohio-state',
         destination: 'michigan',
+        nodes: ['ohio-state', 'alabama', 'michigan'],
+        edges: [],
       };
 
       const positions = calculateDegreePositions(pathFilter, 800, 600);
@@ -329,6 +335,8 @@ describe('cytoscape-builder', () => {
         ]),
         source: 'ohio-state',
         destination: 'michigan',
+        nodes: ['ohio-state', 'alabama', 'georgia', 'michigan'],
+        edges: [],
       };
 
       const positions = calculateDegreePositions(pathFilter, 800, 600);
@@ -346,6 +354,8 @@ describe('cytoscape-builder', () => {
         ]),
         source: 'ohio-state',
         destination: 'michigan',
+        nodes: ['ohio-state', 'michigan'],
+        edges: [],
       };
 
       const positions = calculateDegreePositions(pathFilter, 1000, 800);
@@ -419,8 +429,11 @@ describe('cytoscape-builder', () => {
 
       const config = createLayoutConfig(pathFilter, 1200, 900);
 
-      expect(config.positions['ohio-state'].x).toBe(50);
-      expect(config.positions['michigan'].x).toBe(1150); // 1200 - 50
+      expect(config.positions).toBeDefined();
+      expect(typeof config.positions).toBe('object');
+      const positions = config.positions as { [nodeId: string]: { x: number; y: number } };
+      expect(positions['ohio-state'].x).toBe(50);
+      expect(positions['michigan'].x).toBe(1150); // 1200 - 50
     });
   });
 });
