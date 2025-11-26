@@ -80,8 +80,22 @@ function createTimelineApp(options = {}) {
   async function init() {
     try {
       const raw = await loadData();
+      console.log('[MatchupTimeline] Raw data loaded:', {
+        conferences: raw.conferences?.length,
+        teams: raw.teams?.length,
+        teamSeasons: raw.teamSeasons?.length,
+        polls: raw.polls?.length,
+        games: raw.games?.length,
+      });
       state.data = prepareSeasonModel(raw, state.season);
+      console.log('[MatchupTimeline] Season model prepared:', {
+        teams: state.data.teams?.length,
+        games: state.data.games?.length,
+        upcomingGames: state.data.upcomingGames?.length,
+        adjacencySize: state.data.adjacency?.size,
+      });
       const available = getTeamsForScope('power4');
+      console.log('[MatchupTimeline] Available teams in scope:', available.length);
       const defaultStart =
         available.find(team => team.id === 'alabama')?.id ?? available[0]?.id ?? null;
       let defaultEnd =
@@ -91,8 +105,10 @@ function createTimelineApp(options = {}) {
         defaultEnd = chooseFallbackTeam(available, defaultStart);
       }
       Object.assign(state, { loading: false, startTeam: defaultStart, endTeam: defaultEnd });
+      console.log('[MatchupTimeline] Initial teams selected:', { startTeam: defaultStart, endTeam: defaultEnd });
       updatePath();
     } catch (error) {
+      console.error('[MatchupTimeline] Error during init:', error);
       state.loading = false;
       state.error = error instanceof Error ? error.message : String(error);
     }
@@ -753,7 +769,10 @@ function prepareSeasonModel(raw, season) {
       awayTeam: teamMap.get(game.awayTeamId),
     }));
   const upcomingGames = games.filter(game => game.result === 'TBD');
-  const edgesByPair = buildEdgeMap(upcomingGames);
+  // Use ALL games (not just upcoming) to build the leverage chain graph.
+  // This ensures we can find paths even when connecting games have already been played.
+  // For example: Alabama → South Carolina (already played) → Clemson (upcoming).
+  const edgesByPair = buildEdgeMap(games);
   const adjacency = buildAdjacency(edgesByPair);
   return {
     conferences: raw.conferences,

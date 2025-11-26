@@ -12,23 +12,23 @@ if ($EnvFile -eq "${PWD}\ .env") {
   if (Test-Path $possible) { $EnvFile = $possible } else { $EnvFile = $null }
 }
 
-function Load-DotEnv($path) {
+function Import-DotEnv($path) {
   if (-not $path) { return }
   if (-not (Test-Path $path)) { return }
   Get-Content $path | ForEach-Object {
-    $_ = $_.Trim()
-    if ([string]::IsNullOrWhiteSpace($_)) { return }
-    if ($_.StartsWith('#')) { return }
-    $parts = $_ -split '=', 2
+    $line = $_.Trim()
+    if ([string]::IsNullOrWhiteSpace($line)) { return }
+    if ($line.StartsWith('#')) { return }
+    $parts = $line -split '=', 2
     if ($parts.Count -lt 2) { return }
     $k = $parts[0].Trim()
     $v = $parts[1].Trim().Trim('"')
-    if ($k) { $env:$k = $v }
+    if ($k) { Set-Item -Path "env:$k" -Value $v }
   }
 }
 
 try {
-  Load-DotEnv -path $EnvFile
+  Import-DotEnv -path $EnvFile
 } catch {
   Write-Verbose "Failed to load .env: $_"
 }

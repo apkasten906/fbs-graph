@@ -63,9 +63,11 @@ async function generate(season = 2025, limit = 12, gameLimit = 6, leverageThresh
   const outDir = path.join(process.cwd(), 'web');
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
-  const html = renderHTML(data, { polls, teams, teamSeasons, conferences });
-  fs.writeFileSync(path.join(outDir, 'playoff-preview.html'), html, 'utf-8');
+  const { playoffHtml, rankingsHtml } = renderHTML(data, { polls, teams, teamSeasons, conferences, dataDir: DATA_DIR });
+  fs.writeFileSync(path.join(outDir, 'playoff-preview.html'), playoffHtml, 'utf-8');
+  fs.writeFileSync(path.join(outDir, 'rankings.html'), rankingsHtml, 'utf-8');
   console.log('Wrote web/playoff-preview.html');
+  console.log('Wrote web/rankings.html');
 }
 
 // If the resolver returned fewer contenders than requested, attempt to
@@ -165,12 +167,16 @@ async function supplementContendersIfNeeded(data: any, limit: number, season: nu
   }
 }
 
-function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: any[]; conferences: any[] }) {
+function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: any[]; conferences: any[]; dataDir: string }) {
   // Prefer grouping by the existing `week` field on Game, falling back to ISO week-start from the date.
   const games = (data.remainingHighLeverageGames || []).map((g: any) => ({
     ...g,
     dateObj: g.date ? new Date(g.date) : undefined,
+    week: g.week,
   }));
+
+  // Load all games from local data to expand beyond high-leverage games
+  const allGames: any[] = JSON.parse(fs.readFileSync(path.join(ctx.dataDir, 'games.json'), 'utf-8'));
 
   // Build poll -> week -> rank -> teamSeasonId map for client-side filtering
   const pollsData = ctx.polls || [];
@@ -235,8 +241,88 @@ function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: a
     return dt.toISOString().slice(0, 10);
   }
 
-  const gamesByWeek: Record<string, any[]> = {};
+  // Find latest poll week across all polls to get current top 25
+  let latestTop25 = new Set<string>();
+  for (const poll of ['CFP', 'COACHES', 'AP']) {
+    const pollWeeks = ranksByPollWeek[poll];
+    if (!pollWeeks) continue;
+    const numericWeeks = Object.keys(pollWeeks)
+      .filter(w => w !== 'unknown')
+      .map(Number)
+      .sort((a, b) => b - a);
+    if (numericWeeks.length === 0) continue;
+    const latestWeek = String(numericWeeks[0]);
+    const rankMap = pollWeeks[latestWeek];
+    if (rankMap) {
+      // Get all teams ranked 1-25
+      for (let rank = 1; rank <= 25; rank++) {
+        const teamSeasonId = rankMap[String(rank)];
+        if (teamSeasonId) latestTop25.add(teamSeasonId);
+      }
+      break; // Use first available poll's top 25
+    }
+  }
+
+  // Filter games to those involving top 25 teams and still in the future
+  const now = new Date();
+  
+  // Create a map of game IDs to leverage scores from high-leverage games
+  const leverageMap = new Map<string, number>();
   for (const g of games) {
+    if (g.id && typeof g.leverage === 'number') {
+      leverageMap.set(g.id, g.leverage);
+    }
+  }
+  
+  // Build reverse map from teamSeasonId to CFP rank
+  const cfpRankMap = new Map<string, number>();
+  const cfpPollOrder = ['CFP', 'COACHES', 'AP'];
+  for (const pollType of cfpPollOrder) {
+    const pollWeeks = ranksByPollWeek[pollType];
+    if (!pollWeeks || Object.keys(pollWeeks).length === 0) continue;
+    const numericWeeks = Object.keys(pollWeeks)
+      .filter(w => w !== 'unknown')
+      .map(Number)
+      .sort((a, b) => b - a);
+    if (numericWeeks.length === 0) continue;
+    const latestWeek = String(numericWeeks[0]);
+    const rankMap = pollWeeks[latestWeek];
+    if (rankMap) {
+      for (const [rank, teamSeasonId] of Object.entries(rankMap)) {
+        cfpRankMap.set(teamSeasonId as string, Number(rank));
+      }
+      break; // Use first available poll
+    }
+  }
+
+  const upcomingTop25Games = allGames
+    .filter(g => {
+      if (g.season !== season) return false;
+      if (g.result && g.result !== 'TBD') return false; // Game already played
+      const gameDate = g.date ? new Date(g.date) : null;
+      if (gameDate && gameDate < now) return false; // Game in the past
+      const homeTeamSeasonId = `${g.homeTeamId}-${season}`;
+      const awayTeamSeasonId = `${g.awayTeamId}-${season}`;
+      return latestTop25.has(homeTeamSeasonId) || latestTop25.has(awayTeamSeasonId);
+    })
+    .map(g => ({
+      ...g,
+      dateObj: g.date ? new Date(g.date) : undefined,
+      leverage: leverageMap.get(g.id), // Add leverage if available
+      home: { 
+        name: (ctx.teams || []).find((t: any) => t.id === g.homeTeamId)?.name || g.homeTeamId,
+        seasonId: `${g.homeTeamId}-${season}`,
+        cfpRank: cfpRankMap.get(`${g.homeTeamId}-${season}`)
+      },
+      away: { 
+        name: (ctx.teams || []).find((t: any) => t.id === g.awayTeamId)?.name || g.awayTeamId,
+        seasonId: `${g.awayTeamId}-${season}`,
+        cfpRank: cfpRankMap.get(`${g.awayTeamId}-${season}`)
+      },
+    }));
+
+  const gamesByWeek: Record<string, any[]> = {};
+  for (const g of upcomingTop25Games) {
     const weekLabel = typeof g.week === 'number' ? `Week ${g.week}` : g.dateObj ? `Week of ${weekStartIso(g.dateObj)}` : 'Unscheduled';
     if (!gamesByWeek[weekLabel]) gamesByWeek[weekLabel] = [];
     gamesByWeek[weekLabel].push(g);
@@ -259,12 +345,20 @@ function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: a
   const gamesHtml = sortedWeeks
     .map(week => {
       const rows = gamesByWeek[week]
-        .sort((a, b) => (b.leverage ?? 0) - (a.leverage ?? 0))
+        .sort((a, b) => {
+          // Sort by date if available, otherwise by leverage if available
+          if (a.dateObj && b.dateObj) return a.dateObj.getTime() - b.dateObj.getTime();
+          return (b.leverage ?? 0) - (a.leverage ?? 0);
+        })
         .map(
-          (g: any) =>
-            `<li>${g.date ? new Date(g.date).toISOString().slice(0, 10) + ' — ' : ''}${escapeHtml(
+          (g: any) => {
+            const dateStr = g.date ? `<span class="game-time" data-time="${g.date}">${new Date(g.date).toISOString().slice(0, 10)}</span> — ` : '';
+            const homeRank = g.home.cfpRank ? `#${g.home.cfpRank} ` : '';
+            const awayRank = g.away.cfpRank ? `#${g.away.cfpRank} ` : '';
+            return `<li>${dateStr}${homeRank}${escapeHtml(
               g.home.name
-            )} vs ${escapeHtml(g.away.name)} (lev: ${g.leverage})</li>`
+            )} vs ${awayRank}${escapeHtml(g.away.name)}${g.leverage ? ` (lev: ${g.leverage})` : ''}</li>`;
+          }
         )
         .join('\n');
       return `<li><strong>${escapeHtml(week)}</strong><ul>${rows}</ul></li>`;
@@ -296,28 +390,99 @@ function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: a
     })
     .join('\n');
 
-  return `<!doctype html>
+  // Generate rankings HTML for separate page
+  const rankingsHtml = generateRankingsPage(data, ranksByPollWeek, teamNameToSeasonId, ctx);
+  
+  const playoffHtml = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Playoff Preview — ${data.season}</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="common-theme.css">
+  <link rel="stylesheet" href="css/shared-nav.css">
+  <style>
+    .container {
+      padding: 1.5rem 2rem;
+    }
+    
+    /* Hide bullet points for matchup lists */
+    section ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    section ul ul {
+      padding-left: 1.5rem;
+      margin-top: 0.25rem;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
+  <div class="content-wrapper">
     <h1>Playoff Preview — ${data.season}</h1>
     <p style="color: var(--muted); font-size: 0.95rem">Generated: ${escapeHtml(data.generatedAt)}</p>
 
     <section>
-      <h2 style="text-align:left">Remaining High-Leverage Games</h2>
+      <h2 style="text-align:left">Upcoming Games (Top 25 Teams)</h2>
       <ul style="text-align:left">
         ${gamesHtml}
       </ul>
     </section>
 
+    <script>
+      // Format game times in user's local timezone
+      (function formatGameTimes() {
+        const gameTimeElements = document.querySelectorAll('.game-time');
+        gameTimeElements.forEach(el => {
+          const isoTime = el.getAttribute('data-time');
+          if (!isoTime) return;
+          const date = new Date(isoTime);
+          const dateStr = date.toLocaleDateString(undefined, { 
+            month: 'short', 
+            day: 'numeric' 
+          });
+          const timeStr = date.toLocaleTimeString(undefined, { 
+            hour: 'numeric', 
+            minute: '2-digit',
+            hour12: true 
+          });
+          el.textContent = \`\${dateStr} at \${timeStr}\`;
+        });
+      })();
+  </script>
+
+  <script type="module">
+    import { initNavigation } from './modules/shared-nav.js';
+    initNavigation('playoff-preview');
+  </script>
+</body>
+</html>`;
+
+  return { playoffHtml, rankingsHtml };
+}
+
+function generateRankingsPage(data: any, ranksByPollWeek: any, teamNameToSeasonId: any, ctx: any) {
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Rankings — ${data.season}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="common-theme.css">
+  <link rel="stylesheet" href="css/shared-nav.css">
+  <style>
+    .container {
+      padding: 1.5rem 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="content-wrapper">
+    <h1>Top 25 Rankings — ${data.season}</h1>
+    <p style="color: var(--muted); font-size: 0.95rem">Generated: ${escapeHtml(data.generatedAt)}</p>
+
     <section>
-      <h2 style="text-align:left">Top 25 Rankings</h2>
+      <h2 style="text-align:left">Rankings</h2>
       <div style="margin-bottom:0.5rem">
         <label for="pollSelect">Poll:</label>
         <select id="pollSelect">
@@ -464,10 +629,35 @@ function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: a
         // Render initial rankings
         renderRankings();
       })();
+
+      // Format game times in user's local timezone
+      (function formatGameTimes() {
+        const gameTimeElements = document.querySelectorAll('.game-time');
+        gameTimeElements.forEach(el => {
+          const isoTime = el.getAttribute('data-time');
+          if (!isoTime) return;
+          const date = new Date(isoTime);
+          const dateStr = date.toLocaleDateString(undefined, { 
+            month: 'short', 
+            day: 'numeric' 
+          });
+          const timeStr = date.toLocaleTimeString(undefined, { 
+            hour: 'numeric', 
+            minute: '2-digit',
+            hour12: true 
+          });
+          el.textContent = \`\${dateStr} at \${timeStr}\`;
+        });
+      })();
     </script>
 
     <footer style="margin-top:1.25rem; color:var(--muted); font-size:0.85rem">Generated by fbs-graph</footer>
   </div>
+
+  <script type="module">
+    import { initNavigation } from './modules/shared-nav.js';
+    initNavigation('rankings');
+  </script>
 </body>
 </html>`;
 }

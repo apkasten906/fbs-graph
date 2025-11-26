@@ -6,11 +6,19 @@
     <title>FBS Schedule Graph — Home</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="common-theme.css" />
+    <link rel="stylesheet" href="css/shared-nav.css" />
   </head>
   <body>
+    <div class="content-wrapper">
     <div class="container">
       <h1>FBS Schedule Graph</h1>
       <ul>
+        <li>
+          <a href="playoff-preview.html">Playoff Preview</a> - Upcoming games involving top 25 teams
+        </li>
+        <li>
+          <a href="rankings.html">Rankings</a> - CFP, Coaches, and AP poll rankings
+        </li>
         <li>
           <a href="fbs-graph-timeline-explorer.html">FBS Schedule Graph - Timeline Explorer</a>
         </li>
@@ -23,5 +31,10 @@
         <span>Choose a tool to explore the FBS schedule graph.</span>
       </div>
     </div>
+    </div>
+    <script type="module">
+      import { initNavigation } from './modules/shared-nav.js';
+      initNavigation('home');
+    </script>
   </body>
 </html>

@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['**/*.test.ts', '**/*.spec.ts', 'web/**/*.test.ts'],
+    include: ['**/*.test.ts', '**/*.spec.ts', 'web/tests/**/*.test.ts'],
     exclude: ['node_modules', 'dist', '.vscode', '.github'],
     reporters: ['verbose'],
     outputFile: {
