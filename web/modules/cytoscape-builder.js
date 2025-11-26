@@ -10,16 +10,18 @@
  */
 export const COLORS = {
   acc: '#00539F',
-  'big-ten': '#CC0000',
-  'big-12': '#003594',
+  b1g: '#CC0000',
+  b12: '#003594',
   sec: '#0033A0',
-  pac: '#8C1515',
-  'mountain-west': '#003366',
-  'american-athletic': '#003087',
-  'sun-belt': '#003366',
-  'conference-usa': '#003087',
-  mac: '#CC0000',
-  independent: '#666666',
+  pac12: '#8C1515',
+  mwc: '#003366',
+  aac: '#003087',
+  sbc: '#90CAF9',
+  cusa: '#FF9E00',
+  mac: '#FFD166',
+  ind: '#666666',
+  wac: '#80ED99',
+  be: '#9CCC65', // Big East
   other: '#444444',
 };
 
@@ -73,9 +75,7 @@ export function buildGraphElements({
   teams.forEach(t => teamIndex.set(t.id, t));
 
   // Filter teams to show (all or just path nodes)
-  const teamsToShow = pathFilter
-    ? teams.filter(t => pathFilter.nodes.includes(t.id))
-    : teams;
+  const teamsToShow = pathFilter ? teams.filter(t => pathFilter.nodes.includes(t.id)) : teams;
 
   // Build nodes
   for (const t of teamsToShow) {

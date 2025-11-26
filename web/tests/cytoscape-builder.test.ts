@@ -31,8 +31,8 @@ describe('cytoscape-builder', () => {
   beforeEach(() => {
     // Setup mock data
     mockTeams = [
-      { id: 'ohio-state', name: 'Ohio State', conference: { id: 'big-ten' } },
-      { id: 'michigan', name: 'Michigan', conference: { id: 'big-ten' } },
+      { id: 'ohio-state', name: 'Ohio State', conference: { id: 'b1g' } },
+      { id: 'michigan', name: 'Michigan', conference: { id: 'b1g' } },
       { id: 'georgia', name: 'Georgia', conference: { id: 'sec' } },
       { id: 'alabama', name: 'Alabama', conference: { id: 'sec' } },
       { id: 'notre-dame', name: 'Notre Dame' }, // Independent, no conference
@@ -75,9 +75,11 @@ describe('cytoscape-builder', () => {
 
   describe('COLORS constant', () => {
     it('should have conference color mappings', () => {
-      expect(COLORS['big-ten']).toBe('#CC0000');
+      expect(COLORS.b1g).toBe('#CC0000');
       expect(COLORS.sec).toBe('#0033A0');
       expect(COLORS.acc).toBe('#00539F');
+      expect(COLORS.b12).toBe('#003594');
+      expect(COLORS.mwc).toBe('#003366');
       expect(COLORS.other).toBe('#444444');
     });
   });
@@ -225,8 +227,8 @@ describe('cytoscape-builder', () => {
 
       const nodes = elements.filter((e: any) => e.group === 'nodes');
       const osuNode = nodes.find((n: any) => n.data.id === 'ohio-state');
-      expect(osuNode.classes).toBe('big-ten');
-      expect(osuNode.data.conf).toBe('big-ten');
+      expect(osuNode.classes).toBe('b1g');
+      expect(osuNode.data.conf).toBe('b1g');
 
       const ndNode = nodes.find((n: any) => n.data.id === 'notre-dame');
       expect(ndNode.classes).toBe('other');
