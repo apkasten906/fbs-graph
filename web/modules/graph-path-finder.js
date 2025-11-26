@@ -167,6 +167,9 @@ export function findNodesWithinDegrees(
         ]),
         source,
         destination: dest,
+        // Provide shortestPathNodes and nodeLabels so layout code can render a straight line
+        shortestPathNodes: [source, dest],
+        nodeLabels: Object.fromEntries(teams.map(t => [t.id, t.name])),
       };
     }
     return {
@@ -175,6 +178,8 @@ export function findNodesWithinDegrees(
       nodesByDegree: new Map(),
       source,
       destination: dest,
+      shortestPathNodes: [],
+      nodeLabels: Object.fromEntries(teams.map(t => [t.id, t.name])),
     };
   }
 
@@ -257,5 +262,9 @@ export function findNodesWithinDegrees(
     nodesByDegree,
     source,
     destination: dest,
+    // expose which nodes came from the provided shortestPath (if any)
+    shortestPathNodes: shortestPath && shortestPath.nodes ? shortestPath.nodes : [],
+    // provide id->name lookup so layout can sort alphabetically
+    nodeLabels: Object.fromEntries(teams.map(t => [t.id, t.name])),
   };
 }

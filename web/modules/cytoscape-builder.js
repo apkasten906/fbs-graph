@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Cytoscape Graph Builder Module
  *
  * Handles construction of Cytoscape graph elements from game and team data.
@@ -56,6 +56,43 @@ export const COLORS = {
   // Fallback
   other: '#444444',
 };
+
+// Lightweight conditional logger. Enable by adding `?layoutDebug=1` to the URL
+// or by setting `localStorage.setItem('fbs_layout_debug','1')` in the console.
+function L(...args) {
+  try {
+    if (typeof window === 'undefined') return;
+    if (window.FBS_LAYOUT_DEBUG === undefined) {
+      const params = new URLSearchParams(window.location.search);
+      const enabled =
+        params.get('layoutDebug') === '1' ||
+        (window.localStorage && window.localStorage.getItem('fbs_layout_debug') === '1');
+      window.FBS_LAYOUT_DEBUG = !!enabled;
+    }
+    if (window.FBS_LAYOUT_DEBUG && console && console.debug) {
+      console.debug(...args);
+    }
+  } catch (e) {
+    // ignore
+  }
+}
+
+// Midpoint fraction used for degree-1 node placement between source and anchor.
+// Default is 0.5 (halfway). Can be overridden with URL `?midFrac=0.4` or
+// by setting `localStorage.setItem('fbs_mid_frac','0.4')`.
+const MIDPOINT_FRACTION = (() => {
+  try {
+    if (typeof window === 'undefined') return 0.5;
+    const params = new URLSearchParams(window.location.search);
+    const fromUrl = params.get('midFrac');
+    const fromStorage = window.localStorage && window.localStorage.getItem('fbs_mid_frac');
+    const raw = fromUrl || fromStorage || '0.5';
+    const v = parseFloat(raw);
+    return Number.isFinite(v) && v > 0 && v < 1 ? v : 0.5;
+  } catch (e) {
+    return 0.5;
+  }
+})();
 
 /**
  * Degree-based color scheme for edges in comparison view
@@ -217,27 +254,185 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
   const horizontalSpacing =
     maxDegree > 0 ? (destX - sourceX) / (maxDegree + 1) : (destX - sourceX) / 2;
 
+  // Helpful lookups from pathFilter
+  const shortestPathNodes = pathFilter.shortestPathNodes || [];
+  const nodeLabels = pathFilter.nodeLabels || {}; // id -> name
+
+  // Place shortest-path nodes on the exact center line to form a straight horizontal chain
+  // Place shortest-path nodes on the exact center line to form a straight horizontal chain
+  const pathIndex = new Map();
+  let pathSpacing = null;
+  if (shortestPathNodes && shortestPathNodes.length > 0) {
+    const count = shortestPathNodes.length;
+    pathSpacing = count > 1 ? (destX - sourceX) / (count - 1) : (destX - sourceX) / 2;
+    for (let i = 0; i < shortestPathNodes.length; i++) {
+      const nid = shortestPathNodes[i];
+      const x = sourceX + pathSpacing * i;
+      positions[nid] = { x, y: centerY };
+      pathIndex.set(nid, i);
+    }
+  }
+
+  // Helper to build alphabetically-sorted array of node ids
+  function sortByLabel(ids) {
+    return ids.slice().sort((a, b) => {
+      const A = (nodeLabels[a] || a).toLowerCase();
+      const B = (nodeLabels[b] || b).toLowerCase();
+      if (A < B) return -1;
+      if (A > B) return 1;
+      return 0;
+    });
+  }
+
+  // (direct connection detection removed — layout anchors to shortest-path nodes)
+
   for (let degree = 1; degree <= maxDegree; degree++) {
-    const nodesAtDegree = (degreeGroups.get(degree) || []).filter(
-      id => id !== source && id !== destination
+    let nodesAtDegree = (degreeGroups.get(degree) || []).filter(
+      id => id !== source && id !== destination && !positions[id]
     );
     if (nodesAtDegree.length === 0) continue;
 
-    const x = sourceX + horizontalSpacing * degree;
+    // Sort alphabetically for deterministic placement
+    nodesAtDegree = sortByLabel(nodesAtDegree);
 
-    // Distribute nodes vertically, avoiding the center line where source/dest are positioned
-    const topY = centerY * 0.4; // Top boundary
-    const bottomY = centerY * 1.6; // Bottom boundary
+    // If degree 1 and we have a shortest-path anchor (first path node after source),
+    // place these 1° nodes centered between source and that anchor and split above/below.
+    if (degree === 1 && shortestPathNodes && shortestPathNodes.length > 1) {
+      const firstPathNode = shortestPathNodes[1];
+      // Prefer using the already-calculated position for the first path node (more robust)
+      const anchorPos = positions[firstPathNode];
+      let midX = null;
+
+      // Debug: log key values used to compute midpoint for degree-1 nodes
+      L('[layout] degree=1 firstPathNode:', firstPathNode);
+      L('[layout] positions[source]:', positions[source]);
+      L('[layout] positions[firstPathNode]:', anchorPos);
+      L('[layout] pathIndex.size, pathSpacing:', pathIndex.size, pathSpacing);
+
+      // 1) Use the actual positioned anchor if available and not equal to source.x
+      if (anchorPos && typeof anchorPos.x === 'number' && anchorPos.x !== positions[source].x) {
+        midX = (positions[source].x + anchorPos.x) / 2;
+        L('[layout] using positioned anchor for midX', {
+          midX,
+          source: positions[source].x,
+          anchor: anchorPos.x,
+        });
+
+        // 2) Compute baseX from pathIndex but avoid index 0 (source)
+      } else if (pathIndex.size > 0 && pathSpacing !== null) {
+        const anchorIdx = pathIndex.get(firstPathNode);
+        let safeIdx = typeof anchorIdx === 'number' ? anchorIdx : null;
+        if (safeIdx === 0) safeIdx = 1; // nudge to first path step if somehow 0
+        if (safeIdx !== null && safeIdx >= 0) {
+          const baseX = sourceX + pathSpacing * safeIdx;
+          midX = (sourceX + baseX) / 2;
+          L('[layout] using computed anchorIdx for midX', { midX, safeIdx, baseX });
+        }
+
+        // 3) Fallback: use half the first path spacing to the right of source
+      } else if (pathSpacing !== null) {
+        midX = sourceX + pathSpacing / 2;
+        L('[layout] fallback midX using pathSpacing/2', { midX, pathSpacing });
+
+        // 4) Ultimate fallback: nudge right from source
+      } else {
+        midX = positions[source].x + Math.max(60, (destX - sourceX) * 0.1);
+        L('[layout] ultimate fallback midX', { midX });
+      }
+
+      if (midX !== null) {
+        const half = Math.ceil(nodesAtDegree.length / 2);
+        const upper = nodesAtDegree.slice(0, half);
+        const lower = nodesAtDegree.slice(half);
+        const stepY = Math.max(36, Math.min(80, height * 0.12));
+        upper.forEach((nid, idx) => {
+          positions[nid] = { x: midX, y: centerY - (idx + 1) * stepY };
+        });
+        lower.forEach((nid, idx) => {
+          positions[nid] = { x: midX, y: centerY + (idx + 1) * stepY };
+        });
+        continue;
+      }
+    }
+
+    // Placement helpers
+    const topY = centerY * 0.4;
+    const bottomY = centerY * 1.6;
+    const stepY = Math.max(36, Math.min(80, height * 0.12));
 
     nodesAtDegree.forEach((nodeId, index) => {
-      // Distribute evenly, but skip the center area
+      // If this node is already positioned (e.g., on the shortest path), skip
+      if (positions[nodeId]) return;
+
+      // Try to find a shortest-path node this node connects to and anchor to it
+      let anchorIdx = null;
+      if (pathIndex.size > 0) {
+        for (const [pn, idx] of pathIndex) {
+          const edgeKey = nodeId < pn ? `${nodeId}__${pn}` : `${pn}__${nodeId}`;
+          if ((pathFilter.edges || []).includes(edgeKey)) {
+            anchorIdx = idx;
+            break;
+          }
+        }
+      }
+
+      // Avoid anchoring to the source (index 0) where possible; prefer the first path step
+      if (anchorIdx === 0) {
+        if (pathIndex.size > 1) {
+          L('[layout] remapping anchorIdx 0 -> 1 to avoid anchoring to source', { nodeId });
+          anchorIdx = 1;
+        } else {
+          // no other path node to anchor to
+          anchorIdx = null;
+        }
+      }
+
+      if (anchorIdx !== null && pathSpacing !== null) {
+        const baseX = sourceX + pathSpacing * anchorIdx;
+        const jitter = ((index % 3) - 1) * 12;
+        // If this is a degree-1 node, place it between the source and the anchor baseX
+        // using a configurable fraction (MIDPOINT_FRACTION) for tuning.
+        const isDegreeOne = degree === 1;
+        const anchorId = shortestPathNodes ? shortestPathNodes[anchorIdx] : null;
+        const prevAnchorId =
+          shortestPathNodes && anchorIdx > 0 ? shortestPathNodes[anchorIdx - 1] : null;
+        const anchorX = anchorId && positions[anchorId] ? positions[anchorId].x : baseX;
+        const prevX = prevAnchorId && positions[prevAnchorId] ? positions[prevAnchorId].x : null;
+        let x;
+        if (isDegreeOne) {
+          x = sourceX + (baseX - sourceX) * MIDPOINT_FRACTION + jitter;
+        } else if (prevX !== null) {
+          // Pull higher-degree nodes toward their anchor but keep them between the two
+          // neighboring path nodes so they do not stack on the anchor's x.
+          const pull = Math.min(0.9, degree / (degree + 1));
+          x = prevX + (anchorX - prevX) * pull + jitter;
+        } else {
+          x = anchorX + jitter;
+        }
+        L('[layout] anchoring node to path', {
+          nodeId,
+          anchorIdx,
+          baseX,
+          jitter,
+          x,
+          isDegreeOne,
+          anchorId,
+          prevAnchorId,
+        });
+        const above = index % 2 === 0;
+        const offsetIdx = Math.floor(index / 2) + 1;
+        const y = above ? centerY - offsetIdx * stepY : centerY + offsetIdx * stepY;
+        positions[nodeId] = { x, y };
+        return;
+      }
+
+      // Fallback to degree-based x positioning
+      const x = sourceX + horizontalSpacing * degree;
       const fraction = (index + 1) / (nodesAtDegree.length + 1);
       let y;
       if (fraction < 0.5) {
-        // Top half
         y = topY + fraction * 2 * (centerY - topY - 50);
       } else {
-        // Bottom half
         y = centerY + 50 + (fraction - 0.5) * 2 * (bottomY - centerY - 50);
       }
       positions[nodeId] = { x, y };

@@ -4,7 +4,7 @@
  */
 
 export class StaticDataAdapter {
-  constructor(basePath = 'data') {
+  constructor(basePath = './web/data') {
     this.basePath = basePath;
     this.cache = new Map();
     // Single source of truth for default season used when callers omit a season
@@ -364,4 +364,4 @@ export class StaticDataAdapter {
 }
 
 // Create a global instance
-export const staticData = new StaticDataAdapter('./data');
+export const staticData = new StaticDataAdapter('./web/data');
