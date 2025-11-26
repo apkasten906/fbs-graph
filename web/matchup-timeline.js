@@ -105,7 +105,10 @@ function createTimelineApp(options = {}) {
         defaultEnd = chooseFallbackTeam(available, defaultStart);
       }
       Object.assign(state, { loading: false, startTeam: defaultStart, endTeam: defaultEnd });
-      console.log('[MatchupTimeline] Initial teams selected:', { startTeam: defaultStart, endTeam: defaultEnd });
+      console.log('[MatchupTimeline] Initial teams selected:', {
+        startTeam: defaultStart,
+        endTeam: defaultEnd,
+      });
       updatePath();
     } catch (error) {
       console.error('[MatchupTimeline] Error during init:', error);

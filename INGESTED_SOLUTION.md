@@ -73,7 +73,7 @@ npm test
 - **Add pointer in `README.md`:** Add a short link that points to `INGESTED_SOLUTION.md` for quick onboarding.
 - **Run the web server and audit script** to validate local setup.
 - **Optional:** Create a `docs/DEVELOPER_ONBOARDING.md` with local environment tips (Node version, recommended editor settings, VS Code tasks).
- - **Optional:** Create a `docs/DEVELOPER_ONBOARDING.md` with local environment tips (Node version, recommended editor settings, VS Code tasks). 
+- **Optional:** Create a `docs/DEVELOPER_ONBOARDING.md` with local environment tips (Node version, recommended editor settings, VS Code tasks).
 
 **Contact / Ownership**
 

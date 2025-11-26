@@ -25,7 +25,10 @@ function idify(s: string) {
   const games = parse(schedulesText, { columns: true, skip_empty_lines: true });
 
   // Calculate records for each team
-  const records = new Map<string, { wins: number; losses: number; ties: number; confWins: number; confLosses: number }>();
+  const records = new Map<
+    string,
+    { wins: number; losses: number; ties: number; confWins: number; confLosses: number }
+  >();
 
   for (const g of games) {
     const homeId = idify(g.home);
@@ -90,7 +93,9 @@ function idify(s: string) {
   }
 
   fs.writeFileSync(teamSeasonsPath, out.join('\n') + '\n', 'utf-8');
-  console.log(`Updated records in ${teamSeasonsPath} for ${records.size} teams from ${games.length} games`);
+  console.log(
+    `Updated records in ${teamSeasonsPath} for ${records.size} teams from ${games.length} games`
+  );
 })().catch(e => {
   console.error(e);
   process.exit(1);

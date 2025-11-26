@@ -390,24 +390,24 @@
           align-items: flex-start;
         }
       }
-      
+
       /* Override content-wrapper padding for this page */
       .content-wrapper {
         padding: 0;
         margin-left: 220px;
         max-width: none;
       }
-      
+
       .content-wrapper.nav-collapsed {
         margin-left: 0;
       }
-      
+
       /* Adjust body and main for nav offset */
       body {
         margin-left: 220px;
         transition: margin-left 0.3s ease;
       }
-      
+
       body.nav-collapsed {
         margin-left: 0;
       }
@@ -433,7 +433,7 @@
     <script type="module">
       import { staticData } from './modules/static-data-adapter.js';
       import createTimelineApp from './matchup-timeline.js';
-      
+
       // Use static data adapter for loading data
       createTimelineApp({
         loadData: async () => {
@@ -443,7 +443,7 @@
             staticData.getTeams(),
             staticData.getGames(2025),
           ]);
-          
+
           // The static games already have leverage calculated and teams embedded,
           // but prepareSeasonModel expects to calculate leverage from raw data.
           // We'll strip the embedded objects to get raw games, since prepareSeasonModel
@@ -452,12 +452,12 @@
             const { homeTeam, awayTeam, homeConference, awayConference, ...rawGame } = g;
             return rawGame;
           });
-          
+
           // Create minimal teamSeasons data from the games' leverage scores
           // This allows buildLatestAPRankMap to work even though we don't have poll data
           const teamSeasons = [];
           const seenTeams = new Set();
-          
+
           for (const game of gamesEnriched) {
             if (game.homeTeamId && !seenTeams.has(game.homeTeamId)) {
               seenTeams.add(game.homeTeamId);
@@ -476,15 +476,15 @@
               });
             }
           }
-          
-          return { 
-            conferences, 
-            teams, 
+
+          return {
+            conferences,
+            teams,
             teamSeasons,
             polls: [], // Empty polls - leverage already calculated
-            games 
+            games,
           };
-        }
+        },
       });
     </script>
   </body>

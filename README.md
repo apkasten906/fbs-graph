@@ -140,13 +140,13 @@ query {
 ### Local Development
 
 - `npm run setup` — One-step data import and preparation
- - `npm run validate:data` — Quick data-id consistency check (teams, teamSeasons, polls)
+- `npm run validate:data` — Quick data-id consistency check (teams, teamSeasons, polls)
 - `npm run dev` — Start backend GraphQL server
 - `npm run web:serve` — Start static web server
 - `npm run fetch:all` — Fetch all data (conferences, teams, schedules, polls, ratings)
 - `npm run import:csv` — Import/transform CSV data
 - `npm run preview:playoff` — Run playoff preview query from CLI
- - `npm run fetch:all-ranks` — Fetch AP/CFP/Coaches rankings and computed ratings (ELO/SP+). This replaces the old `fetch:ap` script; use `npm run fetch:rankings` to fetch only poll snapshots or `npm run fetch:ratings` to fetch ELO/SP+.
+- `npm run fetch:all-ranks` — Fetch AP/CFP/Coaches rankings and computed ratings (ELO/SP+). This replaces the old `fetch:ap` script; use `npm run fetch:rankings` to fetch only poll snapshots or `npm run fetch:ratings` to fetch ELO/SP+.
 
 ### GitHub Pages Deployment
 

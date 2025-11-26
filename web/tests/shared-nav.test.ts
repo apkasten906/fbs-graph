@@ -12,7 +12,7 @@ describe('Shared Navigation Component', () => {
       console.log('Testing initNavigation export...');
       const sharedNavPath = path.resolve(__dirname, '../modules/shared-nav.js');
       const sharedNavCode = fs.readFileSync(sharedNavPath, 'utf-8');
-      
+
       expect(sharedNavCode).toContain('export function initNavigation');
       console.log('✓ initNavigation function exported');
     });
@@ -21,7 +21,7 @@ describe('Shared Navigation Component', () => {
       console.log('Testing navigation HTML structure...');
       const sharedNavPath = path.resolve(__dirname, '../modules/shared-nav.js');
       const sharedNavCode = fs.readFileSync(sharedNavPath, 'utf-8');
-      
+
       // Check that it creates the expected HTML elements
       expect(sharedNavCode).toContain('nav-container');
       expect(sharedNavCode).toContain('nav-menu');
@@ -32,7 +32,7 @@ describe('Shared Navigation Component', () => {
     it('should include all menu items', () => {
       const sharedNavPath = path.resolve(__dirname, '../modules/shared-nav.js');
       const sharedNavCode = fs.readFileSync(sharedNavPath, 'utf-8');
-      
+
       expect(sharedNavCode).toContain('Home');
       expect(sharedNavCode).toContain('Playoff Preview');
       expect(sharedNavCode).toContain('Rankings');
@@ -43,7 +43,7 @@ describe('Shared Navigation Component', () => {
     it('should include localStorage for state persistence', () => {
       const sharedNavPath = path.resolve(__dirname, '../modules/shared-nav.js');
       const sharedNavCode = fs.readFileSync(sharedNavPath, 'utf-8');
-      
+
       expect(sharedNavCode).toContain('localStorage');
       expect(sharedNavCode).toContain('navCollapsed');
     });
@@ -51,7 +51,7 @@ describe('Shared Navigation Component', () => {
     it('should toggle navigation collapsed class', () => {
       const sharedNavPath = path.resolve(__dirname, '../modules/shared-nav.js');
       const sharedNavCode = fs.readFileSync(sharedNavPath, 'utf-8');
-      
+
       expect(sharedNavCode).toContain('classList.toggle');
       expect(sharedNavCode).toContain('nav-collapsed');
     });
@@ -59,7 +59,7 @@ describe('Shared Navigation Component', () => {
     it('should support both content-wrapper and body class toggling', () => {
       const sharedNavPath = path.resolve(__dirname, '../modules/shared-nav.js');
       const sharedNavCode = fs.readFileSync(sharedNavPath, 'utf-8');
-      
+
       expect(sharedNavCode).toContain('content-wrapper');
       expect(sharedNavCode).toContain('document.body.classList');
     });
@@ -67,7 +67,7 @@ describe('Shared Navigation Component', () => {
     it('should highlight active page', () => {
       const sharedNavPath = path.resolve(__dirname, '../modules/shared-nav.js');
       const sharedNavCode = fs.readFileSync(sharedNavPath, 'utf-8');
-      
+
       expect(sharedNavCode).toContain('active');
       expect(sharedNavCode).toMatch(/activePage|active-page/);
     });
@@ -75,7 +75,7 @@ describe('Shared Navigation Component', () => {
     it('should create both inline and fixed toggle buttons', () => {
       const sharedNavPath = path.resolve(__dirname, '../modules/shared-nav.js');
       const sharedNavCode = fs.readFileSync(sharedNavPath, 'utf-8');
-      
+
       expect(sharedNavCode).toContain('nav-toggle');
       expect(sharedNavCode).toContain('nav-toggle-fixed');
     });

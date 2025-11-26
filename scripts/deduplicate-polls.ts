@@ -13,7 +13,7 @@ const seen = new Map<string, any>();
 for (const p of polls) {
   const key = `${p.poll}|${p.week}|${p.rank}`;
   const existing = seen.get(key);
-  
+
   if (!existing) {
     seen.set(key, p);
   } else {

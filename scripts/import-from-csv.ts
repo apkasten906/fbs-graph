@@ -51,7 +51,19 @@ const teams: Team[] = teamRows.map((r: any) => ({
 // Build set of all team IDs and FBS-only team IDs
 const allTeamIds = new Set(teams.map(t => t.id));
 // FBS teams are those in known FBS conferences or independents
-const fbsConferences = new Set(['sec', 'b1g', 'b12', 'acc', 'aac', 'mwc', 'mac', 'sbc', 'cusa', 'pac12', 'ind']);
+const fbsConferences = new Set([
+  'sec',
+  'b1g',
+  'b12',
+  'acc',
+  'aac',
+  'mwc',
+  'mac',
+  'sbc',
+  'cusa',
+  'pac12',
+  'ind',
+]);
 const fbsTeamIds = new Set(teams.filter(t => fbsConferences.has(t.conferenceId)).map(t => t.id));
 
 const teamSeasons: TeamSeason[] = seasonRows.map((r: any) => ({
@@ -77,7 +89,8 @@ const games: Game[] = gameRows
     week: r.week ? Number(r.week) : undefined,
     phase: (r.phase || 'REGULAR') as Game['phase'],
     date: r.date || undefined,
-    type: (r.type || (r.conferenceGame === 'true' ? 'CONFERENCE' : 'NON_CONFERENCE')) as Game['type'],
+    type: (r.type ||
+      (r.conferenceGame === 'true' ? 'CONFERENCE' : 'NON_CONFERENCE')) as Game['type'],
     homeTeamId: idify(r.home),
     awayTeamId: idify(r.away),
     result: (r.result || 'TBD') as Game['result'],

@@ -203,13 +203,13 @@ const resolvers = {
         gameLimit = 12,
         leverageThreshold = 0.75,
         onlyCfpRanked = false,
-        }: {
-          season: number;
-          limit?: number;
-          gameLimit?: number;
-          leverageThreshold?: number;
-          onlyCfpRanked?: boolean;
-        }
+      }: {
+        season: number;
+        limit?: number;
+        gameLimit?: number;
+        leverageThreshold?: number;
+        onlyCfpRanked?: boolean;
+      }
     ) => {
       const games = enrichGamesForSeason(season);
       const upcomingGames = games.filter(g => g.result === 'TBD');
@@ -257,7 +257,12 @@ const resolvers = {
       if (chosenPollType === 'CFP') {
         const weeks: number[] = [];
         for (const p of polls) {
-          if (p.poll === 'CFP' && p.teamSeasonId && p.teamSeasonId.endsWith(`-${season}`) && typeof p.week === 'number') {
+          if (
+            p.poll === 'CFP' &&
+            p.teamSeasonId &&
+            p.teamSeasonId.endsWith(`-${season}`) &&
+            typeof p.week === 'number'
+          ) {
             weeks.push(p.week as number);
           }
         }
@@ -287,11 +292,13 @@ const resolvers = {
       for (const ts of relevantSeasons) {
         // If we have a CFP latest-week map, prefer ranks from that map so only
         // teams ranked in the most recent CFP week are treated as ranked.
-        const rank = cfpLatestWeekMap ? cfpLatestWeekMap.get(ts.id) ?? undefined : apMap.get(ts.id);
-          // When requested, exclude teams that are not ranked in the latest CFP week.
-          if (onlyCfpRanked && chosenPollType === 'CFP') {
-            if (!cfpLatestWeekMap || !cfpLatestWeekMap.has(ts.id)) continue;
-          }
+        const rank = cfpLatestWeekMap
+          ? (cfpLatestWeekMap.get(ts.id) ?? undefined)
+          : apMap.get(ts.id);
+        // When requested, exclude teams that are not ranked in the latest CFP week.
+        if (onlyCfpRanked && chosenPollType === 'CFP') {
+          if (!cfpLatestWeekMap || !cfpLatestWeekMap.has(ts.id)) continue;
+        }
         const upcomingForTeam = sortByDateAscending(
           upcomingGames.filter(g => g.homeTeamId === ts.teamId || g.awayTeamId === ts.teamId)
         );

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 
 /**
  * Tests for FBS Graph Visualizer comparison logic
- * 
+ *
  * Testing the findNodesWithinDegrees and shortestPath functions to ensure:
  * 1. Shortest path is correctly calculated and included
  * 2. All nodes in the result have at least one edge
@@ -11,11 +11,10 @@ import { describe, it, expect, beforeEach } from 'vitest';
  */
 
 describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
-  
   // Mock global data structures that the visualizer expects
   let pairGames;
   let teamIndex;
-  
+
   beforeEach(() => {
     pairGames = new Map();
     teamIndex = new Map();
@@ -25,7 +24,7 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
     home: { id: team1, name: team1.toUpperCase() },
     away: { id: team2, name: team2.toUpperCase() },
     type,
-    leverage
+    leverage,
   });
 
   const addConnection = (team1, team2, leverage = 0.5, type = 'REGULAR') => {
@@ -34,7 +33,7 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       pairGames.set(k, []);
     }
     pairGames.get(k).push(createMockGame(team1, team2, leverage, type));
-    
+
     // Add to team index if not exists
     if (!teamIndex.has(team1)) {
       teamIndex.set(team1, { id: team1, name: team1.toUpperCase() });
@@ -44,7 +43,7 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
     }
   };
 
-  const key = (a, b) => a < b ? `${a}__${b}` : `${b}__${a}`;
+  const key = (a, b) => (a < b ? `${a}__${b}` : `${b}__${a}`);
 
   // Copy the actual function implementations for testing
   const shortestPathByInverseLeverage = (srcId, dstId, typeFilter, minLev) => {
@@ -63,7 +62,7 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       adj.get(a).push({ to: b, k, w, avg, games: filtered });
       adj.get(b).push({ to: a, k, w, avg, games: filtered });
     }
-    
+
     const dist = new Map(),
       prev = new Map(),
       prevEdge = new Map();
@@ -71,9 +70,10 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
     const Q = new Set(allIds);
     for (const id of allIds) dist.set(id, Infinity);
     dist.set(srcId, 0);
-    
+
     while (Q.size) {
-      let u = null, best = Infinity;
+      let u = null,
+        best = Infinity;
       for (const v of Q) {
         const d = dist.get(v);
         if (d < best) {
@@ -95,9 +95,9 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
         }
       }
     }
-    
+
     if (!prev.has(dstId)) return null;
-    
+
     const pathIds = [];
     const edges = [];
     let cur = dstId;
@@ -112,10 +112,16 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
     return { nodes: pathIds, edges };
   };
 
-  const findNodesWithinDegrees = (startNodes, maxDegrees, typeFilter, minLev, shortestPath = null) => {
+  const findNodesWithinDegrees = (
+    startNodes,
+    maxDegrees,
+    typeFilter,
+    minLev,
+    shortestPath = null
+  ) => {
     const source = startNodes[0];
     const dest = startNodes[1];
-    
+
     const adj = new Map();
     for (const [k, list] of pairGames) {
       const a = list[0].home.id,
@@ -136,7 +142,10 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
         return {
           nodes: [source, dest],
           edges: [directKey],
-          nodesByDegree: new Map([[source, 0], [dest, 0]]),
+          nodesByDegree: new Map([
+            [source, 0],
+            [dest, 0],
+          ]),
           source,
           destination: dest,
         };
@@ -149,7 +158,7 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
     const validNodes = new Set([source, dest]);
     nodesByDegree.set(source, 0);
     nodesByDegree.set(dest, 0);
-    
+
     if (shortestPath && shortestPath.nodes && shortestPath.edges) {
       for (let i = 0; i < shortestPath.nodes.length; i++) {
         const nodeId = shortestPath.nodes[i];
@@ -162,15 +171,15 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
         validEdges.add(edgeKey);
       }
     }
-    
+
     const directKey = key(source, dest);
     if (pairGames.has(directKey)) {
       validEdges.add(directKey);
     }
-    
+
     const sourceNeighbors = new Set((adj.get(source) || []).map(e => e.to));
     const destNeighbors = new Set((adj.get(dest) || []).map(e => e.to));
-    
+
     for (const node of sourceNeighbors) {
       if (destNeighbors.has(node)) {
         validNodes.add(node);
@@ -181,25 +190,25 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
         validEdges.add(key(dest, node));
       }
     }
-    
+
     if (maxDegrees >= 2) {
       const degree1Teams = Array.from(validNodes).filter(n => nodesByDegree.get(n) === 1);
-      
+
       for (const team1 of degree1Teams) {
         const neighbors = (adj.get(team1) || []).map(e => e.to);
-        
+
         for (const neighbor of neighbors) {
           if (validNodes.has(neighbor)) continue;
-          
+
           const neighborNeighbors = new Set((adj.get(neighbor) || []).map(e => e.to));
-          
+
           if (neighborNeighbors.has(source) || neighborNeighbors.has(dest)) {
             validNodes.add(neighbor);
             if (!nodesByDegree.has(neighbor)) {
               nodesByDegree.set(neighbor, 2);
             }
             validEdges.add(key(team1, neighbor));
-            
+
             if (neighborNeighbors.has(source)) {
               validEdges.add(key(neighbor, source));
             }
@@ -210,7 +219,7 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
         }
       }
     }
-    
+
     return {
       nodes: Array.from(validNodes),
       edges: Array.from(validEdges),
@@ -223,9 +232,9 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
   describe('Shortest Path Calculation', () => {
     it('should find direct path between connected teams', () => {
       addConnection('ohio-state', 'michigan');
-      
+
       const path = shortestPathByInverseLeverage('ohio-state', 'michigan', 'ALL', 0);
-      
+
       expect(path).not.toBeNull();
       expect(path.nodes).toEqual(['ohio-state', 'michigan']);
       expect(path.edges).toHaveLength(1);
@@ -234,9 +243,9 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
     it('should find 2-hop path through intermediate team', () => {
       addConnection('ohio-state', 'texas');
       addConnection('texas', 'georgia');
-      
+
       const path = shortestPathByInverseLeverage('ohio-state', 'georgia', 'ALL', 0);
-      
+
       expect(path).not.toBeNull();
       expect(path.nodes).toEqual(['ohio-state', 'texas', 'georgia']);
       expect(path.edges).toHaveLength(2);
@@ -249,9 +258,9 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       addConnection('ohio-state', 'penn-state', 0.5);
       addConnection('penn-state', 'smu', 0.5);
       addConnection('smu', 'miami', 0.5);
-      
+
       const path = shortestPathByInverseLeverage('ohio-state', 'miami', 'ALL', 0);
-      
+
       expect(path).not.toBeNull();
       // Should prefer direct path with higher leverage
       expect(path.nodes).toEqual(['ohio-state', 'miami']);
@@ -260,9 +269,9 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
     it('should return null when no path exists', () => {
       addConnection('ohio-state', 'michigan');
       addConnection('georgia', 'alabama');
-      
+
       const path = shortestPathByInverseLeverage('ohio-state', 'georgia', 'ALL', 0);
-      
+
       expect(path).toBeNull();
     });
 
@@ -270,9 +279,9 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       addConnection('ohio-state', 'michigan', 0.5, 'REGULAR');
       addConnection('ohio-state', 'texas', 0.5, 'POSTSEASON');
       addConnection('texas', 'michigan', 0.5, 'POSTSEASON');
-      
+
       const path = shortestPathByInverseLeverage('ohio-state', 'michigan', 'REGULAR', 0);
-      
+
       expect(path).not.toBeNull();
       expect(path.nodes).toEqual(['ohio-state', 'michigan']);
     });
@@ -281,9 +290,9 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       addConnection('ohio-state', 'michigan', 0.3);
       addConnection('ohio-state', 'texas', 0.8);
       addConnection('texas', 'michigan', 0.8);
-      
+
       const path = shortestPathByInverseLeverage('ohio-state', 'michigan', 'ALL', 0.5);
-      
+
       expect(path).not.toBeNull();
       // Should take longer path because direct path has too low leverage
       expect(path.nodes).toEqual(['ohio-state', 'texas', 'michigan']);
@@ -295,15 +304,15 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       addConnection('ohio-state', 'penn-state');
       addConnection('penn-state', 'smu');
       addConnection('smu', 'miami');
-      
+
       const shortestPath = shortestPathByInverseLeverage('ohio-state', 'miami', 'ALL', 0);
       const result = findNodesWithinDegrees(['ohio-state', 'miami'], 3, 'ALL', 0, shortestPath);
-      
+
       expect(result.nodes).toContain('ohio-state');
       expect(result.nodes).toContain('penn-state');
       expect(result.nodes).toContain('smu');
       expect(result.nodes).toContain('miami');
-      
+
       expect(result.edges).toContain(key('ohio-state', 'penn-state'));
       expect(result.edges).toContain(key('penn-state', 'smu'));
       expect(result.edges).toContain(key('smu', 'miami'));
@@ -312,10 +321,10 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
     it('should correctly assign degrees based on shortest path', () => {
       addConnection('ohio-state', 'texas');
       addConnection('texas', 'georgia');
-      
+
       const shortestPath = shortestPathByInverseLeverage('ohio-state', 'georgia', 'ALL', 0);
       const result = findNodesWithinDegrees(['ohio-state', 'georgia'], 2, 'ALL', 0, shortestPath);
-      
+
       expect(result.nodesByDegree.get('ohio-state')).toBe(0);
       expect(result.nodesByDegree.get('texas')).toBe(1);
       expect(result.nodesByDegree.get('georgia')).toBe(0); // Destination is always degree 0
@@ -325,21 +334,21 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       addConnection('ohio-state', 'wisconsin');
       addConnection('wisconsin', 'michigan');
       addConnection('ohio-state', 'penn-state'); // Common opponent
-      addConnection('michigan', 'penn-state');   // Common opponent
-      
+      addConnection('michigan', 'penn-state'); // Common opponent
+
       const shortestPath = shortestPathByInverseLeverage('ohio-state', 'michigan', 'ALL', 0);
       const result = findNodesWithinDegrees(['ohio-state', 'michigan'], 1, 'ALL', 0, shortestPath);
-      
+
       expect(result.nodes).toContain('penn-state'); // Common opponent
-      expect(result.nodes).toContain('wisconsin');   // In shortest path
+      expect(result.nodes).toContain('wisconsin'); // In shortest path
     });
 
     it('should handle degree 0 (direct matchup)', () => {
       addConnection('ohio-state', 'michigan');
       addConnection('ohio-state', 'wisconsin');
-      
+
       const result = findNodesWithinDegrees(['ohio-state', 'michigan'], 0, 'ALL', 0);
-      
+
       expect(result.nodes).toHaveLength(2);
       expect(result.nodes).toContain('ohio-state');
       expect(result.nodes).toContain('michigan');
@@ -350,10 +359,10 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       addConnection('ohio-state', 'texas');
       addConnection('texas', 'georgia');
       addConnection('wisconsin', 'iowa'); // Orphaned - no connection to OSU or Georgia
-      
+
       const shortestPath = shortestPathByInverseLeverage('ohio-state', 'georgia', 'ALL', 0);
       const result = findNodesWithinDegrees(['ohio-state', 'georgia'], 2, 'ALL', 0, shortestPath);
-      
+
       expect(result.nodes).not.toContain('wisconsin');
       expect(result.nodes).not.toContain('iowa');
     });
@@ -362,7 +371,7 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
   describe('Edge Cases', () => {
     it('should handle teams with no connections', () => {
       const result = findNodesWithinDegrees(['ohio-state', 'michigan'], 1, 'ALL', 0);
-      
+
       // Source and destination are always included even with no path
       expect(result.nodes).toHaveLength(2);
       expect(result.edges).toHaveLength(0);
@@ -370,18 +379,18 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
 
     it('should handle same source and destination', () => {
       addConnection('ohio-state', 'michigan');
-      
+
       const path = shortestPathByInverseLeverage('ohio-state', 'ohio-state', 'ALL', 0);
-      
+
       // Should handle gracefully (path to self)
       expect(path).toBeDefined();
     });
 
     it('should handle high degree filters', () => {
       addConnection('ohio-state', 'michigan');
-      
+
       const result = findNodesWithinDegrees(['ohio-state', 'michigan'], 10, 'ALL', 0);
-      
+
       // Should work even if max degrees exceeds actual network depth
       expect(result.nodes).toContain('ohio-state');
       expect(result.nodes).toContain('michigan');

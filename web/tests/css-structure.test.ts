@@ -162,10 +162,12 @@ describe('CSS Files and Styling', () => {
       expect(varMatches).toBeTruthy();
 
       if (varMatches) {
-        const hardcodedColors = varMatches.map(m => {
-          const colorMatch = m.match(/#[0-9a-fA-F]+/);
-          return colorMatch ? colorMatch[0] : null;
-        }).filter(Boolean);
+        const hardcodedColors = varMatches
+          .map(m => {
+            const colorMatch = m.match(/#[0-9a-fA-F]+/);
+            return colorMatch ? colorMatch[0] : null;
+          })
+          .filter(Boolean);
 
         // shared-nav.css should not contain these hardcoded colors
         // (with some exceptions for transparent, etc.)

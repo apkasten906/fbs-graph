@@ -65,11 +65,11 @@ function shouldInclude(pollLabel: string) {
 
   fs.mkdirSync('csv', { recursive: true });
   const outPath = 'csv/polls.csv';
-  
+
   // Parse existing CSV and new data, dedupe by (team, season, poll, week, rank)
   const existing = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf-8').split(/\r?\n/) : [];
   const recordMap = new Map<string, string>();
-  
+
   // Process existing rows (skip header)
   for (const line of existing) {
     if (!line || line.trim().toLowerCase() === header.toLowerCase()) continue;
@@ -79,7 +79,7 @@ function shouldInclude(pollLabel: string) {
     const key = `${team}|${season}|${poll}|${week}|${rank}`;
     recordMap.set(key, line); // Keep existing (preserves original date)
   }
-  
+
   // Process new rows (overwrite with fresh data and current timestamp)
   for (const nl of newLines) {
     const parts = nl.split(',');
@@ -88,7 +88,7 @@ function shouldInclude(pollLabel: string) {
     const key = `${team}|${season}|${poll}|${week}|${rank}`;
     recordMap.set(key, nl); // Update with fresh data
   }
-  
+
   const merged = [header, ...Array.from(recordMap.values())];
   fs.writeFileSync(outPath, merged.join('\n') + '\n', 'utf-8');
   console.log(`Wrote ${outPath} (${recordMap.size} unique records)`);

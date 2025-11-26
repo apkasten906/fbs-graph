@@ -1,7 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { computeLeverageForGame, buildLatestAPRankMap, buildNormalizedSpPlus, buildNormalizedElo } from '../src/lib/score';
+import {
+  computeLeverageForGame,
+  buildLatestAPRankMap,
+  buildNormalizedSpPlus,
+  buildNormalizedElo,
+} from '../src/lib/score';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,10 +52,50 @@ console.log('AP rank for texas-am:', apMap.get(tsTAM?.id));
 const gConf = makeGame(home, away, 10, 'CONFERENCE');
 const gNonConf = makeGame(home, away, 10, 'NON_CONFERENCE');
 
-const levConf = computeLeverageForGame(gConf, teamSeasons as any, apMap as any, spNorm as any, eloNorm as any, 'AP');
-const levNon = computeLeverageForGame(gNonConf, teamSeasons as any, apMap as any, spNorm as any, eloNorm as any, 'AP');
+const levConf = computeLeverageForGame(
+  gConf,
+  teamSeasons as any,
+  apMap as any,
+  spNorm as any,
+  eloNorm as any,
+  'AP'
+);
+const levNon = computeLeverageForGame(
+  gNonConf,
+  teamSeasons as any,
+  apMap as any,
+  spNorm as any,
+  eloNorm as any,
+  'AP'
+);
 
-console.log('\nComputed leverage (CONFERENCE):', levConf.leverage, JSON.stringify({ rankWeightHome: levConf.rankWeightHome, rankWeightAway: levConf.rankWeightAway, bridgeBoost: levConf.bridgeBoost, timingBoost: levConf.timingBoost }, null, 2));
-console.log('\nComputed leverage (NON_CONFERENCE):', levNon.leverage, JSON.stringify({ rankWeightHome: levNon.rankWeightHome, rankWeightAway: levNon.rankWeightAway, bridgeBoost: levNon.bridgeBoost, timingBoost: levNon.timingBoost }, null, 2));
+console.log(
+  '\nComputed leverage (CONFERENCE):',
+  levConf.leverage,
+  JSON.stringify(
+    {
+      rankWeightHome: levConf.rankWeightHome,
+      rankWeightAway: levConf.rankWeightAway,
+      bridgeBoost: levConf.bridgeBoost,
+      timingBoost: levConf.timingBoost,
+    },
+    null,
+    2
+  )
+);
+console.log(
+  '\nComputed leverage (NON_CONFERENCE):',
+  levNon.leverage,
+  JSON.stringify(
+    {
+      rankWeightHome: levNon.rankWeightHome,
+      rankWeightAway: levNon.rankWeightAway,
+      bridgeBoost: levNon.bridgeBoost,
+      timingBoost: levNon.timingBoost,
+    },
+    null,
+    2
+  )
+);
 
 process.exit(0);

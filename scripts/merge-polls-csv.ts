@@ -87,8 +87,16 @@ fs.writeFileSync(tmp, lines.join('\n') + '\n', 'utf-8');
 fs.renameSync(tmp, CSV_PATH);
 
 // Also write JSON for static consumption
-const jsonOut = out.map(r => ({ teamSeasonId: r.teamSeasonId, poll: r.poll, week: r.week, rank: r.rank, date: r.date }));
+const jsonOut = out.map(r => ({
+  teamSeasonId: r.teamSeasonId,
+  poll: r.poll,
+  week: r.week,
+  rank: r.rank,
+  date: r.date,
+}));
 fs.mkdirSync(path.dirname(OUT_JSON), { recursive: true });
 fs.writeFileSync(OUT_JSON, JSON.stringify(jsonOut, null, 2), 'utf-8');
 
-console.log(`Merged ${records.length} input rows -> ${out.length} canonical rows (wrote ${CSV_PATH} and ${OUT_JSON})`);
+console.log(
+  `Merged ${records.length} input rows -> ${out.length} canonical rows (wrote ${CSV_PATH} and ${OUT_JSON})`
+);

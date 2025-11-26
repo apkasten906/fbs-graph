@@ -25,7 +25,9 @@ const errors: string[] = [];
 for (const ts of teamSeasons) {
   if (!teamIds.has(ts.teamId)) {
     ok = false;
-    errors.push(`Missing team id in teams.json for teamSeasons entry: teamSeason.id=${ts.id} teamId=${ts.teamId}`);
+    errors.push(
+      `Missing team id in teams.json for teamSeasons entry: teamSeason.id=${ts.id} teamId=${ts.teamId}`
+    );
   }
   // Check id matches convention `<teamId>-<season>`
   const expectedPrefix = `${ts.teamId}-`;
@@ -39,7 +41,9 @@ for (const ts of teamSeasons) {
 for (const p of polls) {
   if (!teamSeasonIds.has(p.teamSeasonId)) {
     ok = false;
-    errors.push(`Poll references unknown teamSeasonId: ${p.teamSeasonId} (poll=${p.poll} date=${p.date})`);
+    errors.push(
+      `Poll references unknown teamSeasonId: ${p.teamSeasonId} (poll=${p.poll} date=${p.date})`
+    );
   }
 }
 
