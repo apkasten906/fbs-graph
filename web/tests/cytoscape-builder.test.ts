@@ -382,7 +382,7 @@ describe('cytoscape-builder', () => {
       expect(config.name).toBe('cose');
       expect(config.idealEdgeLength).toBeDefined();
       expect(config.nodeOverlap).toBe(20);
-      expect(config.nodeRepulsion).toBe(8000);
+      expect(config.nodeRepulsion).toBe(4000);
     });
 
     it('should return preset layout when pathFilter provided', () => {

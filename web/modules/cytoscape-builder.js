@@ -260,11 +260,11 @@ export function createCytoscapeStyle() {
         'background-color': ele => COLORS[ele.data('conf')] || COLORS.other,
         label: 'data(label)',
         color: '#cfe1ff',
-        'font-size': '9px',
+        'font-size': '12px',
         'text-outline-color': '#0b1020',
         'text-outline-width': 2,
-        width: 'mapData(deg, 0, 24, 8, 34)',
-        height: 'mapData(deg, 0, 24, 8, 34)',
+        width: 'mapData(deg, 0, 24, 12, 40)',
+        height: 'mapData(deg, 0, 24, 12, 40)',
       },
     },
     {
@@ -310,10 +310,10 @@ export function createLayoutConfig(pathFilter = null, width = 800, height = 600)
       idealEdgeLength: edge => {
         const avgLev = edge.data('avgLev') || 0.1;
         // Higher leverage = shorter edge (inverse relationship)
-        return Math.max(50, Math.min(300, 150 / Math.max(0.1, avgLev)));
+        return Math.max(30, Math.min(150, 80 / Math.max(0.1, avgLev)));
       },
       nodeOverlap: 20,
-      nodeRepulsion: 8000,
+      nodeRepulsion: 4000,
       fit: true,
     };
   }
