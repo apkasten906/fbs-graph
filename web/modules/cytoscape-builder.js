@@ -14,18 +14,18 @@ export const COLORS = {
   b1g: '#CC0000',
   b12: '#003594',
   sec: '#0033A0',
-  
+
   // Current Group of 5
   aac: '#003087',
   cusa: '#FF9E00',
   mac: '#FFD166',
   mwc: '#003366',
   sbc: '#90CAF9',
-  
+
   // Independents and Other Active
   ind: '#666666',
   wac: '#80ED99',
-  
+
   // Historical Major Conferences
   be: '#9CCC65', // Big East
   pac12: '#8C1515',
@@ -35,7 +35,7 @@ export const COLORS = {
   big8: '#FF9E00',
   big7: '#FFA500',
   big6: '#FFB84D',
-  
+
   // Historical Minor/Regional Conferences
   ivy: '#0B4F1E',
   southland: '#7CB342',
@@ -52,7 +52,7 @@ export const COLORS = {
   southern: '#B0BEC5',
   rmc: '#CFD8DC', // Rocky Mountain
   msac: '#E0E0E0', // Mountain State
-  
+
   // Fallback
   other: '#444444',
 };
