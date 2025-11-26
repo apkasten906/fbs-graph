@@ -219,12 +219,24 @@
         createLayoutConfig,
       } from './modules/cytoscape-builder.js';
 
+      // Import UI rendering functions
+      import {
+        showEdgeGames as uiShowEdgeGames,
+        buildLegend as uiBuildLegend,
+        buildSelectors as uiBuildSelectors,
+      } from './modules/graph-ui.js';
+
       // Expose builder functions to non-module scripts
       window.BUILDER_COLORS = BUILDER_COLORS;
       window.buildGraphElements = buildGraphElements;
       window.calculateDegreePositions = calcDegPos;
       window.createCytoscapeStyle = createCytoscapeStyle;
       window.createLayoutConfig = createLayoutConfig;
+
+      // Expose UI functions to non-module scripts
+      window.uiShowEdgeGames = uiShowEdgeGames;
+      window.uiBuildLegend = uiBuildLegend;
+      window.uiBuildSelectors = uiBuildSelectors;
     </script>
     <script>
       // Helper function to get COLORS (waits for module to load)
@@ -306,95 +318,38 @@ query Graph($season: Int!) {
         cy.layout(window.createLayoutConfig(pathFilter, width, height)).run();
       }
 
-      function showEdgeGames(data) {
-        const { id } = data;
-        const [_, k] = id.split('e_');
-        const games = pairGames.get(k) || [];
-        const container = document.getElementById('pathInfo');
-        // Build DOM nodes instead of using innerHTML to avoid XSS and ensure safe updates
-        const frag = document.createDocumentFragment();
-        const header = document.createElement('div');
-        header.className = 'small muted';
-        header.textContent = `Games on this connection (${games.length}):`;
-        frag.appendChild(header);
-        for (const g of games.slice().sort((a, b) => (a.date || '').localeCompare(b.date || ''))) {
-          const when = g.date ? new Date(g.date).toLocaleString() : 'TBD';
-          const row = document.createElement('div');
-          row.className = 'mono';
-          row.textContent = `${when} — ${g.home.name} vs ${g.away.name} `;
-          const lev = document.createElement('span');
-          lev.className = 'muted';
-          lev.textContent = `(lev ${Number(g.leverage || 0).toFixed(3)})`;
-          row.appendChild(lev);
-          frag.appendChild(row);
-        }
-        container.replaceChildren(frag);
-      }
-
       // Conference metadata cache (populated from GraphQL)
       let conferenceMeta = [];
 
+      // Adapter functions that call the UI module functions
+      function showEdgeGames(data) {
+        if (!window.uiShowEdgeGames) {
+          console.error('uiShowEdgeGames not loaded from module yet');
+          return;
+        }
+        window.uiShowEdgeGames(data, pairGames, 'pathInfo');
+      }
+
       function buildLegend() {
-        const container = document.getElementById('legend');
-        container.replaceChildren();
-        const seen = new Set();
-        // Collect all conferences present in the data
-        for (const t of graphData.teams) {
-          const conf = (t.conference && t.conference.id) || 'other';
-          seen.add(conf);
+        if (!window.uiBuildLegend) {
+          console.error('uiBuildLegend not loaded from module yet');
+          return;
         }
-        // Map to full names, filter, and sort
         const COLORS = getColors();
-        const legendEntries = Array.from(seen)
-          .map(id => {
-            const meta = conferenceMeta.find(c => c.id === id);
-            return {
-              id,
-              color: COLORS[id] || COLORS.other,
-              label: meta ? `${meta.name} (${meta.shortName})` : id.toUpperCase(),
-              sortKey: meta ? meta.name : id,
-            };
-          })
-          .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
-        for (const entry of legendEntries) {
-          const dot = document.createElement('div');
-          dot.className = 'dot';
-          dot.style.background = entry.color;
-          const lbl = document.createElement('div');
-          lbl.textContent = entry.label;
-          container.appendChild(dot);
-          container.appendChild(lbl);
-        }
+        window.uiBuildLegend(graphData.teams, conferenceMeta, COLORS, 'legend');
       }
 
       function buildSelectors() {
-        const srcSel = document.getElementById('srcSel');
-        const dstSel = document.getElementById('dstSel');
-        const opts = graphData.teams.slice().sort((a, b) => a.name.localeCompare(b.name));
-        srcSel.replaceChildren();
-        dstSel.replaceChildren();
-        for (const t of opts) {
-          const o1 = document.createElement('option');
-          o1.value = t.id;
-          o1.textContent = t.name;
-          srcSel.appendChild(o1);
-          const o2 = document.createElement('option');
-          o2.value = t.id;
-          o2.textContent = t.name;
-          dstSel.appendChild(o2);
+        if (!window.uiBuildSelectors) {
+          console.error('uiBuildSelectors not loaded from module yet');
+          return;
         }
-        // Set default selections: OSU and Georgia
-        // Try common IDs, fallback to first if not found
-        const osuId =
-          opts.find(t => t.name.toLowerCase().includes('ohio state'))?.id || opts[0]?.id;
-        const ugaId = opts.find(t => t.name.toLowerCase().includes('georgia'))?.id || opts[1]?.id;
-        if (osuId) srcSel.value = osuId;
-        if (ugaId) dstSel.value = ugaId;
-
-        // Auto-trigger comparison with default selections
-        setTimeout(() => {
-          document.getElementById('pathBtn').click();
-        }, 100);
+        window.uiBuildSelectors(graphData.teams, 'srcSel', 'dstSel', {
+          defaultSrc: 'ohio state',
+          defaultDst: 'georgia',
+          autoTriggerButton: 'pathBtn',
+          autoTriggerDelay: 100,
+        });
       }
 
       // Adapter functions that call the imported module functions with correct parameters
