@@ -63,7 +63,13 @@ async function generate(season = 2025, limit = 12, gameLimit = 6, leverageThresh
   const outDir = path.join(process.cwd(), 'web');
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
-  const { playoffHtml, rankingsHtml } = renderHTML(data, { polls, teams, teamSeasons, conferences, dataDir: DATA_DIR });
+  const { playoffHtml, rankingsHtml } = renderHTML(data, {
+    polls,
+    teams,
+    teamSeasons,
+    conferences,
+    dataDir: DATA_DIR,
+  });
   fs.writeFileSync(path.join(outDir, 'playoff-preview.html'), playoffHtml, 'utf-8');
   fs.writeFileSync(path.join(outDir, 'rankings.html'), rankingsHtml, 'utf-8');
   console.log('Wrote web/playoff-preview.html');
@@ -167,7 +173,10 @@ async function supplementContendersIfNeeded(data: any, limit: number, season: nu
   }
 }
 
-function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: any[]; conferences: any[]; dataDir: string }) {
+function renderHTML(
+  data: any,
+  ctx: { polls: any[]; teams: any[]; teamSeasons: any[]; conferences: any[]; dataDir: string }
+) {
   // Prefer grouping by the existing `week` field on Game, falling back to ISO week-start from the date.
   const games = (data.remainingHighLeverageGames || []).map((g: any) => ({
     ...g,
@@ -176,7 +185,9 @@ function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: a
   }));
 
   // Load all games from local data to expand beyond high-leverage games
-  const allGames: any[] = JSON.parse(fs.readFileSync(path.join(ctx.dataDir, 'games.json'), 'utf-8'));
+  const allGames: any[] = JSON.parse(
+    fs.readFileSync(path.join(ctx.dataDir, 'games.json'), 'utf-8')
+  );
 
   // Build poll -> week -> rank -> teamSeasonId map for client-side filtering
   const pollsData = ctx.polls || [];
@@ -189,7 +200,8 @@ function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: a
     if (!pollTypes.includes(poll)) continue;
     const week = typeof p.week === 'number' ? String(p.week) : 'unknown';
     ranksByPollWeek[poll][week] = ranksByPollWeek[poll][week] || {};
-    if (p.teamSeasonId && typeof p.rank === 'number') ranksByPollWeek[poll][week][String(p.rank)] = String(p.teamSeasonId);
+    if (p.teamSeasonId && typeof p.rank === 'number')
+      ranksByPollWeek[poll][week][String(p.rank)] = String(p.teamSeasonId);
   }
 
   // Build set of FBS teamSeason IDs for the season so we can prune non-FBS entries
@@ -265,7 +277,7 @@ function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: a
 
   // Filter games to those involving top 25 teams and still in the future
   const now = new Date();
-  
+
   // Create a map of game IDs to leverage scores from high-leverage games
   const leverageMap = new Map<string, number>();
   for (const g of games) {
@@ -273,7 +285,7 @@ function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: a
       leverageMap.set(g.id, g.leverage);
     }
   }
-  
+
   // Build reverse map from teamSeasonId to CFP rank
   const cfpRankMap = new Map<string, number>();
   const cfpPollOrder = ['CFP', 'COACHES', 'AP'];
@@ -309,21 +321,26 @@ function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: a
       ...g,
       dateObj: g.date ? new Date(g.date) : undefined,
       leverage: leverageMap.get(g.id), // Add leverage if available
-      home: { 
+      home: {
         name: (ctx.teams || []).find((t: any) => t.id === g.homeTeamId)?.name || g.homeTeamId,
         seasonId: `${g.homeTeamId}-${season}`,
-        cfpRank: cfpRankMap.get(`${g.homeTeamId}-${season}`)
+        cfpRank: cfpRankMap.get(`${g.homeTeamId}-${season}`),
       },
-      away: { 
+      away: {
         name: (ctx.teams || []).find((t: any) => t.id === g.awayTeamId)?.name || g.awayTeamId,
         seasonId: `${g.awayTeamId}-${season}`,
-        cfpRank: cfpRankMap.get(`${g.awayTeamId}-${season}`)
+        cfpRank: cfpRankMap.get(`${g.awayTeamId}-${season}`),
       },
     }));
 
   const gamesByWeek: Record<string, any[]> = {};
   for (const g of upcomingTop25Games) {
-    const weekLabel = typeof g.week === 'number' ? `Week ${g.week}` : g.dateObj ? `Week of ${weekStartIso(g.dateObj)}` : 'Unscheduled';
+    const weekLabel =
+      typeof g.week === 'number'
+        ? `Week ${g.week}`
+        : g.dateObj
+          ? `Week of ${weekStartIso(g.dateObj)}`
+          : 'Unscheduled';
     if (!gamesByWeek[weekLabel]) gamesByWeek[weekLabel] = [];
     gamesByWeek[weekLabel].push(g);
   }
@@ -342,7 +359,16 @@ function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: a
     return a.localeCompare(b);
   });
 
-  const gamesHtml = sortedWeeks
+  // Filter weeks to only include those with at least one future game
+  const filteredWeeks = sortedWeeks.filter(week => {
+    const weekGames = gamesByWeek[week];
+    return weekGames.some(g => {
+      const gameDate = g.dateObj;
+      return !gameDate || gameDate >= now;
+    });
+  });
+
+  const gamesHtml = filteredWeeks
     .map(week => {
       const rows = gamesByWeek[week]
         .sort((a, b) => {
@@ -350,16 +376,17 @@ function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: a
           if (a.dateObj && b.dateObj) return a.dateObj.getTime() - b.dateObj.getTime();
           return (b.leverage ?? 0) - (a.leverage ?? 0);
         })
-        .map(
-          (g: any) => {
-            const dateStr = g.date ? `<span class="game-time" data-time="${g.date}">${new Date(g.date).toISOString().slice(0, 10)}</span> — ` : '';
-            const homeRank = g.home.cfpRank ? `#${g.home.cfpRank} ` : '';
-            const awayRank = g.away.cfpRank ? `#${g.away.cfpRank} ` : '';
-            return `<li>${dateStr}${homeRank}${escapeHtml(
-              g.home.name
-            )} vs ${awayRank}${escapeHtml(g.away.name)}${g.leverage ? ` (lev: ${g.leverage})` : ''}</li>`;
-          }
-        )
+        .map((g: any) => {
+          const dateStr = g.date
+            ? `<span class="game-time" data-time="${g.date}">${new Date(g.date).toISOString().slice(0, 10)}</span> — `
+            : '';
+          const homeRank = g.home.cfpRank ? `#${g.home.cfpRank} ` : '';
+          const awayRank = g.away.cfpRank ? `#${g.away.cfpRank} ` : '';
+          const leverageStr = typeof g.leverage === 'number' ? ` (lev: ${g.leverage.toFixed(4)})` : '';
+          return `<li>${dateStr}${homeRank}${escapeHtml(
+            g.home.name
+          )} vs ${awayRank}${escapeHtml(g.away.name)}${leverageStr}</li>`;
+        })
         .join('\n');
       return `<li><strong>${escapeHtml(week)}</strong><ul>${rows}</ul></li>`;
     })
@@ -392,7 +419,7 @@ function renderHTML(data: any, ctx: { polls: any[]; teams: any[]; teamSeasons: a
 
   // Generate rankings HTML for separate page
   const rankingsHtml = generateRankingsPage(data, ranksByPollWeek, teamNameToSeasonId, ctx);
-  
+
   const playoffHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -508,7 +535,11 @@ function generateRankingsPage(data: any, ranksByPollWeek: any, teamNameToSeasonI
         Object.fromEntries(Object.entries(teamNameToSeasonId).map(([k, v]) => [v, k]))
       )};
       const teamSeasonData = ${JSON.stringify(
-        Object.fromEntries(ctx.teamSeasons.filter((ts: any) => ts.season === data.season).map((ts: any) => [ts.id, ts]))
+        Object.fromEntries(
+          ctx.teamSeasons
+            .filter((ts: any) => ts.season === data.season)
+            .map((ts: any) => [ts.id, ts])
+        )
       )};
       const season = ${data.season};
 

@@ -7,165 +7,49 @@
   <link rel="stylesheet" href="common-theme.css">
   <link rel="stylesheet" href="css/shared-nav.css">
   <style>
-    :root {
-      color-scheme: dark;
-      --panel: rgba(12, 18, 36, 0.82);
-      --panel-solid: #11182f;
-      --border: rgba(56, 189, 248, 0.22);
-      --gold: #facc15;
-      --red: #f87171;
-      --emerald: #34d399;
-      --indigo: #818cf8;
-      --slate: #1e293b;
+    .container {
+      padding: 1.5rem 2rem;
     }
-
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 12% 18%, rgba(56, 189, 248, 0.16) 0, transparent 45%),
-        radial-gradient(circle at 82% 8%, rgba(129, 140, 248, 0.18) 0, transparent 42%), var(--bg);
-      padding: clamp(24px, 8vw, 48px) clamp(20px, 10vw, 72px) 60px;
-    }
-
-    .content-wrapper {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      gap: 32px;
-    }
-
-    h1 {
-      font-size: clamp(28px, 4vw, 36px);
-      letter-spacing: 0.02em;
-      margin: 0;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--indigo) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .meta-info {
-      color: var(--muted);
-      font-size: 0.875rem;
-      margin: -16px 0 0 0;
-    }
-
-    section {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: clamp(20px, 4vw, 32px);
-      box-shadow: 0 8px 32px rgba(2, 6, 23, 0.4);
-    }
-
-    h2 {
-      font-size: clamp(18px, 2.5vw, 22px);
-      letter-spacing: 0.04em;
-      color: var(--accent);
-      margin: 0 0 24px;
-      text-align: left;
-    }
-
-    section > ul {
+    
+    /* Hide bullet points for matchup lists */
+    section ul {
       list-style-type: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      gap: 16px;
+      padding-left: 0;
     }
-
-    section > ul > li {
-      display: grid;
-      gap: 8px;
-    }
-
-    section > ul > li > strong {
-      color: var(--gold);
-      font-size: 1rem;
-      letter-spacing: 0.02em;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--border);
-      display: block;
-    }
-
     section ul ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 8px 0 0;
-      display: grid;
-      gap: 6px;
-    }
-
-    section ul ul li {
-      padding: 8px 12px;
-      background: rgba(255, 255, 255, 0.03);
-      border-left: 3px solid var(--accent);
-      border-radius: 6px;
-      font-size: 0.875rem;
-      line-height: 1.5;
-      transition: all 0.2s ease;
-    }
-
-    section ul ul li:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-left-color: var(--gold);
-      transform: translateX(4px);
-    }
-
-    .game-time {
-      color: var(--muted);
-      font-weight: 500;
-      margin-right: 8px;
+      padding-left: 1.5rem;
+      margin-top: 0.25rem;
     }
   </style>
 </head>
 <body>
   <div class="content-wrapper">
     <h1>Playoff Preview — 2025</h1>
-    <p class="meta-info">Generated: 2025-11-21T14:16:31.984Z</p>
+    <p style="color: var(--muted); font-size: 0.95rem">Generated: 2025-11-26T02:51:57.601Z</p>
 
     <section>
-      <h2>Upcoming Games (Top 25 Teams)</h2>
-      <ul>
-        <li><strong>Week 13</strong><ul><li><span class="game-time" data-time="2025-11-22T17:00:00.000Z">2025-11-22</span> — #1 Ohio State vs Rutgers (lev: 1.023)</li>
-<li><span class="game-time" data-time="2025-11-22T17:00:00.000Z">2025-11-22</span> — #8 Oklahoma vs #22 Missouri</li>
-<li><span class="game-time" data-time="2025-11-22T17:00:00.000Z">2025-11-22</span> — #3 Texas A&amp;M vs Samford</li>
-<li><span class="game-time" data-time="2025-11-22T17:00:00.000Z">2025-11-22</span> — Virginia Tech vs #13 Miami</li>
-<li><span class="game-time" data-time="2025-11-22T17:45:00.000Z">2025-11-22</span> — #4 Georgia vs Charlotte</li>
-<li><span class="game-time" data-time="2025-11-22T19:00:00.000Z">2025-11-22</span> — #10 Alabama vs Eastern Illinois</li>
-<li><span class="game-time" data-time="2025-11-22T20:30:00.000Z">2025-11-22</span> — #17 Texas vs Arkansas</li>
-<li><span class="game-time" data-time="2025-11-22T20:30:00.000Z">2025-11-22</span> — #14 Vanderbilt vs Kentucky</li>
-<li><span class="game-time" data-time="2025-11-22T20:30:00.000Z">2025-11-22</span> — #7 Oregon vs #15 USC (lev: 0.9366)</li>
-<li><span class="game-time" data-time="2025-11-22T20:30:00.000Z">2025-11-22</span> — #9 Notre Dame vs Syracuse</li>
-<li><span class="game-time" data-time="2025-11-22T20:45:00.000Z">2025-11-22</span> — Temple vs #24 Tulane</li>
-<li><span class="game-time" data-time="2025-11-22T21:00:00.000Z">2025-11-22</span> — Maryland vs #18 Michigan</li>
-<li><span class="game-time" data-time="2025-11-22T21:00:00.000Z">2025-11-22</span> — #23 Houston vs TCU</li>
-<li><span class="game-time" data-time="2025-11-22T21:00:00.000Z">2025-11-22</span> — #12 Utah vs Kansas State</li>
-<li><span class="game-time" data-time="2025-11-23T00:00:00.000Z">2025-11-23</span> — #16 Georgia Tech vs Pittsburgh</li>
-<li><span class="game-time" data-time="2025-11-23T00:30:00.000Z">2025-11-23</span> — Wisconsin vs #21 Illinois</li>
-<li><span class="game-time" data-time="2025-11-23T00:30:00.000Z">2025-11-23</span> — Florida vs #20 Tennessee</li>
-<li><span class="game-time" data-time="2025-11-23T01:00:00.000Z">2025-11-23</span> — Cincinnati vs #11 BYU</li>
-<li><span class="game-time" data-time="2025-11-23T01:00:00.000Z">2025-11-23</span> — Colorado vs #25 Arizona State</li></ul></li>
-<li><strong>Week 14</strong><ul><li><span class="game-time" data-time="2025-11-28T17:00:00.000Z">2025-11-28</span> — Kansas vs #12 Utah</li>
-<li><span class="game-time" data-time="2025-11-28T17:00:00.000Z">2025-11-28</span> — Mississippi State vs #6 Ole Miss (lev: 0.9386)</li>
-<li><span class="game-time" data-time="2025-11-28T20:30:00.000Z">2025-11-28</span> — #16 Georgia Tech vs #4 Georgia (lev: 1.0652)</li>
-<li><span class="game-time" data-time="2025-11-29T00:30:00.000Z">2025-11-29</span> — Purdue vs #2 Indiana</li>
-<li><span class="game-time" data-time="2025-11-29T00:30:00.000Z">2025-11-29</span> — #17 Texas vs #3 Texas A&amp;M (lev: 0.9031)</li>
+      <h2 style="text-align:left">Upcoming Games (Top 25 Teams)</h2>
+      <ul style="text-align:left">
+        <li><strong>Week 14</strong><ul><li><span class="game-time" data-time="2025-11-28T17:00:00.000Z">2025-11-28</span> — Mississippi State vs #6 Ole Miss (lev: 0.9153)</li>
+<li><span class="game-time" data-time="2025-11-28T17:00:00.000Z">2025-11-28</span> — Kansas vs #12 Utah</li>
+<li><span class="game-time" data-time="2025-11-28T20:30:00.000Z">2025-11-28</span> — #16 Georgia Tech vs #4 Georgia (lev: 0.8259)</li>
+<li><span class="game-time" data-time="2025-11-29T00:30:00.000Z">2025-11-29</span> — Purdue vs #2 Indiana (lev: 0.8165)</li>
+<li><span class="game-time" data-time="2025-11-29T00:30:00.000Z">2025-11-29</span> — #17 Texas vs #3 Texas A&amp;M (lev: 0.9204)</li>
 <li><span class="game-time" data-time="2025-11-29T02:00:00.000Z">2025-11-29</span> — #25 Arizona State vs Arizona</li>
-<li><span class="game-time" data-time="2025-11-29T05:00:00.000Z">2025-11-29</span> — Washington vs #7 Oregon</li>
-<li><span class="game-time" data-time="2025-11-29T05:00:00.000Z">2025-11-29</span> — #24 Tulane vs Charlotte</li>
-<li><span class="game-time" data-time="2025-11-29T05:00:00.000Z">2025-11-29</span> — #15 USC vs UCLA</li>
-<li><span class="game-time" data-time="2025-11-29T05:00:00.000Z">2025-11-29</span> — West Virginia vs #5 Texas Tech</li>
-<li><span class="game-time" data-time="2025-11-29T05:00:00.000Z">2025-11-29</span> — #11 BYU vs UCF</li>
-<li><span class="game-time" data-time="2025-11-29T05:00:00.000Z">2025-11-29</span> — Baylor vs #23 Houston</li>
-<li><span class="game-time" data-time="2025-11-29T05:00:00.000Z">2025-11-29</span> — #19 Virginia vs Virginia Tech</li>
-<li><span class="game-time" data-time="2025-11-29T05:00:00.000Z">2025-11-29</span> — Pittsburgh vs #13 Miami</li>
-<li><span class="game-time" data-time="2025-11-29T17:00:00.000Z">2025-11-29</span> — #18 Michigan vs #1 Ohio State (lev: 0.9645)</li>
-<li><span class="game-time" data-time="2025-11-29T20:30:00.000Z">2025-11-29</span> — Arkansas vs #22 Missouri</li>
+<li><span class="game-time" data-time="2025-11-29T17:00:00.000Z">2025-11-29</span> — Baylor vs #23 Houston</li>
+<li><span class="game-time" data-time="2025-11-29T17:00:00.000Z">2025-11-29</span> — #18 Michigan vs #1 Ohio State (lev: 1.0479)</li>
+<li><span class="game-time" data-time="2025-11-29T17:00:00.000Z">2025-11-29</span> — Pittsburgh vs #13 Miami</li>
+<li><span class="game-time" data-time="2025-11-29T17:00:00.000Z">2025-11-29</span> — West Virginia vs #5 Texas Tech</li>
+<li><span class="game-time" data-time="2025-11-29T18:00:00.000Z">2025-11-29</span> — #11 BYU vs UCF</li>
 <li><span class="game-time" data-time="2025-11-29T20:30:00.000Z">2025-11-29</span> — #8 Oklahoma vs LSU</li>
+<li><span class="game-time" data-time="2025-11-29T20:30:00.000Z">2025-11-29</span> — Arkansas vs #22 Missouri</li>
 <li><span class="game-time" data-time="2025-11-29T20:30:00.000Z">2025-11-29</span> — #20 Tennessee vs #14 Vanderbilt</li>
+<li><span class="game-time" data-time="2025-11-29T20:30:00.000Z">2025-11-29</span> — Washington vs #7 Oregon</li>
+<li><span class="game-time" data-time="2025-11-29T21:30:00.000Z">2025-11-29</span> — #15 USC vs UCLA</li>
+<li><span class="game-time" data-time="2025-11-30T00:00:00.000Z">2025-11-30</span> — #19 Virginia vs Virginia Tech</li>
 <li><span class="game-time" data-time="2025-11-30T00:30:00.000Z">2025-11-30</span> — #21 Illinois vs Northwestern</li>
 <li><span class="game-time" data-time="2025-11-30T00:30:00.000Z">2025-11-30</span> — Auburn vs #10 Alabama</li>
+<li><span class="game-time" data-time="2025-11-30T00:30:00.000Z">2025-11-30</span> — #24 Tulane vs Charlotte</li>
 <li><span class="game-time" data-time="2025-11-30T03:30:00.000Z">2025-11-30</span> — Stanford vs #9 Notre Dame</li></ul></li>
       </ul>
     </section>
