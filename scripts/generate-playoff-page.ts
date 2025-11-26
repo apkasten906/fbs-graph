@@ -429,29 +429,126 @@ function renderHTML(
   <link rel="stylesheet" href="common-theme.css">
   <link rel="stylesheet" href="css/shared-nav.css">
   <style>
-    .container {
-      padding: 1.5rem 2rem;
+    :root {
+      color-scheme: dark;
+      --panel: rgba(12, 18, 36, 0.82);
+      --panel-solid: #11182f;
+      --border: rgba(56, 189, 248, 0.22);
+      --gold: #facc15;
+      --red: #f87171;
+      --emerald: #34d399;
+      --indigo: #818cf8;
+      --slate: #1e293b;
     }
-    
-    /* Hide bullet points for matchup lists */
-    section ul {
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(56, 189, 248, 0.16) 0, transparent 45%),
+        radial-gradient(circle at 82% 8%, rgba(129, 140, 248, 0.18) 0, transparent 42%), var(--bg);
+      padding: clamp(24px, 8vw, 48px) clamp(20px, 10vw, 72px) 60px;
+    }
+
+    .content-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      gap: 32px;
+    }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 36px);
+      letter-spacing: 0.02em;
+      margin: 0;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--indigo) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .meta-info {
+      color: var(--muted);
+      font-size: 0.875rem;
+      margin: -16px 0 0 0;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: clamp(20px, 4vw, 32px);
+      box-shadow: 0 8px 32px rgba(2, 6, 23, 0.4);
+    }
+
+    h2 {
+      font-size: clamp(18px, 2.5vw, 22px);
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      margin: 0 0 24px;
+      text-align: left;
+    }
+
+    section > ul {
       list-style-type: none;
-      padding-left: 0;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 16px;
     }
+
+    section > ul > li {
+      display: grid;
+      gap: 8px;
+    }
+
+    section > ul > li > strong {
+      color: var(--gold);
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      display: block;
+    }
+
     section ul ul {
-      padding-left: 1.5rem;
-      margin-top: 0.25rem;
+      list-style-type: none;
+      padding: 0;
+      margin: 8px 0 0;
+      display: grid;
+      gap: 6px;
+    }
+
+    section ul ul li {
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      transition: all 0.2s ease;
+    }
+
+    section ul ul li:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-left-color: var(--gold);
+      transform: translateX(4px);
+    }
+
+    .game-time {
+      color: var(--muted);
+      font-weight: 500;
+      margin-right: 8px;
     }
   </style>
 </head>
 <body>
   <div class="content-wrapper">
     <h1>Playoff Preview — ${data.season}</h1>
-    <p style="color: var(--muted); font-size: 0.95rem">Generated: ${escapeHtml(data.generatedAt)}</p>
+    <p class="meta-info">Generated: ${escapeHtml(data.generatedAt)}</p>
 
     <section>
-      <h2 style="text-align:left">Upcoming Games (Top 25 Teams)</h2>
-      <ul style="text-align:left">
+      <h2>Upcoming Games (Top 25 Teams)</h2>
+      <ul>
         ${gamesHtml}
       </ul>
     </section>
@@ -498,34 +595,148 @@ function generateRankingsPage(data: any, ranksByPollWeek: any, teamNameToSeasonI
   <link rel="stylesheet" href="common-theme.css">
   <link rel="stylesheet" href="css/shared-nav.css">
   <style>
-    .container {
-      padding: 1.5rem 2rem;
+    :root {
+      color-scheme: dark;
+      --panel: rgba(12, 18, 36, 0.82);
+      --panel-solid: #11182f;
+      --border: rgba(56, 189, 248, 0.22);
+      --gold: #facc15;
+      --indigo: #818cf8;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(56, 189, 248, 0.16) 0, transparent 45%),
+        radial-gradient(circle at 82% 8%, rgba(129, 140, 248, 0.18) 0, transparent 42%), var(--bg);
+      padding: clamp(24px, 8vw, 48px) clamp(20px, 10vw, 72px) 60px;
+    }
+
+    .content-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      gap: 32px;
+    }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 36px);
+      letter-spacing: 0.02em;
+      margin: 0;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--indigo) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .meta-info {
+      color: var(--muted);
+      font-size: 0.875rem;
+      margin: -16px 0 0 0;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: clamp(20px, 4vw, 32px);
+      box-shadow: 0 8px 32px rgba(2, 6, 23, 0.4);
+    }
+
+    h2 {
+      font-size: clamp(18px, 2.5vw, 22px);
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      margin: 0 0 24px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .controls label {
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+
+    .controls select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--ink);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .controls select:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    #rankingsTable {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #rankingsTable th {
+      background: rgba(56, 189, 248, 0.1);
+      padding: 12px;
+      text-align: left;
+      color: var(--accent);
+      font-weight: 600;
+      border-bottom: 2px solid var(--border);
+      font-size: 0.875rem;
+      letter-spacing: 0.02em;
+    }
+
+    #rankingsTable td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.08);
+      font-size: 0.875rem;
+    }
+
+    #rankingsTable tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    footer {
+      margin-top: 32px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="content-wrapper">
     <h1>Top 25 Rankings — ${data.season}</h1>
-    <p style="color: var(--muted); font-size: 0.95rem">Generated: ${escapeHtml(data.generatedAt)}</p>
+    <p class="meta-info">Generated: ${escapeHtml(data.generatedAt)}</p>
 
     <section>
-      <h2 style="text-align:left">Rankings</h2>
-      <div style="margin-bottom:0.5rem">
+      <h2>Rankings</h2>
+      <div class="controls">
         <label for="pollSelect">Poll:</label>
         <select id="pollSelect">
           <option>CFP</option>
           <option>COACHES</option>
           <option>AP</option>
         </select>
-        <label for="weekSelect" style="margin-left:1rem">Week:</label>
+        <label for="weekSelect">Week:</label>
         <select id="weekSelect"></select>
       </div>
       <div style="overflow-x:auto">
-        <table id="rankingsTable" style="width:100%; border-collapse:collapse; text-align:left">
+        <table id="rankingsTable">
           <!-- Populated by JavaScript from poll data -->
         </table>
       </div>
     </section>
+
+    <footer>Generated by fbs-graph</footer>
 
     <script>
       // Embed ranksByPollWeek, team mappings, and team season data
