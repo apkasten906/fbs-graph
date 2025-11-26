@@ -250,8 +250,10 @@ query Graph($season: Int!) {
       let pairGames = new Map(); // key "a__b" -> array of games
       let teamIndex = new Map();
 
-      // Use imported edgeKey function from graph-path-finder module
-      const key = window.edgeKey;
+      // Inline key function (edgeKey equivalent) for immediate availability
+      function key(a, b) {
+        return a < b ? `${a}__${b}` : `${b}__${a}`;
+      }
 
       function buildGraph(season, typeFilter, minLev, pathFilter = null) {
         console.log('buildGraph called with pathFilter:', pathFilter);
@@ -616,12 +618,13 @@ query Graph($season: Int!) {
         return positions;
       }
 
-      // Use imported findNodesWithinDegrees function from graph-path-finder module
-      const findNodesWithinDegrees = window.findNodesWithinDegrees;
-
-      // Use imported shortestPathByInverseLeverage function from graph-path-finder module
-      // Note: module version requires pairGames and teams array, so we create a wrapper
+      // Wrapper functions that call the imported module functions
+      // These are defined as functions so they execute at call-time (when window.* is available)
       function shortestPathByInverseLeverage(srcId, dstId, typeFilter, minLev) {
+        if (!window.shortestPathByInverseLeverage) {
+          console.error('shortestPathByInverseLeverage not loaded from module yet');
+          return null;
+        }
         return window.shortestPathByInverseLeverage(
           srcId,
           dstId,
@@ -629,6 +632,23 @@ query Graph($season: Int!) {
           graphData.teams,
           typeFilter,
           minLev
+        );
+      }
+
+      function findNodesWithinDegrees(startNodes, maxDegrees, typeFilter, minLev, shortestPath) {
+        if (!window.findNodesWithinDegrees) {
+          console.error('findNodesWithinDegrees not loaded from module yet');
+          return { nodes: [], edges: [], nodesByDegree: new Map(), source: startNodes[0], destination: startNodes[1] };
+        }
+        // Module signature: findNodesWithinDegrees(startNodes, maxDegrees, pairGames, teams, typeFilter, minLev, shortestPath)
+        return window.findNodesWithinDegrees(
+          startNodes,
+          maxDegrees,
+          pairGames,
+          graphData.teams,
+          typeFilter,
+          minLev,
+          shortestPath
         );
       }
 
@@ -728,11 +748,9 @@ query Graph($season: Int!) {
 
         // Find all nodes within N degrees of both selected teams
         // Pass the shortest path to ensure it's always included
-        const res = window.findNodesWithinDegrees(
+        const res = findNodesWithinDegrees(
           [src, dst],
           degrees,
-          pairGames,
-          graphData.teams,
           typeFilter,
           minLev,
           shortestPath
