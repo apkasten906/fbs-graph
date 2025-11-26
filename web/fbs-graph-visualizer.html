@@ -195,6 +195,20 @@
       // Expose centralized GraphQL endpoint to non-module scripts
       import { GRAPHQL_ENDPOINT } from './modules/config.js';
       window.GRAPHQL_ENDPOINT = GRAPHQL_ENDPOINT;
+
+      // Import graph path-finding algorithms
+      import {
+        edgeKey,
+        buildAdjacencyList,
+        shortestPathByInverseLeverage as spbil,
+        findNodesWithinDegrees as fnwd,
+      } from './modules/graph-path-finder.js';
+
+      // Expose to non-module scripts
+      window.edgeKey = edgeKey;
+      window.buildAdjacencyList = buildAdjacencyList;
+      window.shortestPathByInverseLeverage = spbil;
+      window.findNodesWithinDegrees = fnwd;
     </script>
     <script>
       const COLORS = {
@@ -236,9 +250,8 @@ query Graph($season: Int!) {
       let pairGames = new Map(); // key "a__b" -> array of games
       let teamIndex = new Map();
 
-      function key(a, b) {
-        return a < b ? a + '__' + b : b + '__' + a;
-      }
+      // Use imported edgeKey function from graph-path-finder module
+      const key = window.edgeKey;
 
       function buildGraph(season, typeFilter, minLev, pathFilter = null) {
         console.log('buildGraph called with pathFilter:', pathFilter);
@@ -603,200 +616,20 @@ query Graph($season: Int!) {
         return positions;
       }
 
-      function findNodesWithinDegrees(
-        startNodes,
-        maxDegrees,
-        typeFilter,
-        minLev,
-        shortestPath = null
-      ) {
-        // For comparison view, we want to find paths that connect the two selected teams
-        const source = startNodes[0];
-        const dest = startNodes[1];
+      // Use imported findNodesWithinDegrees function from graph-path-finder module
+      const findNodesWithinDegrees = window.findNodesWithinDegrees;
 
-        // Build adjacency list from filtered edges
-        const adj = new Map();
-        for (const [k, list] of pairGames) {
-          const a = list[0].home.id,
-            b = list[0].away.id;
-          const filtered = list.filter(
-            g => (typeFilter === 'ALL' || g.type === typeFilter) && (g.leverage || 0) >= minLev
-          );
-          if (!filtered.length) continue;
-          if (!adj.has(a)) adj.set(a, []);
-          if (!adj.has(b)) adj.set(b, []);
-          adj.get(a).push({ to: b, k });
-          adj.get(b).push({ to: a, k });
-        }
-
-        // Special case: degree 0 means direct matchup only
-        if (maxDegrees === 0) {
-          const directKey = key(source, dest);
-          if (pairGames.has(directKey)) {
-            return {
-              nodes: [source, dest],
-              edges: [directKey],
-              nodesByDegree: new Map([
-                [source, 0],
-                [dest, 0],
-              ]),
-              source,
-              destination: dest,
-            };
-          }
-          return { nodes: [], edges: [], nodesByDegree: new Map() };
-        }
-
-        // Build valid paths layer by layer
-        // Layer 0: source and dest
-        // Layer 1: common opponents (reachable from both within 1 hop)
-        // Layer 2: teams that connect layer 1 teams back to source/dest
-
-        const nodesByDegree = new Map();
-        const validEdges = new Set();
-        const validNodes = new Set([source, dest]);
-        nodesByDegree.set(source, 0);
-        nodesByDegree.set(dest, 0);
-
-        // If we have a shortest path, ensure all its nodes and edges are included
-        if (shortestPath && shortestPath.nodes && shortestPath.edges) {
-          for (let i = 0; i < shortestPath.nodes.length; i++) {
-            const nodeId = shortestPath.nodes[i];
-            validNodes.add(nodeId);
-            // Assign degree based on distance from source
-            if (!nodesByDegree.has(nodeId)) {
-              nodesByDegree.set(nodeId, i);
-            }
-          }
-          for (const edgeKey of shortestPath.edges) {
-            validEdges.add(edgeKey);
-          }
-        }
-
-        // Find direct connection if it exists
-        const directKey = key(source, dest);
-        if (pairGames.has(directKey)) {
-          validEdges.add(directKey);
-        }
-
-        // Layer 1: Find common opponents (teams that played both source and dest)
-        const sourceNeighbors = new Set((adj.get(source) || []).map(e => e.to));
-        const destNeighbors = new Set((adj.get(dest) || []).map(e => e.to));
-
-        for (const node of sourceNeighbors) {
-          if (destNeighbors.has(node)) {
-            // This is a common opponent
-            validNodes.add(node);
-            nodesByDegree.set(node, 1);
-            validEdges.add(key(source, node));
-            validEdges.add(key(dest, node));
-          }
-        }
-
-        // Layer 2 and beyond: Find teams that bridge between layer 1 teams and source/dest
-        if (maxDegrees >= 2) {
-          // For each degree 1 team, find their neighbors
-          const degree1Teams = Array.from(validNodes).filter(n => nodesByDegree.get(n) === 1);
-
-          for (const team1 of degree1Teams) {
-            const neighbors = (adj.get(team1) || []).map(e => e.to);
-
-            for (const neighbor of neighbors) {
-              if (validNodes.has(neighbor)) continue; // Already included
-
-              // Check if this neighbor connects back to source or dest
-              const neighborNeighbors = new Set((adj.get(neighbor) || []).map(e => e.to));
-
-              if (neighborNeighbors.has(source) || neighborNeighbors.has(dest)) {
-                // This neighbor connects back to source or dest through team1
-                validNodes.add(neighbor);
-                nodesByDegree.set(neighbor, 2);
-                validEdges.add(key(team1, neighbor));
-
-                // Add edge to source or dest if it exists
-                if (neighborNeighbors.has(source)) {
-                  validEdges.add(key(neighbor, source));
-                }
-                if (neighborNeighbors.has(dest)) {
-                  validEdges.add(key(neighbor, dest));
-                }
-              }
-            }
-          }
-        }
-
-        return {
-          nodes: Array.from(validNodes),
-          edges: Array.from(validEdges),
-          nodesByDegree,
-          source,
-          destination: dest,
-        };
-      }
-
+      // Use imported shortestPathByInverseLeverage function from graph-path-finder module
+      // Note: module version requires pairGames and teams array, so we create a wrapper
       function shortestPathByInverseLeverage(srcId, dstId, typeFilter, minLev) {
-        // Build adjacency with weight = 1 / (avg leverage of pair). If multiple games per pair, we use avg.
-        const adj = new Map();
-        for (const [k, list] of pairGames) {
-          const a = list[0].home.id,
-            b = list[0].away.id;
-          const filtered = list.filter(
-            g => (typeFilter === 'ALL' || g.type === typeFilter) && (g.leverage || 0) >= minLev
-          );
-          if (!filtered.length) continue;
-          const avg = filtered.reduce((s, x) => s + (x.leverage || 0), 0) / filtered.length;
-          const w = 1 / Math.max(1e-6, avg);
-          if (!adj.has(a)) adj.set(a, []);
-          if (!adj.has(b)) adj.set(b, []);
-          adj.get(a).push({ to: b, k, w, avg, games: filtered });
-          adj.get(b).push({ to: a, k, w, avg, games: filtered });
-        }
-        // Dijkstra
-        const dist = new Map(),
-          prev = new Map(),
-          prevEdge = new Map();
-        const allIds = Array.from(graphData.teams, t => t.id);
-        const Q = new Set(allIds);
-        for (const id of allIds) dist.set(id, Infinity);
-        dist.set(srcId, 0);
-        while (Q.size) {
-          let u = null,
-            best = Infinity;
-          for (const v of Q) {
-            const d = dist.get(v);
-            if (d < best) {
-              best = d;
-              u = v;
-            }
-          }
-          if (u === null || best === Infinity) break;
-          Q.delete(u);
-          if (u === dstId) break;
-          const nbrs = adj.get(u) || [];
-          for (const e of nbrs) {
-            if (!Q.has(e.to)) continue;
-            const alt = dist.get(u) + e.w;
-            if (alt < dist.get(e.to)) {
-              dist.set(e.to, alt);
-              prev.set(e.to, u);
-              prevEdge.set(e.to, e.k);
-            }
-          }
-        }
-        if (!prev.has(dstId)) return null;
-        // Rebuild path
-        const pathIds = [];
-        const edges = [];
-        let cur = dstId;
-        while (cur !== srcId) {
-          pathIds.push(cur);
-          edges.push(prevEdge.get(cur));
-          cur = prev.get(cur);
-        }
-        pathIds.push(srcId);
-        pathIds.reverse();
-        edges.reverse();
-        return { nodes: pathIds, edges };
+        return window.shortestPathByInverseLeverage(
+          srcId,
+          dstId,
+          pairGames,
+          graphData.teams,
+          typeFilter,
+          minLev
+        );
       }
 
       const CONFERENCES_QUERY = `
@@ -895,7 +728,15 @@ query Graph($season: Int!) {
 
         // Find all nodes within N degrees of both selected teams
         // Pass the shortest path to ensure it's always included
-        const res = findNodesWithinDegrees([src, dst], degrees, typeFilter, minLev, shortestPath);
+        const res = window.findNodesWithinDegrees(
+          [src, dst],
+          degrees,
+          pairGames,
+          graphData.teams,
+          typeFilter,
+          minLev,
+          shortestPath
+        );
 
         if (!res || res.nodes.length === 0) {
           box.textContent = 'No connections found (maybe filters are too strict).';
