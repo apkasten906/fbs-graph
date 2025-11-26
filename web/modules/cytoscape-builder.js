@@ -260,7 +260,7 @@ export function createCytoscapeStyle() {
         'background-color': ele => COLORS[ele.data('conf')] || COLORS.other,
         label: 'data(label)',
         color: '#cfe1ff',
-        'font-size': '12px',
+        'font-size': '20px',
         'text-outline-color': '#0b1020',
         'text-outline-width': 2,
         width: 'mapData(deg, 0, 24, 12, 40)',

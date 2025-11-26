@@ -70,11 +70,69 @@
       }
       #sidebar {
         width: 320px;
+        min-width: 240px; /* keep panel usable on narrow viewports */
         border-right: 1px solid #26335f;
         background: var(--panel);
         padding: 10px;
         overflow: auto;
+        position: relative;
+        transition: width 0.22s ease, padding 0.18s ease, border-right 0.18s ease;
       }
+      /* Collapsed state: keep a narrow but usable strip with toggle visible */
+      /* When collapsed, fully hide the sidebar (shrink to 0) so core content takes full width.
+         The toggle button remains visible in the adjacent `#sidebarToggle` column. */
+      #sidebar.collapsed {
+        width: 0 !important;
+        min-width: 0 !important;
+        padding: 0 !important;
+        border-right: none !important;
+        overflow: hidden !important;
+      }
+
+      /* Narrow toggle column that sits between the sidebar and main content */
+      #sidebarToggle {
+        width: 44px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        background: transparent;
+        border-left: 1px solid rgba(255,255,255,0.02);
+      }
+
+      /* Toggle button (chevron) placed in its own adjacent column */
+      .panel-toggle {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        border: 1px solid #26335f;
+        background: linear-gradient(180deg, #0e1631, #112044);
+        color: #cfe1ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 1px 0 rgba(0,0,0,0.3);
+        margin: 8px;
+      }
+      .panel-toggle:focus {
+        outline: 2px solid #1f6feb;
+      }
+      .panel-toggle svg {
+        width: 12px;
+        height: 12px;
+        transition: transform 0.22s ease;
+      }
+      /* Rotate when sidebar is collapsed (sibling column holds the toggle) */
+      #sidebar.collapsed + #sidebarToggle .panel-toggle svg {
+        transform: rotate(180deg);
+      }
+      /* When collapsed, hide most of the panel content but keep small elements visible */
+      #sidebar.collapsed .section,
+      #sidebar.collapsed .legend,
+      #sidebar.collapsed .pathlist {
+        display: none;
+      }
+      /* Remove the pseudo-label to avoid overlap now that the toggle has its own column. */
       #cy {
         flex: 1;
       }
@@ -185,6 +243,14 @@
           connection.
         </div>
       </aside>
+      <div id="sidebarToggle">
+        <button id="panelToggle" class="panel-toggle" aria-expanded="true" aria-controls="sidebar" title="Collapse panel">
+          <!-- Chevron icon -->
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 1 0 1.41 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.7 6.7a1 1 0 0 0-1.41.01z"/>
+          </svg>
+        </button>
+      </div>
       <div id="cy"></div>
     </main>
 
@@ -522,6 +588,44 @@
       });
 
       // Auto-load will be triggered after static data adapter loads
+    </script>
+    <script>
+      // Panel toggle handler: don't commit state changes automatically
+      (function () {
+        const toggle = document.getElementById('panelToggle');
+        const sidebar = document.getElementById('sidebar');
+        if (!toggle || !sidebar) return;
+
+        function setCollapsed(collapsed, persist = true) {
+          if (collapsed) {
+            sidebar.classList.add('collapsed');
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.title = 'Expand panel';
+          } else {
+            sidebar.classList.remove('collapsed');
+            toggle.setAttribute('aria-expanded', 'true');
+            toggle.title = 'Collapse panel';
+          }
+          if (persist) {
+            try {
+              localStorage.setItem('visualizer.sidebarCollapsed', collapsed ? '1' : '0');
+            } catch (e) {
+              /* ignore localStorage failures */
+            }
+          }
+        }
+
+        // Initialize from persisted state if present
+        try {
+          const v = localStorage.getItem('visualizer.sidebarCollapsed');
+          if (v === '1') setCollapsed(true, false);
+        } catch (e) {}
+
+        toggle.addEventListener('click', () => {
+          const isCollapsed = sidebar.classList.contains('collapsed');
+          setCollapsed(!isCollapsed, true);
+        });
+      })();
     </script>
     <script type="module">
       // Load static data adapter first
