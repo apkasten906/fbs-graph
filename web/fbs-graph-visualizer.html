@@ -209,22 +209,26 @@
       window.buildAdjacencyList = buildAdjacencyList;
       window.shortestPathByInverseLeverage = spbil;
       window.findNodesWithinDegrees = fnwd;
+
+      // Import Cytoscape builder functions
+      import {
+        COLORS as BUILDER_COLORS,
+        buildGraphElements,
+        calculateDegreePositions as calcDegPos,
+        createCytoscapeStyle,
+        createLayoutConfig,
+      } from './modules/cytoscape-builder.js';
+
+      // Expose builder functions to non-module scripts
+      window.BUILDER_COLORS = BUILDER_COLORS;
+      window.buildGraphElements = buildGraphElements;
+      window.calculateDegreePositions = calcDegPos;
+      window.createCytoscapeStyle = createCytoscapeStyle;
+      window.createLayoutConfig = createLayoutConfig;
     </script>
     <script>
-      const COLORS = {
-        sec: '#6CCFF6',
-        b1g: '#B28DFF',
-        b12: '#F6AE2D',
-        acc: '#4CC9F0',
-        aac: '#FF6B6B',
-        mwc: '#80ED99',
-        mac: '#FFD166',
-        sbc: '#90CAF9',
-        cusa: '#FF9E00',
-        ind: '#BDB2FF',
-        pac12: '#9CCC65',
-        other: '#CCD6F6',
-      };
+      // Use COLORS from builder module
+      const COLORS = window.BUILDER_COLORS;
 
       const QUERY = `
 query Graph($season: Int!) {
@@ -257,167 +261,30 @@ query Graph($season: Int!) {
 
       function buildGraph(season, typeFilter, minLev, pathFilter = null) {
         console.log('buildGraph called with pathFilter:', pathFilter);
-        const els = [];
-        teamIndex.clear();
-        graphData.teams.forEach(t => teamIndex.set(t.id, t));
 
-        // Filter teams to show (all or just path nodes)
-        const teamsToShow = pathFilter
-          ? graphData.teams.filter(t => pathFilter.nodes.includes(t.id))
-          : graphData.teams;
+        // Build graph elements using builder module
+        const els = window.buildGraphElements({
+          teams: graphData.teams,
+          games: graphData.games,
+          teamIndex,
+          pairGames,
+          typeFilter,
+          minLeverage: minLev,
+          pathFilter,
+        });
 
-        // Nodes
-        for (const t of teamsToShow) {
-          const conf = (t.conference && t.conference.id) || 'other';
-          els.push({
-            group: 'nodes',
-            data: { id: t.id, label: t.name, conf },
-            classes: conf,
-          });
-        }
-
-        // Edge aggregation by pair
-        pairGames.clear();
-        const edges = new Map();
-        for (const g of graphData.games) {
-          if (typeFilter !== 'ALL' && g.type !== typeFilter) continue;
-          const lev = typeof g.leverage === 'number' ? g.leverage : 0;
-          if (lev < minLev) continue;
-          const a = g.home.id,
-            b = g.away.id;
-          if (!teamIndex.has(a) || !teamIndex.has(b)) continue;
-          const k = key(a, b);
-          const arr = pairGames.get(k) || [];
-          arr.push(g);
-          pairGames.set(k, arr);
-        }
-
-        const degreeColors = [
-          '#00FF00', // 0: Bright Green (direct connection)
-          '#FFFF00', // 1: Bright Yellow (1 hop)
-          '#FFA500', // 2: Orange (2 hops)
-          '#FF6B35', // 3: Orange-Red (3 hops)
-          '#FF4500', // 4: Red-Orange (4 hops)
-          '#DC143C', // 5: Crimson (5 hops)
-          '#8B0000', // 6: Dark Red (6 hops)
-        ];
-
-        for (const [k, list] of pairGames) {
-          // Skip edge if pathFilter is active and edge is not in path
-          if (pathFilter && !pathFilter.edges.includes(k)) continue;
-
-          // compute edge weight
-          const a = list[0].home.id,
-            b = list[0].away.id;
-          const sumLev = list.reduce((s, x) => s + (x.leverage || 0), 0);
-          const avgLev = sumLev / list.length;
-          const w = Math.max(1, Math.log2(1 + sumLev * 4));
-
-          // Calculate edge color based on degree of separation in the comparison path
-          let edgeColor = '#4562aa'; // Default blue
-          if (
-            pathFilter &&
-            pathFilter.nodesByDegree &&
-            pathFilter.source &&
-            pathFilter.destination
-          ) {
-            const degreeA = pathFilter.nodesByDegree.get(a) || 0;
-            const degreeB = pathFilter.nodesByDegree.get(b) || 0;
-
-            // The degree of an edge is the maximum degree it connects (representing how many hops from source)
-            const edgeDegree = Math.max(degreeA, degreeB);
-            edgeColor = degreeColors[Math.min(edgeDegree, degreeColors.length - 1)];
-
-            // Debug logging
-            console.log(
-              `Edge ${a} -> ${b}: degreeA=${degreeA}, degreeB=${degreeB}, edgeDegree=${edgeDegree}, color=${edgeColor}`
-            );
-          }
-
-          edges.set(k, { a, b, count: list.length, sumLev, avgLev, weight: w, edgeColor });
-        }
-        for (const [k, e] of edges) {
-          els.push({
-            group: 'edges',
-            data: {
-              id: 'e_' + k,
-              source: e.a,
-              target: e.b,
-              label: `${e.count}`,
-              weight: e.weight,
-              avgLev: e.avgLev,
-              edgeColor: e.edgeColor,
-            },
-          });
-        }
+        // Get container dimensions for layout
+        const container = document.getElementById('cy');
+        const width = container.offsetWidth || 800;
+        const height = container.offsetHeight || 600;
 
         // Init / update Cytoscape
         if (!cy) {
           cy = cytoscape({
-            container: document.getElementById('cy'),
+            container,
             elements: els,
-            layout: {
-              name: pathFilter ? 'preset' : 'cose',
-              positions: pathFilter
-                ? node => {
-                    const degree = pathFilter.nodesByDegree.get(node.id()) || 0;
-                    // Position nodes horizontally based on their degree from source
-                    // Left (x=100) for source team, right for destination team
-                    const maxDegree = Math.max(...Array.from(pathFilter.nodesByDegree.values()));
-                    const containerWidth = document.getElementById('cy').offsetWidth || 800;
-                    const xPadding = 100;
-                    const usableWidth = containerWidth - 2 * xPadding;
-                    const x =
-                      maxDegree > 0
-                        ? xPadding + (degree / maxDegree) * usableWidth
-                        : containerWidth / 2;
-
-                    // Add some vertical jitter to prevent overlaps at same degree
-                    const jitter = (Math.random() - 0.5) * 100;
-                    const y = 300 + jitter;
-
-                    return { x, y };
-                  }
-                : undefined,
-              idealEdgeLength: edge => {
-                const avgLev = edge.data('avgLev') || 0.1;
-                // Higher leverage = shorter edge (inverse relationship)
-                // Scale from 50 (high leverage ~1.0) to 300 (low leverage ~0.1)
-                return Math.max(50, Math.min(300, 150 / Math.max(0.1, avgLev)));
-              },
-              nodeOverlap: 20,
-              nodeRepulsion: 8000,
-              fit: true,
-            },
-            style: [
-              {
-                selector: 'node',
-                style: {
-                  'background-color': ele => COLORS[ele.data('conf')] || COLORS.other,
-                  label: 'data(label)',
-                  color: '#cfe1ff',
-                  'font-size': '9px',
-                  'text-outline-color': '#0b1020',
-                  'text-outline-width': 2,
-                  width: 'mapData(deg, 0, 24, 8, 34)',
-                  height: 'mapData(deg, 0, 24, 8, 34)',
-                },
-              },
-              {
-                selector: 'edge',
-                style: {
-                  'line-color': ele => ele.data('edgeColor') || '#4562aa',
-                  width: ele => Math.max(1.5, ele.data('weight') || 1.5),
-                  opacity: 0.7,
-                  'curve-style': 'haystack',
-                },
-              },
-              { selector: 'edge:selected', style: { 'line-color': '#fff', opacity: 1 } },
-              {
-                selector: '.highlight',
-                style: { 'line-color': '#fff', 'background-color': '#fff', opacity: 1 },
-              },
-            ],
+            layout: window.createLayoutConfig(pathFilter, width, height),
+            style: window.createCytoscapeStyle(),
           });
           cy.on('tap', 'edge', e => showEdgeGames(e.target.data()));
         } else {
@@ -433,34 +300,8 @@ query Graph($season: Int!) {
           n.data('deg', n.connectedEdges().length);
         });
 
-        // Use preset layout for comparison view to create left-to-right flow
-        console.log('Layout selection - pathFilter:', pathFilter, 'truthy?', !!pathFilter);
-        if (pathFilter) {
-          console.log('Using preset layout with positions');
-          const positions = calculateDegreePositions(pathFilter);
-          console.log('Calculated positions:', positions);
-
-          cy.layout({
-            name: 'preset',
-            positions: positions,
-            fit: true,
-            padding: 50,
-            avoidOverlap: true,
-            nodeDimensionsIncludeLabels: true,
-          }).run();
-        } else {
-          console.log('Using cose layout');
-          cy.layout({
-            name: 'cose',
-            idealEdgeLength: edge => {
-              const avgLev = edge.data('avgLev') || 0.1;
-              // Higher leverage = shorter edge (inverse relationship)
-              return Math.max(50, Math.min(300, 150 / Math.max(0.1, avgLev)));
-            },
-            nodeOverlap: 20,
-            nodeRepulsion: 8000,
-          }).run();
-        }
+        // Apply layout
+        cy.layout(window.createLayoutConfig(pathFilter, width, height)).run();
       }
 
       function showEdgeGames(data) {
@@ -551,71 +392,6 @@ query Graph($season: Int!) {
         setTimeout(() => {
           document.getElementById('pathBtn').click();
         }, 100);
-      }
-
-      // Calculate positions for nodes based on their degree from source
-      function calculateDegreePositions(pathFilter) {
-        const positions = {};
-        const nodesByDegree = pathFilter.nodesByDegree;
-        const source = pathFilter.source;
-        const destination = pathFilter.destination;
-        const maxDegree = Math.max(...nodesByDegree.values());
-
-        // Group nodes by their degree
-        const degreeGroups = new Map();
-        for (const [nodeId, degree] of nodesByDegree) {
-          if (!degreeGroups.has(degree)) {
-            degreeGroups.set(degree, []);
-          }
-          degreeGroups.get(degree).push(nodeId);
-        }
-
-        const width = 800;
-        const height = 600;
-        const centerY = height / 2;
-
-        // Special handling for source and destination to be on same horizontal plane
-        const sourceX = 50;
-        const destX = width - 50;
-
-        positions[source] = { x: sourceX, y: centerY };
-        positions[destination] = { x: destX, y: centerY };
-
-        // Position intermediate nodes (degrees 1 to maxDegree)
-        const horizontalSpacing =
-          maxDegree > 0 ? (destX - sourceX) / (maxDegree + 1) : (destX - sourceX) / 2;
-
-        for (let degree = 1; degree <= maxDegree; degree++) {
-          const nodesAtDegree = (degreeGroups.get(degree) || []).filter(
-            id => id !== source && id !== destination
-          );
-          if (nodesAtDegree.length === 0) continue;
-
-          const x = sourceX + horizontalSpacing * degree;
-
-          // Distribute nodes vertically, avoiding the center line where source/dest are positioned
-          // Use top half and bottom half of the canvas
-          const topY = centerY * 0.4; // Top boundary
-          const bottomY = centerY * 1.6; // Bottom boundary
-          const availableHeight = bottomY - topY - 100; // Leave space around center
-
-          nodesAtDegree.forEach((nodeId, index) => {
-            // Distribute evenly, but skip the center area
-            const fraction = (index + 1) / (nodesAtDegree.length + 1);
-            let y;
-            if (fraction < 0.5) {
-              // Top half
-              y = topY + fraction * 2 * (centerY - topY - 50);
-            } else {
-              // Bottom half
-              y = centerY + 50 + (fraction - 0.5) * 2 * (bottomY - centerY - 50);
-            }
-            positions[nodeId] = { x, y };
-          });
-        }
-
-        console.log('calculateDegreePositions returning:', positions);
-        return positions;
       }
 
       // Adapter functions that call the imported module functions with correct parameters
