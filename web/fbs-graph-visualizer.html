@@ -193,8 +193,8 @@
     <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
     <script type="module">
       // Expose centralized GraphQL endpoint to non-module scripts
-      import { GRAPHQL_ENDPOINT } from './modules/config.js';
-      window.GRAPHQL_ENDPOINT = GRAPHQL_ENDPOINT;
+      import { DEFAULT_GRAPHQL_ENDPOINT } from './modules/config.js';
+      window.GRAPHQL_ENDPOINT = DEFAULT_GRAPHQL_ENDPOINT;
 
       // Import graph path-finding algorithms
       import {
