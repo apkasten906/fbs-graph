@@ -6,7 +6,18 @@
     <title>FBS Schedule Graph — Teams & Matchups</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="common-theme.css" />
+    <link rel="stylesheet" href="css/shared-nav.css" />
     <style>
+      /* Adjust body for nav offset */
+      body {
+        margin-left: 220px;
+        transition: margin-left 0.3s ease;
+      }
+      
+      body.nav-collapsed {
+        margin-left: 0;
+      }
+      
       * {
         box-sizing: border-box;
       }
@@ -137,7 +148,7 @@
       <aside id="sidebar">
         <div class="section">
           <div class="muted small">
-            Find connection between teams (shortest path by 1/leverage):
+            Compare teams (show all paths within degrees of separation):
           </div>
           <div
             style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: flex-end"
@@ -145,10 +156,15 @@
             <select id="srcSel"></select>
             <select id="dstSel"></select>
           </div>
-          <div style="margin-top: 8px">
-            <button id="pathBtn">Path</button>
+          <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center">
+            <label style="font-size: 11px;">Degrees:</label>
+            <input id="degrees" type="range" min="0" max="6" step="1" value="1" style="width: 100px" />
+            <span id="degreesVal" class="muted small">1</span>
           </div>
-          <div id="pathInfo" class="pathlist" style="margin-top: 8px">No path computed yet.</div>
+          <div style="margin-top: 8px">
+            <button id="pathBtn">Show Comparisons</button>
+          </div>
+          <div id="pathInfo" class="pathlist" style="margin-top: 8px">Select teams and click "Show Comparisons".</div>
         </div>
         <div class="section">
           <div class="muted small">Legend / Conferences</div>
@@ -214,13 +230,19 @@ query Graph($season: Int!) {
         return a < b ? a + '__' + b : b + '__' + a;
       }
 
-      function buildGraph(season, typeFilter, minLev) {
+      function buildGraph(season, typeFilter, minLev, pathFilter = null) {
+        console.log('buildGraph called with pathFilter:', pathFilter);
         const els = [];
         teamIndex.clear();
         graphData.teams.forEach(t => teamIndex.set(t.id, t));
 
+        // Filter teams to show (all or just path nodes)
+        const teamsToShow = pathFilter
+          ? graphData.teams.filter(t => pathFilter.nodes.includes(t.id))
+          : graphData.teams;
+
         // Nodes
-        for (const t of graphData.teams) {
+        for (const t of teamsToShow) {
           const conf = (t.conference && t.conference.id) || 'other';
           els.push({
             group: 'nodes',
@@ -244,14 +266,43 @@ query Graph($season: Int!) {
           arr.push(g);
           pairGames.set(k, arr);
         }
+        
+        const degreeColors = [
+          '#00FF00',  // 0: Bright Green (direct connection)
+          '#FFFF00',  // 1: Bright Yellow (1 hop)
+          '#FFA500',  // 2: Orange (2 hops)
+          '#FF6B35',  // 3: Orange-Red (3 hops)
+          '#FF4500',  // 4: Red-Orange (4 hops)
+          '#DC143C',  // 5: Crimson (5 hops)
+          '#8B0000'   // 6: Dark Red (6 hops)
+        ];
+        
         for (const [k, list] of pairGames) {
+          // Skip edge if pathFilter is active and edge is not in path
+          if (pathFilter && !pathFilter.edges.includes(k)) continue;
+
           // compute edge weight
           const a = list[0].home.id,
             b = list[0].away.id;
           const sumLev = list.reduce((s, x) => s + (x.leverage || 0), 0);
           const avgLev = sumLev / list.length;
           const w = Math.max(1, Math.log2(1 + sumLev * 4));
-          edges.set(k, { a, b, count: list.length, sumLev, avgLev, weight: w });
+          
+          // Calculate edge color based on degree of separation in the comparison path
+          let edgeColor = '#4562aa'; // Default blue
+          if (pathFilter && pathFilter.nodesByDegree && pathFilter.source && pathFilter.destination) {
+            const degreeA = pathFilter.nodesByDegree.get(a) || 0;
+            const degreeB = pathFilter.nodesByDegree.get(b) || 0;
+            
+            // The degree of an edge is the maximum degree it connects (representing how many hops from source)
+            const edgeDegree = Math.max(degreeA, degreeB);
+            edgeColor = degreeColors[Math.min(edgeDegree, degreeColors.length - 1)];
+            
+            // Debug logging
+            console.log(`Edge ${a} -> ${b}: degreeA=${degreeA}, degreeB=${degreeB}, edgeDegree=${edgeDegree}, color=${edgeColor}`);
+          }
+          
+          edges.set(k, { a, b, count: list.length, sumLev, avgLev, weight: w, edgeColor });
         }
         for (const [k, e] of edges) {
           els.push({
@@ -263,6 +314,7 @@ query Graph($season: Int!) {
               label: `${e.count}`,
               weight: e.weight,
               avgLev: e.avgLev,
+              edgeColor: e.edgeColor,
             },
           });
         }
@@ -272,7 +324,34 @@ query Graph($season: Int!) {
           cy = cytoscape({
             container: document.getElementById('cy'),
             elements: els,
-            layout: { name: 'cose', idealEdgeLength: 120, nodeOverlap: 10 },
+            layout: {
+              name: pathFilter ? 'preset' : 'cose',
+              positions: pathFilter ? (node) => {
+                const degree = pathFilter.nodesByDegree.get(node.id()) || 0;
+                // Position nodes horizontally based on their degree from source
+                // Left (x=100) for source team, right for destination team
+                const maxDegree = Math.max(...Array.from(pathFilter.nodesByDegree.values()));
+                const containerWidth = document.getElementById('cy').offsetWidth || 800;
+                const xPadding = 100;
+                const usableWidth = containerWidth - 2 * xPadding;
+                const x = maxDegree > 0 ? xPadding + (degree / maxDegree) * usableWidth : containerWidth / 2;
+                
+                // Add some vertical jitter to prevent overlaps at same degree
+                const jitter = (Math.random() - 0.5) * 100;
+                const y = 300 + jitter;
+                
+                return { x, y };
+              } : undefined,
+              idealEdgeLength: edge => {
+                const avgLev = edge.data('avgLev') || 0.1;
+                // Higher leverage = shorter edge (inverse relationship)
+                // Scale from 50 (high leverage ~1.0) to 300 (low leverage ~0.1)
+                return Math.max(50, Math.min(300, 150 / Math.max(0.1, avgLev)));
+              },
+              nodeOverlap: 20,
+              nodeRepulsion: 8000,
+              fit: true,
+            },
             style: [
               {
                 selector: 'node',
@@ -290,7 +369,7 @@ query Graph($season: Int!) {
               {
                 selector: 'edge',
                 style: {
-                  'line-color': '#4562aa',
+                  'line-color': ele => ele.data('edgeColor') || '#4562aa',
                   width: ele => Math.max(1.5, ele.data('weight') || 1.5),
                   opacity: 0.7,
                   'curve-style': 'haystack',
@@ -303,10 +382,13 @@ query Graph($season: Int!) {
               },
             ],
           });
-          cy.on('tap', 'edge', e => showEdgeGames(e.target().data()));
+          cy.on('tap', 'edge', e => showEdgeGames(e.target.data()));
         } else {
           cy.elements().remove();
           cy.add(els);
+          // Re-register edge click handler
+          cy.off('tap', 'edge');
+          cy.on('tap', 'edge', e => showEdgeGames(e.target.data()));
         }
 
         // Compute degree for sizing
@@ -314,7 +396,34 @@ query Graph($season: Int!) {
           n.data('deg', n.connectedEdges().length);
         });
 
-        cy.layout({ name: 'cose', idealEdgeLength: 120, nodeOverlap: 10 }).run();
+        // Use preset layout for comparison view to create left-to-right flow
+        console.log('Layout selection - pathFilter:', pathFilter, 'truthy?', !!pathFilter);
+        if (pathFilter) {
+          console.log('Using preset layout with positions');
+          const positions = calculateDegreePositions(pathFilter);
+          console.log('Calculated positions:', positions);
+          
+          cy.layout({
+            name: 'preset',
+            positions: positions,
+            fit: true,
+            padding: 50,
+            avoidOverlap: true,
+            nodeDimensionsIncludeLabels: true,
+          }).run();
+        } else {
+          console.log('Using cose layout');
+          cy.layout({
+            name: 'cose',
+            idealEdgeLength: edge => {
+              const avgLev = edge.data('avgLev') || 0.1;
+              // Higher leverage = shorter edge (inverse relationship)
+              return Math.max(50, Math.min(300, 150 / Math.max(0.1, avgLev)));
+            },
+            nodeOverlap: 20,
+            nodeRepulsion: 8000,
+          }).run();
+        }
       }
 
       function showEdgeGames(data) {
@@ -400,6 +509,195 @@ query Graph($season: Int!) {
         const ugaId = opts.find(t => t.name.toLowerCase().includes('georgia'))?.id || opts[1]?.id;
         if (osuId) srcSel.value = osuId;
         if (ugaId) dstSel.value = ugaId;
+        
+        // Auto-trigger comparison with default selections
+        setTimeout(() => {
+          document.getElementById('pathBtn').click();
+        }, 100);
+      }
+
+      // Calculate positions for nodes based on their degree from source
+      function calculateDegreePositions(pathFilter) {
+        const positions = {};
+        const nodesByDegree = pathFilter.nodesByDegree;
+        const source = pathFilter.source;
+        const destination = pathFilter.destination;
+        const maxDegree = Math.max(...nodesByDegree.values());
+        
+        // Group nodes by their degree
+        const degreeGroups = new Map();
+        for (const [nodeId, degree] of nodesByDegree) {
+          if (!degreeGroups.has(degree)) {
+            degreeGroups.set(degree, []);
+          }
+          degreeGroups.get(degree).push(nodeId);
+        }
+        
+        const width = 800;
+        const height = 600;
+        const centerY = height / 2;
+        
+        // Special handling for source and destination to be on same horizontal plane
+        const sourceX = 50;
+        const destX = width - 50;
+        
+        positions[source] = { x: sourceX, y: centerY };
+        positions[destination] = { x: destX, y: centerY };
+        
+        // Position intermediate nodes (degrees 1 to maxDegree)
+        const horizontalSpacing = maxDegree > 0 ? (destX - sourceX) / (maxDegree + 1) : (destX - sourceX) / 2;
+        
+        for (let degree = 1; degree <= maxDegree; degree++) {
+          const nodesAtDegree = (degreeGroups.get(degree) || []).filter(id => id !== source && id !== destination);
+          if (nodesAtDegree.length === 0) continue;
+          
+          const x = sourceX + horizontalSpacing * degree;
+          
+          // Distribute nodes vertically, avoiding the center line where source/dest are positioned
+          // Use top half and bottom half of the canvas
+          const topY = centerY * 0.4; // Top boundary
+          const bottomY = centerY * 1.6; // Bottom boundary
+          const availableHeight = bottomY - topY - 100; // Leave space around center
+          
+          nodesAtDegree.forEach((nodeId, index) => {
+            // Distribute evenly, but skip the center area
+            const fraction = (index + 1) / (nodesAtDegree.length + 1);
+            let y;
+            if (fraction < 0.5) {
+              // Top half
+              y = topY + (fraction * 2) * (centerY - topY - 50);
+            } else {
+              // Bottom half
+              y = centerY + 50 + ((fraction - 0.5) * 2) * (bottomY - centerY - 50);
+            }
+            positions[nodeId] = { x, y };
+          });
+        }
+        
+        console.log('calculateDegreePositions returning:', positions);
+        return positions;
+      }
+
+      function findNodesWithinDegrees(startNodes, maxDegrees, typeFilter, minLev, shortestPath = null) {
+        // For comparison view, we want to find paths that connect the two selected teams
+        const source = startNodes[0];
+        const dest = startNodes[1];
+        
+        // Build adjacency list from filtered edges
+        const adj = new Map();
+        for (const [k, list] of pairGames) {
+          const a = list[0].home.id,
+            b = list[0].away.id;
+          const filtered = list.filter(
+            g => (typeFilter === 'ALL' || g.type === typeFilter) && (g.leverage || 0) >= minLev
+          );
+          if (!filtered.length) continue;
+          if (!adj.has(a)) adj.set(a, []);
+          if (!adj.has(b)) adj.set(b, []);
+          adj.get(a).push({ to: b, k });
+          adj.get(b).push({ to: a, k });
+        }
+
+        // Special case: degree 0 means direct matchup only
+        if (maxDegrees === 0) {
+          const directKey = key(source, dest);
+          if (pairGames.has(directKey)) {
+            return {
+              nodes: [source, dest],
+              edges: [directKey],
+              nodesByDegree: new Map([[source, 0], [dest, 0]]),
+              source,
+              destination: dest,
+            };
+          }
+          return { nodes: [], edges: [], nodesByDegree: new Map() };
+        }
+
+        // Build valid paths layer by layer
+        // Layer 0: source and dest
+        // Layer 1: common opponents (reachable from both within 1 hop)
+        // Layer 2: teams that connect layer 1 teams back to source/dest
+        
+        const nodesByDegree = new Map();
+        const validEdges = new Set();
+        const validNodes = new Set([source, dest]);
+        nodesByDegree.set(source, 0);
+        nodesByDegree.set(dest, 0);
+        
+        // If we have a shortest path, ensure all its nodes and edges are included
+        if (shortestPath && shortestPath.nodes && shortestPath.edges) {
+          for (let i = 0; i < shortestPath.nodes.length; i++) {
+            const nodeId = shortestPath.nodes[i];
+            validNodes.add(nodeId);
+            // Assign degree based on distance from source
+            if (!nodesByDegree.has(nodeId)) {
+              nodesByDegree.set(nodeId, i);
+            }
+          }
+          for (const edgeKey of shortestPath.edges) {
+            validEdges.add(edgeKey);
+          }
+        }
+        
+        // Find direct connection if it exists
+        const directKey = key(source, dest);
+        if (pairGames.has(directKey)) {
+          validEdges.add(directKey);
+        }
+        
+        // Layer 1: Find common opponents (teams that played both source and dest)
+        const sourceNeighbors = new Set((adj.get(source) || []).map(e => e.to));
+        const destNeighbors = new Set((adj.get(dest) || []).map(e => e.to));
+        
+        for (const node of sourceNeighbors) {
+          if (destNeighbors.has(node)) {
+            // This is a common opponent
+            validNodes.add(node);
+            nodesByDegree.set(node, 1);
+            validEdges.add(key(source, node));
+            validEdges.add(key(dest, node));
+          }
+        }
+        
+        // Layer 2 and beyond: Find teams that bridge between layer 1 teams and source/dest
+        if (maxDegrees >= 2) {
+          // For each degree 1 team, find their neighbors
+          const degree1Teams = Array.from(validNodes).filter(n => nodesByDegree.get(n) === 1);
+          
+          for (const team1 of degree1Teams) {
+            const neighbors = (adj.get(team1) || []).map(e => e.to);
+            
+            for (const neighbor of neighbors) {
+              if (validNodes.has(neighbor)) continue; // Already included
+              
+              // Check if this neighbor connects back to source or dest
+              const neighborNeighbors = new Set((adj.get(neighbor) || []).map(e => e.to));
+              
+              if (neighborNeighbors.has(source) || neighborNeighbors.has(dest)) {
+                // This neighbor connects back to source or dest through team1
+                validNodes.add(neighbor);
+                nodesByDegree.set(neighbor, 2);
+                validEdges.add(key(team1, neighbor));
+                
+                // Add edge to source or dest if it exists
+                if (neighborNeighbors.has(source)) {
+                  validEdges.add(key(neighbor, source));
+                }
+                if (neighborNeighbors.has(dest)) {
+                  validEdges.add(key(neighbor, dest));
+                }
+              }
+            }
+          }
+        }
+        
+        return {
+          nodes: Array.from(validNodes),
+          edges: Array.from(validEdges),
+          nodesByDegree,
+          source,
+          destination: dest,
+        };
       }
 
       function shortestPathByInverseLeverage(srcId, dstId, typeFilter, minLev) {
@@ -514,70 +812,117 @@ query Graph($season: Int!) {
         const typeFilter = document.getElementById('typeFilter').value;
         const minLev = Number(document.getElementById('lev').value);
         document.getElementById('levVal').textContent = String(minLev);
-        buildGraph(Number(document.getElementById('season').value), typeFilter, minLev);
+        // Clear path filter when applying filters (show all teams again)
+        buildGraph(Number(document.getElementById('season').value), typeFilter, minLev, null);
       }
 
       document.getElementById('loadBtn').addEventListener('click', load);
       document.getElementById('fitBtn').addEventListener('click', () => cy && cy.fit());
       document.getElementById('lev').addEventListener('input', applyFilters);
       document.getElementById('typeFilter').addEventListener('change', applyFilters);
+      document.getElementById('degrees').addEventListener('input', (e) => {
+        document.getElementById('degreesVal').textContent = e.target.value;
+      });
       document.getElementById('pathBtn').addEventListener('click', () => {
         const typeFilter = document.getElementById('typeFilter').value;
         const minLev = Number(document.getElementById('lev').value);
         const src = document.getElementById('srcSel').value;
         const dst = document.getElementById('dstSel').value;
-        const res = shortestPathByInverseLeverage(src, dst, typeFilter, minLev);
         const box = document.getElementById('pathInfo');
-        if (!res) {
-          box.textContent = 'No path found (maybe filters are too strict).';
+
+        if (!src || !dst) {
+          box.textContent = 'Please select both teams.';
           return;
         }
-        // Highlight
+
+        // First, find the shortest path to determine the minimum degrees needed
+        const shortestPath = shortestPathByInverseLeverage(src, dst, typeFilter, minLev);
+        
+        if (!shortestPath || shortestPath.nodes.length === 0) {
+          box.textContent = 'No path found between these teams (maybe filters are too strict).';
+          return;
+        }
+        
+        // Calculate the number of hops in the shortest path
+        // Path nodes include source and dest, so hops = nodes - 1
+        const shortestPathHops = shortestPath.nodes.length - 1;
+        
+        // Determine appropriate degrees to show based on shortest path
+        // If direct connection (1 hop), show degree 1 to see common opponents too
+        // Otherwise, show the exact number of hops in the shortest path
+        const suggestedDegrees = shortestPathHops === 1 ? 1 : shortestPathHops;
+        
+        // Update the degree slider to match the shortest path
+        const degreesSlider = document.getElementById('degrees');
+        degreesSlider.value = suggestedDegrees;
+        document.getElementById('degreesVal').textContent = suggestedDegrees;
+        
+        const degrees = suggestedDegrees;
+
+        // Find all nodes within N degrees of both selected teams
+        // Pass the shortest path to ensure it's always included
+        const res = findNodesWithinDegrees([src, dst], degrees, typeFilter, minLev, shortestPath);
+        
+        if (!res || res.nodes.length === 0) {
+          box.textContent = 'No connections found (maybe filters are too strict).';
+          return;
+        }
+
+        // Rebuild graph to show teams within degrees of separation
+        const season = Number(document.getElementById('season').value);
+        buildGraph(season, typeFilter, minLev, res);
+
+        // Highlight the selected teams
         cy.elements().removeClass('highlight');
-        const elist = [];
-        for (const id of res.nodes) elist.push(cy.getElementById(id));
-        for (const k of res.edges) elist.push(cy.getElementById('e_' + k));
-        elist.forEach(e => e.addClass('highlight'));
+        cy.getElementById(src).addClass('highlight');
+        cy.getElementById(dst).addClass('highlight');
         cy.style()
           .selector('.highlight')
-          .style({ 'line-color': '#fff', 'background-color': '#fff' })
+          .style({ 'background-color': '#facc15', 'border-width': 3, 'border-color': '#fff' })
           .update();
-        // Render path with game details
+
+        // Render comparison info
         const frag = document.createDocumentFragment();
         const header = document.createElement('div');
         header.className = 'small muted';
-        header.textContent = 'Shortest connection (by 1/leverage):';
+        header.textContent = `Comparison network (${res.nodes.length} teams, ${res.edges.length} connections):`;
         frag.appendChild(header);
-        for (let i = 0; i < res.nodes.length; i++) {
-          const id = res.nodes[i];
-          const t = teamIndex.get(id);
-          const nodeLine = document.createElement('div');
-          nodeLine.textContent = t.name + (i < res.nodes.length - 1 ? ' → ' : '');
-          frag.appendChild(nodeLine);
-          if (i < res.nodes.length - 1) {
-            const k = res.edges[i];
-            const games = pairGames.get(k) || [];
-            const top = games
-              .slice()
-              .sort((a, b) => (b.leverage || 0) - (a.leverage || 0))
-              .slice(0, 3);
-            const subHeader = document.createElement('div');
-            subHeader.className = 'muted small';
-            subHeader.style.margin = '4px 0 6px 8px';
-            subHeader.textContent = 'Top games on this edge:';
-            frag.appendChild(subHeader);
-            for (const g of top) {
-              const when = g.date ? new Date(g.date).toLocaleDateString() : 'TBD';
-              const row = document.createElement('div');
-              row.className = 'mono';
-              row.style.marginLeft = '8px';
-              row.textContent = `${when} — ${g.home.name} vs ${g.away.name} (lev ${Number(
-                g.leverage || 0
-              ).toFixed(3)})`;
-              frag.appendChild(row);
-            }
+
+        const srcTeam = teamIndex.get(src);
+        const dstTeam = teamIndex.get(dst);
+        
+        const summary = document.createElement('div');
+        summary.style.marginTop = '8px';
+        summary.innerHTML = `<strong>${srcTeam.name}</strong> vs <strong>${dstTeam.name}</strong>`;
+        frag.appendChild(summary);
+        
+        // Show shortest path info
+        const pathInfo = document.createElement('div');
+        pathInfo.className = 'small muted';
+        pathInfo.style.marginTop = '4px';
+        const pathTeamNames = shortestPath.nodes.map(id => teamIndex.get(id)?.name || id);
+        pathInfo.textContent = `Shortest path (${shortestPathHops} hop${shortestPathHops !== 1 ? 's' : ''}): ${pathTeamNames.join(' → ')}`;
+        frag.appendChild(pathInfo);
+
+        // Count teams by degree
+        const degreeCount = new Map();
+        for (const [node, deg] of res.nodesByDegree) {
+          degreeCount.set(deg, (degreeCount.get(deg) || 0) + 1);
+        }
+
+        const degreeInfo = document.createElement('div');
+        degreeInfo.className = 'small muted';
+        degreeInfo.style.marginTop = '6px';
+        const degreeParts = [];
+        for (let d = 0; d <= degrees; d++) {
+          const count = degreeCount.get(d) || 0;
+          if (count > 0) {
+            degreeParts.push(`${count} at ${d}°`);
           }
         }
+        degreeInfo.textContent = 'Distribution: ' + degreeParts.join(', ');
+        frag.appendChild(degreeInfo);
+
         box.replaceChildren(frag);
       });
 
@@ -593,6 +938,10 @@ query Graph($season: Int!) {
 
       // Trigger the load function that was defined in the previous script
       load();
+    </script>
+    <script type="module">
+      import { initNavigation } from './modules/shared-nav.js';
+      initNavigation('fbs-graph');
     </script>
   </body>
 </html>
