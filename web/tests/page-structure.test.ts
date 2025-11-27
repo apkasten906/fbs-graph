@@ -28,15 +28,15 @@ describe('Page Structure Tests', () => {
       hasContentWrapper: false,
     },
     {
-      file: 'cfb-graph-timeline-explorer.html',
-      name: 'CFB Graph Timeline Explorer',
-      activePage: 'cfb-graph-timeline-explorer',
+      file: 'fbs-graph-timeline-explorer.html',
+      name: 'FBS Graph Timeline Explorer',
+      activePage: 'fbs-graph-timeline-explorer',
       hasContentWrapper: false,
     },
     {
-      file: 'cfb-graph-visualizer.html',
-      name: 'CFB Graph Visualizer',
-      activePage: 'cfb-graph',
+      file: 'fbs-graph-visualizer.html',
+      name: 'FBS Graph Visualizer',
+      activePage: 'fbs-graph',
       hasContentWrapper: false,
     },
   ];

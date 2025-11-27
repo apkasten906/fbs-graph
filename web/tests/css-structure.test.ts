@@ -130,16 +130,16 @@ describe('CSS Files and Styling', () => {
   });
 
   describe('Page-specific CSS files', () => {
-    it('cfb-graph-visualizer.css should exist if referenced', () => {
-      const filePath = path.join(cssDir, 'cfb-graph-visualizer.css');
+    it('fbs-graph-visualizer.css should exist if referenced', () => {
+      const filePath = path.join(cssDir, 'fbs-graph-visualizer.css');
       // Only test if file exists, don't fail if it doesn't
       if (fs.existsSync(filePath)) {
         expect(fs.existsSync(filePath)).toBe(true);
       }
     });
 
-    it('cfb-graph-timeline-explorer.css should exist if referenced', () => {
-      const filePath = path.join(cssDir, 'cfb-graph-timeline-explorer.css');
+    it('fbs-graph-timeline-explorer.css should exist if referenced', () => {
+      const filePath = path.join(cssDir, 'fbs-graph-timeline-explorer.css');
       // Only test if file exists, don't fail if it doesn't
       if (fs.existsSync(filePath)) {
         expect(fs.existsSync(filePath)).toBe(true);

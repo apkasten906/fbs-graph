@@ -43,8 +43,8 @@ describe('Layout Pattern Validation', () => {
   describe('Body Margin Pattern (Visualizer Pages)', () => {
     const visualizerPages = [
       'matchup-timeline.html',
-      'cfb-graph-timeline-explorer.html',
-      'cfb-graph-visualizer.html',
+      'fbs-graph-timeline-explorer.html',
+      'fbs-graph-visualizer.html',
     ];
 
     visualizerPages.forEach(pageName => {
@@ -108,8 +108,8 @@ describe('Layout Pattern Validation', () => {
       'playoff-preview.html',
       'rankings.html',
       'matchup-timeline.html',
-      'cfb-graph-timeline-explorer.html',
-      'cfb-graph-visualizer.html',
+      'fbs-graph-timeline-explorer.html',
+      'fbs-graph-visualizer.html',
     ];
 
     const pageActiveMappings: Record<string, string> = {
@@ -117,8 +117,8 @@ describe('Layout Pattern Validation', () => {
       'playoff-preview.html': 'playoff-preview',
       'rankings.html': 'rankings',
       'matchup-timeline.html': 'matchup-timeline',
-      'cfb-graph-timeline-explorer.html': 'cfb-graph-timeline-explorer',
-      'cfb-graph-visualizer.html': 'cfb-graph',
+      'fbs-graph-timeline-explorer.html': 'fbs-graph-timeline-explorer',
+      'fbs-graph-visualizer.html': 'fbs-graph',
     };
 
     allPages.forEach(pageName => {
@@ -193,8 +193,8 @@ describe('Layout Pattern Validation', () => {
     it('visualizer pages should have main as direct body child', () => {
       const visualizerPages = [
         'matchup-timeline.html',
-        'cfb-graph-timeline-explorer.html',
-        'cfb-graph-visualizer.html',
+        'fbs-graph-timeline-explorer.html',
+        'fbs-graph-visualizer.html',
       ];
 
       visualizerPages.forEach(pageName => {

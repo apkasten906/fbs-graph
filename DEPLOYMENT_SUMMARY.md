@@ -76,15 +76,15 @@ Push to `main` branch triggers GitHub Actions workflow which:
 2. Select "Deploy to GitHub Pages" workflow
 3. Click "Run workflow"
 
-## 🧪 Local Testing
+## Local Testing
 
 Before deploying:
 
 ```bash
 # Generate static data files
 npm run generate:static
-│   ├── cfb-graph-timeline-explorer.html
-│   ├── cfb-graph-visualizer.html
+│   ├── fbs-graph-timeline-explorer.html
+│   ├── fbs-graph-visualizer.html
 npm run web:serve
 
 # Open browser to http://localhost:4173

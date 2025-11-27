@@ -45,7 +45,7 @@ npm run web:serve
 ```
 
 From the main page, choose either [Matchup Timeline](http://localhost:4173/web/matchup-timeline.html)
-or [CFB Graph Visualizer](http://localhost:4173/web/cfb-graph-visualizer.html).
+or [FBS Graph Visualizer](http://localhost:4173/web/fbs-graph-visualizer.html).
 
 > **Tip:** Opening HTML files directly from disk will not work due to browser security restrictions—always use the static server.
 

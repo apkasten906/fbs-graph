@@ -1,6 +1,23 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createApolloServer } from '../src/server.js';
+
+// Resolve data directory used by CLI and library code. Prefer CWD, fall back to module-relative path.
+function resolveDataDir() {
+  const cwdCandidate = path.join(process.cwd(), 'src', 'data');
+  if (fs.existsSync(cwdCandidate)) return cwdCandidate;
+
+  try {
+    const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+    const modCandidate = path.join(scriptDir, '..', 'src', 'data');
+    if (fs.existsSync(modCandidate)) return modCandidate;
+  } catch (e) {
+    // ignore
+  }
+
+  return cwdCandidate;
+}
 
 async function generate(season = 2025, limit = 12, gameLimit = 6, leverageThreshold = 0.75) {
   const server = createApolloServer();
@@ -50,7 +67,7 @@ async function generate(season = 2025, limit = 12, gameLimit = 6, leverageThresh
     return;
   }
   // Load local data to support client-side filtering (weeks and poll snapshots)
-  const DATA_DIR = path.join(process.cwd(), 'src', 'data');
+  const DATA_DIR = resolveDataDir();
   const teamSeasons: any[] = JSON.parse(
     fs.readFileSync(path.join(DATA_DIR, 'teamSeasons.json'), 'utf-8')
   );
@@ -127,7 +144,7 @@ const { playoffHtml, rankingsHtml } = renderHTML(data, {
 async function supplementContendersIfNeeded(data: any, limit: number, season: number) {
   if ((data.contenders || []).length >= limit) return data;
   try {
-    const DATA_DIR = path.join(process.cwd(), 'src', 'data');
+    const DATA_DIR = resolveDataDir();
     const teamSeasons: any[] = JSON.parse(
       fs.readFileSync(path.join(DATA_DIR, 'teamSeasons.json'), 'utf-8')
     );
@@ -815,7 +832,7 @@ function generateRankingsPage(
         Object.fromEntries(Object.entries(teamNameToSeasonId).map(([k, v]) => [v, k]))
       )};
       const recordByTeamSeasonIdLocal = new Map(${JSON.stringify(
-        Array.from(recordByTeamSeasonId.entries())
+        Array.from(recordByTeamSeasonIdLocal.entries())
       )});
       const teamSeasonData = ${JSON.stringify(
         Object.fromEntries(
