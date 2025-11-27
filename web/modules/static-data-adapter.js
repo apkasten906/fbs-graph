@@ -4,7 +4,10 @@
  */
 
 export class StaticDataAdapter {
-  constructor(basePath = './web/data') {
+  constructor(basePath) {
+    // Default basePath: prefer Node-friendly `src/data` when running under Node
+    const isNode = typeof process !== 'undefined' && !!process.versions && !!process.versions.node;
+    if (!basePath) basePath = isNode ? './src/data' : './web/data';
     this.basePath = basePath;
     this.cache = new Map();
     // Single source of truth for default season used when callers omit a season
@@ -22,34 +25,63 @@ export class StaticDataAdapter {
       console.log(`[StaticDataAdapter] Loaded ${filename} from cache`);
       return this.cache.get(filename);
     }
+    const isNode = typeof process !== 'undefined' && !!process.versions && !!process.versions.node;
 
-    const url = `${this.basePath}/${filename}`;
-    console.log(`[StaticDataAdapter] Fetching ${url}`);
-
-    try {
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        console.error(
-          `[StaticDataAdapter] Failed to load ${filename}: ${response.status} ${response.statusText}`
+    // Prefer fetch when available (tests may provide a global fetch mock in Node)
+    if (typeof fetch === 'function') {
+      const url = `${this.basePath.replace(/\/+$/, '')}/${filename}`;
+      console.log(`[StaticDataAdapter] Fetching ${url}`);
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          console.error(
+            `[StaticDataAdapter] Failed to load ${filename}: ${response.status} ${response.statusText}`
+          );
+          throw new Error(`Failed to load ${filename}: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log(
+          `[StaticDataAdapter] Successfully loaded ${filename}, ${JSON.stringify(data).length} bytes`
         );
-        throw new Error(`Failed to load ${filename}: ${response.status} ${response.statusText}`);
+        this.cache.set(filename, data);
+        return data;
+      } catch (error) {
+        if (error instanceof Error && error.message.startsWith('Failed to load')) throw error;
+        console.error(`[StaticDataAdapter] Error loading ${filename}:`, error);
+        throw new Error(
+          `Failed to load ${filename}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
+      }
+    }
+
+    // Node environment fallback: read files from disk using fs
+    try {
+      const path = (await import('path')).default;
+      const fs = (await import('fs')).promises;
+      const { fileURLToPath } = await import('url');
+
+      let candidatePath;
+      if (path.isAbsolute(this.basePath)) {
+        candidatePath = path.join(this.basePath, filename);
+      } else {
+        // First try: treat basePath as relative to process.cwd()
+        candidatePath = path.join(process.cwd(), this.basePath, filename);
+        try {
+          await fs.access(candidatePath);
+        } catch (e) {
+          // Fallback: resolve relative to this module (e.g., when running in test runner)
+          const moduleDir = path.dirname(fileURLToPath(import.meta.url));
+          candidatePath = path.join(moduleDir, '..', this.basePath, filename);
+        }
       }
 
-      const data = await response.json();
-      console.log(
-        `[StaticDataAdapter] Successfully loaded ${filename}, ${JSON.stringify(data).length} bytes`
-      );
+      console.log(`[StaticDataAdapter] Reading local file ${candidatePath}`);
+      const content = await fs.readFile(candidatePath, 'utf8');
+      const data = JSON.parse(content);
       this.cache.set(filename, data);
       return data;
     } catch (error) {
-      // Network errors, CORS issues, or JSON parsing failures
-      if (error instanceof Error && error.message.startsWith('Failed to load')) {
-        // Re-throw our own errors with context preserved
-        throw error;
-      }
-      // Wrap network/parsing errors with additional context
-      console.error(`[StaticDataAdapter] Error loading ${filename}:`, error);
+      console.error(`[StaticDataAdapter] Error reading ${filename} from disk:`, error);
       throw new Error(
         `Failed to load ${filename}: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -364,4 +396,4 @@ export class StaticDataAdapter {
 }
 
 // Create a global instance
-export const staticData = new StaticDataAdapter('./web/data');
+export const staticData = new StaticDataAdapter();
