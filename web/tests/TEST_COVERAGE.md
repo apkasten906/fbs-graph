@@ -25,8 +25,8 @@ This test suite verifies that UI components are appearing correctly across all p
 #### Visualizer Pages (without content-wrapper)
 
 - Matchup Timeline (`matchup-timeline.html`)
-- FBS Graph Timeline Explorer (`fbs-graph-timeline-explorer.html`)
-- FBS Graph Visualizer (`fbs-graph-visualizer.html`)
+- CFB Graph Timeline Explorer (`cfb-graph-timeline-explorer.html`)
+- CFB Graph Visualizer (`cfb-graph-visualizer.html`)
 
 **Tests verify:**
 
@@ -186,7 +186,7 @@ npm run test:coverage -- web/
    - Body has inline margin-left: 220px style
    - Toggles `.nav-collapsed` class on body element
    - Main element is direct child of body (required for flex layouts)
-   - Pages: matchup-timeline.html, fbs-graph-timeline-explorer.html, fbs-graph-visualizer.html
+   - Pages: matchup-timeline.html, cfb-graph-timeline-explorer.html, cfb-graph-visualizer.html
 
 ### Navigation Constants
 

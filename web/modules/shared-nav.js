@@ -14,9 +14,9 @@ export function initNavigation(activePage) {
               <button class="nav-toggle" id="navToggle" title="Toggle navigation">☰</button>
             </a>
           </li>
-          <li><a href="fbs-graph-timeline-explorer.html" class="${activePage === 'fbs-graph-timeline-explorer' ? 'active' : ''}">Timeline Explorer</a></li>
+          <li><a href="cfb-graph-timeline-explorer.html" class="${activePage === 'cfb-graph-timeline-explorer' ? 'active' : ''}">Timeline Explorer</a></li>
           <li><a href="matchup-timeline.html" class="${activePage === 'matchup-timeline' ? 'active' : ''}">Matchup Timeline</a></li>
-          <li><a href="fbs-graph-visualizer.html" class="${activePage === 'fbs-graph' ? 'active' : ''}">FBS Graph Visualizer</a></li>
+          <li><a href="cfb-graph-visualizer.html" class="${activePage === 'cfb-graph' ? 'active' : ''}">CFB Graph Visualizer</a></li>
           <li><a href="playoff-preview.html" class="${activePage === 'playoff-preview' ? 'active' : ''}">Playoff Preview</a></li>
           <li><a href="rankings.html" class="${activePage === 'rankings' ? 'active' : ''}">Rankings</a></li>          
         </ul>

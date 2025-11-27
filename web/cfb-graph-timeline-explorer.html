@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FBS Schedule Graph — Timeline Explorer</title>
+    <title>CFB Schedule Graph — Timeline Explorer</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="common-theme.css" />
     <link rel="stylesheet" href="css/shared-nav.css" />
-    <link rel="stylesheet" href="css/fbs-graph-visualizer.css" />
-    <link rel="stylesheet" href="css/fbs-graph-timeline-explorer.css" />
+    <link rel="stylesheet" href="css/cfb-graph-visualizer.css" />
+    <link rel="stylesheet" href="css/cfb-graph-timeline-explorer.css" />
     <style>
       /* Adjust body for nav offset */
       body {
@@ -23,7 +23,7 @@
   </head>
   <body>
     <header>
-      <h1>FBS Schedule Graph — Timeline Explorer</h1>
+      <h1>CFB Schedule Graph — Timeline Explorer</h1>
       <div class="controls">
         <label for="season">Season:</label>
         <input id="season" type="number" value="2025" style="width: 86px" />
@@ -90,7 +90,7 @@
     <footer>Tip: try nudging the leverage slider to surface only the highest-impact weeks.</footer>
     <script type="module">
       import { initNavigation } from './modules/shared-nav.js';
-      initNavigation('fbs-graph-timeline-explorer');
+      initNavigation('cfb-graph-timeline-explorer');
     </script>
     <script type="module">
       // Load static data adapter first
@@ -100,6 +100,6 @@
         console.log('[Timeline Explorer] Static data adapter initialized');
       }
     </script>
-    <script type="module" src="./modules/fbs-graph-timeline-explorer.js"></script>
+    <script type="module" src="./modules/cfb-graph-timeline-explorer.js"></script>
   </body>
 </html>
