@@ -11,28 +11,46 @@ import { describe, it, expect, beforeEach } from 'vitest';
  */
 
 describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
+  // Mock types for test data
+  interface MockGame {
+    home: { id: string; name: string };
+    away: { id: string; name: string };
+    type: string;
+    leverage: number;
+  }
+
   // Mock global data structures that the visualizer expects
-  let pairGames;
-  let teamIndex;
+  let pairGames: Map<string, MockGame[]>;
+  let teamIndex: Map<string, { id: string; name: string }>;
 
   beforeEach(() => {
     pairGames = new Map();
     teamIndex = new Map();
   });
 
-  const createMockGame = (team1, team2, leverage = 0.5, type = 'REGULAR') => ({
+  const createMockGame = (
+    team1: string,
+    team2: string,
+    leverage = 0.5,
+    type = 'REGULAR'
+  ): MockGame => ({
     home: { id: team1, name: team1.toUpperCase() },
     away: { id: team2, name: team2.toUpperCase() },
     type,
     leverage,
   });
 
-  const addConnection = (team1, team2, leverage = 0.5, type = 'REGULAR') => {
+  const addConnection = (
+    team1: string,
+    team2: string,
+    leverage = 0.5,
+    type = 'REGULAR'
+  ): void => {
     const k = team1 < team2 ? `${team1}__${team2}` : `${team2}__${team1}`;
     if (!pairGames.has(k)) {
       pairGames.set(k, []);
     }
-    pairGames.get(k).push(createMockGame(team1, team2, leverage, type));
+    pairGames.get(k)!.push(createMockGame(team1, team2, leverage, type));
 
     // Add to team index if not exists
     if (!teamIndex.has(team1)) {
@@ -43,39 +61,47 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
     }
   };
 
-  const key = (a, b) => (a < b ? `${a}__${b}` : `${b}__${a}`);
+  const key = (a: string, b: string): string => (a < b ? `${a}__${b}` : `${b}__${a}`);
 
   // Copy the actual function implementations for testing
-  const shortestPathByInverseLeverage = (srcId, dstId, typeFilter, minLev) => {
-    const adj = new Map();
+  const shortestPathByInverseLeverage = (
+    srcId: string,
+    dstId: string,
+    typeFilter: string,
+    minLev: number
+  ): { nodes: string[]; edges: string[] } | null => {
+    const adj: Map<
+      string,
+      Array<{ to: string; k: string; w: number; avg: number; games: MockGame[] }>
+    > = new Map();
     for (const [k, list] of pairGames) {
       const a = list[0].home.id,
         b = list[0].away.id;
       const filtered = list.filter(
-        g => (typeFilter === 'ALL' || g.type === typeFilter) && (g.leverage || 0) >= minLev
+        (g: MockGame) => (typeFilter === 'ALL' || g.type === typeFilter) && (g.leverage || 0) >= minLev
       );
       if (!filtered.length) continue;
       const avg = filtered.reduce((s, x) => s + (x.leverage || 0), 0) / filtered.length;
       const w = 1 / Math.max(1e-6, avg);
       if (!adj.has(a)) adj.set(a, []);
       if (!adj.has(b)) adj.set(b, []);
-      adj.get(a).push({ to: b, k, w, avg, games: filtered });
-      adj.get(b).push({ to: a, k, w, avg, games: filtered });
+      adj.get(a)!.push({ to: b, k, w, avg, games: filtered });
+      adj.get(b)!.push({ to: a, k, w, avg, games: filtered });
     }
 
-    const dist = new Map(),
-      prev = new Map(),
-      prevEdge = new Map();
+    const dist: Map<string, number> = new Map();
+    const prev: Map<string, string> = new Map();
+    const prevEdge: Map<string, string> = new Map();
     const allIds = Array.from(teamIndex.keys());
-    const Q = new Set(allIds);
+    const Q = new Set<string>(allIds);
     for (const id of allIds) dist.set(id, Infinity);
     dist.set(srcId, 0);
 
     while (Q.size) {
-      let u = null,
+      let u: string | null = null,
         best = Infinity;
       for (const v of Q) {
-        const d = dist.get(v);
+        const d = dist.get(v) ?? Infinity;
         if (d < best) {
           best = d;
           u = v;
@@ -87,8 +113,8 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       const nbrs = adj.get(u) || [];
       for (const e of nbrs) {
         if (!Q.has(e.to)) continue;
-        const alt = dist.get(u) + e.w;
-        if (alt < dist.get(e.to)) {
+        const alt = (dist.get(u) ?? Infinity) + e.w;
+        if (alt < (dist.get(e.to) ?? Infinity)) {
           dist.set(e.to, alt);
           prev.set(e.to, u);
           prevEdge.set(e.to, e.k);
@@ -103,8 +129,8 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
     let cur = dstId;
     while (cur !== srcId) {
       pathIds.push(cur);
-      edges.push(prevEdge.get(cur));
-      cur = prev.get(cur);
+      edges.push(prevEdge.get(cur)!);
+      cur = prev.get(cur)!;
     }
     pathIds.push(srcId);
     pathIds.reverse();
@@ -113,27 +139,33 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
   };
 
   const findNodesWithinDegrees = (
-    startNodes,
-    maxDegrees,
-    typeFilter,
-    minLev,
-    shortestPath = null
-  ) => {
+    startNodes: string[],
+    maxDegrees: number,
+    typeFilter: string,
+    minLev: number,
+    shortestPath: { nodes: string[]; edges: string[] } | null = null
+  ): {
+    nodes: string[];
+    edges: string[];
+    nodesByDegree: Map<string, number>;
+    source: string;
+    destination: string;
+  } => {
     const source = startNodes[0];
     const dest = startNodes[1];
 
-    const adj = new Map();
+    const adj: Map<string, Array<{ to: string; k: string }>> = new Map();
     for (const [k, list] of pairGames) {
       const a = list[0].home.id,
         b = list[0].away.id;
       const filtered = list.filter(
-        g => (typeFilter === 'ALL' || g.type === typeFilter) && (g.leverage || 0) >= minLev
+        (g: MockGame) => (typeFilter === 'ALL' || g.type === typeFilter) && (g.leverage || 0) >= minLev
       );
       if (!filtered.length) continue;
       if (!adj.has(a)) adj.set(a, []);
       if (!adj.has(b)) adj.set(b, []);
-      adj.get(a).push({ to: b, k });
-      adj.get(b).push({ to: a, k });
+      adj.get(a)!.push({ to: b, k });
+      adj.get(b)!.push({ to: a, k });
     }
 
     if (maxDegrees === 0) {
@@ -150,12 +182,12 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
           destination: dest,
         };
       }
-      return { nodes: [], edges: [], nodesByDegree: new Map() };
+      return { nodes: [], edges: [], nodesByDegree: new Map<string, number>(), source, destination: dest };
     }
 
-    const nodesByDegree = new Map();
-    const validEdges = new Set();
-    const validNodes = new Set([source, dest]);
+    const nodesByDegree: Map<string, number> = new Map();
+    const validEdges: Set<string> = new Set();
+    const validNodes: Set<string> = new Set([source, dest]);
     nodesByDegree.set(source, 0);
     nodesByDegree.set(dest, 0);
 
@@ -177,8 +209,8 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       validEdges.add(directKey);
     }
 
-    const sourceNeighbors = new Set((adj.get(source) || []).map(e => e.to));
-    const destNeighbors = new Set((adj.get(dest) || []).map(e => e.to));
+    const sourceNeighbors = new Set<string>((adj.get(source) || []).map(e => e.to));
+    const destNeighbors = new Set<string>((adj.get(dest) || []).map(e => e.to));
 
     for (const node of sourceNeighbors) {
       if (destNeighbors.has(node)) {
@@ -192,15 +224,15 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
     }
 
     if (maxDegrees >= 2) {
-      const degree1Teams = Array.from(validNodes).filter(n => nodesByDegree.get(n) === 1);
+      const degree1Teams = Array.from(validNodes).filter((n) => nodesByDegree.get(n) === 1) as string[];
 
       for (const team1 of degree1Teams) {
-        const neighbors = (adj.get(team1) || []).map(e => e.to);
+        const neighbors = (adj.get(team1) || []).map((e) => e.to) as string[];
 
         for (const neighbor of neighbors) {
           if (validNodes.has(neighbor)) continue;
 
-          const neighborNeighbors = new Set((adj.get(neighbor) || []).map(e => e.to));
+          const neighborNeighbors = new Set<string>((adj.get(neighbor) || []).map((e) => e.to));
 
           if (neighborNeighbors.has(source) || neighborNeighbors.has(dest)) {
             validNodes.add(neighbor);
@@ -236,8 +268,9 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       const path = shortestPathByInverseLeverage('ohio-state', 'michigan', 'ALL', 0);
 
       expect(path).not.toBeNull();
-      expect(path.nodes).toEqual(['ohio-state', 'michigan']);
-      expect(path.edges).toHaveLength(1);
+      const p = path!;
+      expect(p.nodes).toEqual(['ohio-state', 'michigan']);
+      expect(p.edges).toHaveLength(1);
     });
 
     it('should find 2-hop path through intermediate team', () => {
@@ -247,8 +280,9 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       const path = shortestPathByInverseLeverage('ohio-state', 'georgia', 'ALL', 0);
 
       expect(path).not.toBeNull();
-      expect(path.nodes).toEqual(['ohio-state', 'texas', 'georgia']);
-      expect(path.edges).toHaveLength(2);
+      const p = path!;
+      expect(p.nodes).toEqual(['ohio-state', 'texas', 'georgia']);
+      expect(p.edges).toHaveLength(2);
     });
 
     it('should find shortest of multiple paths', () => {
@@ -262,8 +296,9 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       const path = shortestPathByInverseLeverage('ohio-state', 'miami', 'ALL', 0);
 
       expect(path).not.toBeNull();
+      const p = path!;
       // Should prefer direct path with higher leverage
-      expect(path.nodes).toEqual(['ohio-state', 'miami']);
+      expect(p.nodes).toEqual(['ohio-state', 'miami']);
     });
 
     it('should return null when no path exists', () => {
@@ -283,7 +318,8 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       const path = shortestPathByInverseLeverage('ohio-state', 'michigan', 'REGULAR', 0);
 
       expect(path).not.toBeNull();
-      expect(path.nodes).toEqual(['ohio-state', 'michigan']);
+      const p = path!;
+      expect(p.nodes).toEqual(['ohio-state', 'michigan']);
     });
 
     it('should respect minimum leverage filter', () => {
@@ -294,8 +330,9 @@ describe('FBS Graph Visualizer - Shortest Path & Comparison Network', () => {
       const path = shortestPathByInverseLeverage('ohio-state', 'michigan', 'ALL', 0.5);
 
       expect(path).not.toBeNull();
+      const p = path!;
       // Should take longer path because direct path has too low leverage
-      expect(path.nodes).toEqual(['ohio-state', 'texas', 'michigan']);
+      expect(p.nodes).toEqual(['ohio-state', 'texas', 'michigan']);
     });
   });
 
