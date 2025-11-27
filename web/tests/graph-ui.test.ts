@@ -153,7 +153,7 @@ describe('graph-ui', () => {
   });
 
   describe('buildLegend', () => {
-    it('should build legend from teams data', () => {
+    it('should build legend from teams data', async () => {
       const teams: Team[] = [
         { id: 'ohio-state', name: 'Ohio State', conference: { id: 'b1g' } },
         { id: 'michigan', name: 'Michigan', conference: { id: 'b1g' } },
@@ -165,7 +165,9 @@ describe('graph-ui', () => {
         { id: 'sec', name: 'SEC', shortName: 'SEC' },
       ];
 
-      const colors = { b1g: '#CC0000', sec: '#0033A0', other: '#444444' };
+      // @ts-ignore - import canonical colors
+      const { CONFERENCE_COLORS } = await import('../modules/conference-colors.js');
+      const colors = { b1g: CONFERENCE_COLORS.b1g, sec: CONFERENCE_COLORS.sec, other: CONFERENCE_COLORS.other };
 
       buildLegend(teams, conferenceMeta, colors);
 
@@ -192,7 +194,7 @@ describe('graph-ui', () => {
       expect(container?.textContent).toContain('OTHER');
     });
 
-    it('should sort legend entries alphabetically', () => {
+    it('should sort legend entries alphabetically', async () => {
       const teams: Team[] = [
         { id: 't1', name: 'Team 1', conference: { id: 'sec' } },
         { id: 't2', name: 'Team 2', conference: { id: 'acc' } },
@@ -205,7 +207,9 @@ describe('graph-ui', () => {
         { id: 'b1g', name: 'Big Ten', shortName: 'B1G' },
       ];
 
-      const colors = { sec: '#0033A0', acc: '#00539F', b1g: '#CC0000', other: '#444444' };
+      // @ts-ignore - import canonical colors
+      const { CONFERENCE_COLORS: C2 } = await import('../modules/conference-colors.js');
+      const colors = { sec: C2.sec, acc: C2.acc, b1g: C2.b1g, other: C2.other };
 
       buildLegend(teams, conferenceMeta, colors);
 

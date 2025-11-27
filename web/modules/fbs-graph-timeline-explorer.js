@@ -77,20 +77,7 @@ function shortestPathByInverseLeverage(pairs, teams, srcId, dstId) {
   edges.reverse();
   return { nodes, edges };
 }
-const COLORS = {
-  sec: '#6CCFF6',
-  b1g: '#B28DFF',
-  b12: '#F6AE2D',
-  acc: '#4CC9F0',
-  aac: '#FF6B6B',
-  mwc: '#80ED99',
-  mac: '#FFD166',
-  sbc: '#90CAF9',
-  cusa: '#FF9E00',
-  ind: '#BDB2FF',
-  pac12: '#9CCC65',
-  other: '#CCD6F6',
-};
+import { CONFERENCE_COLORS as COLORS, getConferenceColor } from './conference-colors.js';
 
 const SEGMENT_COLORS = ['#60a5fa', '#f97316', '#a855f7', '#22c55e', '#facc15', '#f43f5e'];
 
@@ -161,7 +148,7 @@ function applyConferenceLegend() {
       const meta = state.conferenceMeta.find(c => c.id === id);
       return {
         id,
-        color: COLORS[id] || COLORS.other,
+        color: getConferenceColor(id),
         label: meta ? `${meta.name} (${meta.shortName})` : id.toUpperCase(),
       };
     })

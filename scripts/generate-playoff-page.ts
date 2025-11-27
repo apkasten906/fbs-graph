@@ -44,8 +44,8 @@ async function generate(season = 2025, limit = 12, gameLimit = 6, leverageThresh
     return;
   }
   const data = result.body.singleResult.data?.playoffPreview;
-  if (!data) {
-    console.error('No playoffPreview data returned');
+  if (!data || typeof data !== 'object' || !('season' in data) || typeof data.season !== 'number') {
+    console.error('No playoffPreview data returned or missing season field');
     process.exitCode = 1;
     return;
   }
@@ -59,17 +59,62 @@ async function generate(season = 2025, limit = 12, gameLimit = 6, leverageThresh
   const conferences: any[] = JSON.parse(
     fs.readFileSync(path.join(DATA_DIR, 'conferences.json'), 'utf-8')
   );
+  const games: any[] = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'games.json'), 'utf-8'));
+
+  function buildRecordsForSeason(season: number) {
+    const rec = new Map<
+      string,
+      { wins: number; losses: number; ties: number; confWins: number; confLosses: number }
+    >();
+    const ensure = (teamId: string) => {
+      const key = `${teamId}-${season}`;
+      if (!rec.has(key)) {
+        rec.set(key, { wins: 0, losses: 0, ties: 0, confWins: 0, confLosses: 0 });
+      }
+      return key;
+    };
+    for (const g of games) {
+      if (g.season !== season) continue;
+      const isConf = g.type === 'CONFERENCE';
+      const homeKey = ensure(g.homeTeamId);
+      const awayKey = ensure(g.awayTeamId);
+      const homeRec = rec.get(homeKey)!;
+      const awayRec = rec.get(awayKey)!;
+      if (g.result === 'HOME_WIN') {
+        homeRec.wins += 1;
+        awayRec.losses += 1;
+        if (isConf) {
+          homeRec.confWins += 1;
+          awayRec.confLosses += 1;
+        }
+      } else if (g.result === 'AWAY_WIN') {
+        awayRec.wins += 1;
+        homeRec.losses += 1;
+        if (isConf) {
+          awayRec.confWins += 1;
+          homeRec.confLosses += 1;
+        }
+      } else if (g.result === 'TIE') {
+        homeRec.ties += 1;
+        awayRec.ties += 1;
+      }
+    }
+    return rec;
+  }
 
   const outDir = path.join(process.cwd(), 'web');
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
-  const { playoffHtml, rankingsHtml } = renderHTML(data, {
-    polls,
-    teams,
-    teamSeasons,
-    conferences,
-    dataDir: DATA_DIR,
-  });
+  const recordByTeamSeasonId = buildRecordsForSeason(data.season);
+
+const { playoffHtml, rankingsHtml } = renderHTML(data, {
+  polls,
+  teams,
+  teamSeasons,
+  recordByTeamSeasonId,
+  conferences,
+  dataDir: DATA_DIR,
+});
   fs.writeFileSync(path.join(outDir, 'playoff-preview.html'), playoffHtml, 'utf-8');
   fs.writeFileSync(path.join(outDir, 'rankings.html'), rankingsHtml, 'utf-8');
   console.log('Wrote web/playoff-preview.html');
@@ -175,7 +220,17 @@ async function supplementContendersIfNeeded(data: any, limit: number, season: nu
 
 function renderHTML(
   data: any,
-  ctx: { polls: any[]; teams: any[]; teamSeasons: any[]; conferences: any[]; dataDir: string }
+  ctx: {
+    polls: any[];
+    teams: any[];
+    teamSeasons: any[];
+    conferences: any[];
+    dataDir: string;
+    recordByTeamSeasonId?: Map<
+      string,
+      { wins: number; losses: number; ties: number; confWins: number; confLosses: number }
+    >;
+  }
 ) {
   // Prefer grouping by the existing `week` field on Game, falling back to ISO week-start from the date.
   const games = (data.remainingHighLeverageGames || []).map((g: any) => ({
@@ -192,6 +247,12 @@ function renderHTML(
   // Build poll -> week -> rank -> teamSeasonId map for client-side filtering
   const pollsData = ctx.polls || [];
   const pollTypes = ['CFP', 'COACHES', 'AP'];
+  const recordByTeamSeasonId =
+    ctx.recordByTeamSeasonId ||
+    new Map<
+      string,
+      { wins: number; losses: number; ties: number; confWins: number; confLosses: number }
+    >();
   // Structure: ranksByPollWeek[poll][week][rank] = teamSeasonId
   const ranksByPollWeek: Record<string, Record<string, Record<string, string>>> = {};
   for (const pt of pollTypes) ranksByPollWeek[pt] = {};
@@ -382,7 +443,8 @@ function renderHTML(
             : '';
           const homeRank = g.home.cfpRank ? `#${g.home.cfpRank} ` : '';
           const awayRank = g.away.cfpRank ? `#${g.away.cfpRank} ` : '';
-          const leverageStr = typeof g.leverage === 'number' ? ` (lev: ${g.leverage.toFixed(4)})` : '';
+          const leverageStr =
+            typeof g.leverage === 'number' ? ` (lev: ${g.leverage.toFixed(4)})` : '';
           return `<li>${dateStr}${homeRank}${escapeHtml(
             g.home.name
           )} vs ${awayRank}${escapeHtml(g.away.name)}${leverageStr}</li>`;
@@ -418,7 +480,7 @@ function renderHTML(
     .join('\n');
 
   // Generate rankings HTML for separate page
-  const rankingsHtml = generateRankingsPage(data, ranksByPollWeek, teamNameToSeasonId, ctx);
+  const rankingsHtml = generateRankingsPage(data, ranksByPollWeek, teamNameToSeasonId, ctx, recordByTeamSeasonId);
 
   const playoffHtml = `<!doctype html>
 <html lang="en">
@@ -585,7 +647,16 @@ function renderHTML(
   return { playoffHtml, rankingsHtml };
 }
 
-function generateRankingsPage(data: any, ranksByPollWeek: any, teamNameToSeasonId: any, ctx: any) {
+function generateRankingsPage(
+  data: any,
+  ranksByPollWeek: any,
+  teamNameToSeasonId: any,
+  ctx: any,
+  recordByTeamSeasonId?: Map<string, { wins: number; losses: number; ties: number; confWins: number; confLosses: number; }>
+) {
+  // Use provided recordByTeamSeasonId from renderHTML (if present), otherwise create an empty map
+  const recordByTeamSeasonIdLocal =
+    recordByTeamSeasonId || new Map<string, { wins: number; losses: number; ties: number; confWins: number; confLosses: number; }>();
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -736,8 +807,6 @@ function generateRankingsPage(data: any, ranksByPollWeek: any, teamNameToSeasonI
       </div>
     </section>
 
-    <footer>Generated by fbs-graph</footer>
-
     <script>
       // Embed ranksByPollWeek, team mappings, and team season data
       const ranksByPollWeek = ${JSON.stringify(ranksByPollWeek)};
@@ -745,11 +814,19 @@ function generateRankingsPage(data: any, ranksByPollWeek: any, teamNameToSeasonI
       const teamSeasonIdToName = ${JSON.stringify(
         Object.fromEntries(Object.entries(teamNameToSeasonId).map(([k, v]) => [v, k]))
       )};
+      const recordByTeamSeasonIdLocal = new Map(${JSON.stringify(
+        Array.from(recordByTeamSeasonId.entries())
+      )});
       const teamSeasonData = ${JSON.stringify(
         Object.fromEntries(
           ctx.teamSeasons
             .filter((ts: any) => ts.season === data.season)
-            .map((ts: any) => [ts.id, ts])
+            .map((ts: any) => {
+              const rec =
+                recordByTeamSeasonIdLocal.get(ts.id) ||
+                ts.record || { wins: 0, losses: 0, ties: 0, confWins: 0, confLosses: 0 };
+              return [ts.id, { ...ts, record: rec }];
+            })
         )
       )};
       const season = ${data.season};

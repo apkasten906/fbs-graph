@@ -11,6 +11,10 @@ import {
   createLayoutConfig,
 } from '../modules/cytoscape-builder.js';
 
+// import canonical colors for assertions
+// @ts-ignore
+import { CONFERENCE_COLORS } from '../modules/conference-colors.js';
+
 // Type definitions for test data
 type Team = { id: string; name: string; conference?: { id: string } };
 type Game = {
@@ -75,12 +79,12 @@ describe('cytoscape-builder', () => {
 
   describe('COLORS constant', () => {
     it('should have conference color mappings', () => {
-      expect(COLORS.b1g).toBe('#CC0000');
-      expect(COLORS.sec).toBe('#0033A0');
-      expect(COLORS.acc).toBe('#00539F');
-      expect(COLORS.b12).toBe('#003594');
-      expect(COLORS.mwc).toBe('#003366');
-      expect(COLORS.other).toBe('#444444');
+      expect(COLORS.b1g).toBe(CONFERENCE_COLORS.b1g);
+      expect(COLORS.sec).toBe(CONFERENCE_COLORS.sec);
+      expect(COLORS.acc).toBe(CONFERENCE_COLORS.acc);
+      expect(COLORS.b12).toBe(CONFERENCE_COLORS.b12);
+      expect(COLORS.mwc).toBe(CONFERENCE_COLORS.mwc);
+      expect(COLORS.other).toBe(CONFERENCE_COLORS.other);
     });
   });
 
