@@ -12,7 +12,7 @@ export class StaticDataAdapter {
   constructor(basePath) {
     // Default basePath: prefer Node-friendly `src/data` when running under Node
     const isNode = typeof process !== 'undefined' && !!process.versions && !!process.versions.node;
-    if (!basePath) basePath = isNode ? './src/data' : './web/data';
+      if (!basePath) basePath = isNode ? './src/data' : './data';
     this.basePath = basePath;
     this.cache = new Map();
     // Single source of truth for default season used when callers omit a season
