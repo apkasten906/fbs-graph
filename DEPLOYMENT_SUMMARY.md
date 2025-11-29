@@ -52,23 +52,16 @@
 
 ### 6. Documentation
 
-- Updated `README.md`:
   - Added live demo link section at the top
   - Expanded scripts section with deployment commands
   - Explained GitHub Actions workflow
-- Created `docs/GITHUB_PAGES_DEPLOYMENT.md`:
   - Comprehensive deployment guide
   - Architecture explanation
   - Troubleshooting section
-  - Local testing instructions
 
 ## 🌐 Live URL
-
 Once deployed to GitHub Pages:
 **https://apkasten906.github.io/fbs-graph/**
-
-## 🚀 Deployment Process
-
 ### Automatic Deployment
 
 Push to `main` branch triggers GitHub Actions workflow which:
@@ -83,15 +76,15 @@ Push to `main` branch triggers GitHub Actions workflow which:
 2. Select "Deploy to GitHub Pages" workflow
 3. Click "Run workflow"
 
-## 🧪 Local Testing
+## Local Testing
 
 Before deploying:
 
 ```bash
 # Generate static data files
 npm run generate:static
-
-# Start web server
+│   ├── fbs-graph-timeline-explorer.html
+│   ├── fbs-graph-visualizer.html
 npm run web:serve
 
 # Open browser to http://localhost:4173

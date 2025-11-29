@@ -1,6 +1,11 @@
 import fs from 'node:fs';
 import { parse } from 'csv-parse/sync';
-const API_KEY = process.env.CFBD_KEY || process.env.COLLEGE_FOOTBALL_API_KEY;
+import localenv from 'dotenv';
+// Allow loading CFBD_KEY from a .env file when running individual scripts
+const API_KEY =
+  process.env.CFBD_KEY ||
+  process.env.COLLEGE_FOOTBALL_API_KEY ||
+  localenv.config().parsed?.CFBD_KEY;
 if (!API_KEY) {
   console.error('Missing CFBD_KEY');
   process.exit(1);
@@ -9,10 +14,11 @@ const YEAR = Number(process.env.YEAR || 2025);
 function idify(s: string) {
   return s
     .toLowerCase()
-    .replace(/&/g, 'and')
-    .replace(/[.']/g, '')
-    .replace(/[()]/g, '')
-    .replace(/\s+/g, '-');
+    .replace(/[&.]/g, '')
+    .replace(/[()]/g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 (async () => {
   const url = new URL('https://api.collegefootballdata.com/ratings/elo');

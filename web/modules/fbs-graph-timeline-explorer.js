@@ -1,4 +1,4 @@
-// --- Helper functions for timeline explorer ---
+// --- Helper functions for timeline explorer (FBS copy) ---
 import { DEFAULT_GRAPHQL_ENDPOINT } from './config.js';
 import { setConferenceMap } from './conference-map.js';
 
@@ -77,20 +77,7 @@ function shortestPathByInverseLeverage(pairs, teams, srcId, dstId) {
   edges.reverse();
   return { nodes, edges };
 }
-const COLORS = {
-  sec: '#6CCFF6',
-  b1g: '#B28DFF',
-  b12: '#F6AE2D',
-  acc: '#4CC9F0',
-  aac: '#FF6B6B',
-  mwc: '#80ED99',
-  mac: '#FFD166',
-  sbc: '#90CAF9',
-  cusa: '#FF9E00',
-  ind: '#BDB2FF',
-  pac12: '#9CCC65',
-  other: '#CCD6F6',
-};
+import { getConferenceColor } from './conference-colors.js';
 
 const SEGMENT_COLORS = ['#60a5fa', '#f97316', '#a855f7', '#22c55e', '#facc15', '#f43f5e'];
 
@@ -161,7 +148,7 @@ function applyConferenceLegend() {
       const meta = state.conferenceMeta.find(c => c.id === id);
       return {
         id,
-        color: COLORS[id] || COLORS.other,
+        color: getConferenceColor(id),
         label: meta ? `${meta.name} (${meta.shortName})` : id.toUpperCase(),
       };
     })
@@ -583,19 +570,19 @@ async function load() {
     updateStatus('Loading data…');
     const season = Number(document.getElementById('season').value);
 
-    console.log(
+    console.debug(
       '[Timeline Explorer] Starting load, staticDataAdapter available:',
       !!window.staticDataAdapter
     );
 
     // Use static data adapter if available, otherwise fall back to GraphQL
     if (window.staticDataAdapter) {
-      console.log('[Timeline Explorer] Using static data adapter');
+      console.debug('[Timeline Explorer] Using static data adapter');
       const [conferences, result] = await Promise.all([
         window.staticDataAdapter.getConferences(),
         window.staticDataAdapter.queryGraph(season),
       ]);
-      console.log('[Timeline Explorer] Data loaded:', {
+      console.debug('[Timeline Explorer] Data loaded:', {
         conferences: conferences?.length,
         teams: result.data?.teams?.length,
         games: result.data?.games?.length,
@@ -604,7 +591,7 @@ async function load() {
       setConferenceMap(conferences ?? []);
       state.graph = result.data || { teams: [], games: [] };
     } else {
-      console.log('[Timeline Explorer] Static data adapter not available, using GraphQL');
+      console.debug('[Timeline Explorer] Static data adapter not available, using GraphQL');
       // Fallback to GraphQL if static data not available
       const endpoint =
         document.getElementById('endpoint')?.value?.trim() || DEFAULT_GRAPHQL_ENDPOINT;

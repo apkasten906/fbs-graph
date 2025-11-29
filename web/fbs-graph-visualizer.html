@@ -6,7 +6,18 @@
     <title>FBS Schedule Graph — Teams & Matchups</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="common-theme.css" />
+    <link rel="stylesheet" href="css/shared-nav.css" />
     <style>
+      /* Adjust body for nav offset */
+      body {
+        margin-left: 220px;
+        transition: margin-left 0.3s ease;
+      }
+
+      body.nav-collapsed {
+        margin-left: 0;
+      }
+
       * {
         box-sizing: border-box;
       }
@@ -41,7 +52,7 @@
         border: 1px solid #23315e;
         border-radius: 8px;
         padding: 6px 8px;
-        font-size: 12px;
+        font-size: 14px;
       }
       .controls input[type='range'] {
         width: 160px;
@@ -59,16 +70,74 @@
       }
       #sidebar {
         width: 320px;
+        min-width: 240px; /* keep panel usable on narrow viewports */
         border-right: 1px solid #26335f;
         background: var(--panel);
         padding: 10px;
         overflow: auto;
+        position: relative;
+        transition: width 0.22s ease, padding 0.18s ease, border-right 0.18s ease;
       }
+      /* Collapsed state: keep a narrow but usable strip with toggle visible */
+      /* When collapsed, fully hide the sidebar (shrink to 0) so core content takes full width.
+         The toggle button remains visible in the adjacent `#sidebarToggle` column. */
+      #sidebar.collapsed {
+        width: 0 !important;
+        min-width: 0 !important;
+        padding: 0 !important;
+        border-right: none !important;
+        overflow: hidden !important;
+      }
+
+      /* Narrow toggle column that sits between the sidebar and main content */
+      #sidebarToggle {
+        width: 44px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        background: transparent;
+        border-left: 1px solid rgba(255,255,255,0.02);
+      }
+
+      /* Toggle button (chevron) placed in its own adjacent column */
+      .panel-toggle {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        border: 1px solid #26335f;
+        background: linear-gradient(180deg, #0e1631, #112044);
+        color: #cfe1ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 1px 0 rgba(0,0,0,0.3);
+        margin: 8px;
+      }
+      .panel-toggle:focus {
+        outline: 2px solid #1f6feb;
+      }
+      .panel-toggle svg {
+        width: 12px;
+        height: 12px;
+        transition: transform 0.22s ease;
+      }
+      /* Rotate when sidebar is collapsed (sibling column holds the toggle) */
+      #sidebar.collapsed + #sidebarToggle .panel-toggle svg {
+        transform: rotate(180deg);
+      }
+      /* When collapsed, hide most of the panel content but keep small elements visible */
+      #sidebar.collapsed .section,
+      #sidebar.collapsed .legend,
+      #sidebar.collapsed .pathlist {
+        display: none;
+      }
+      /* Remove the pseudo-label to avoid overlap now that the toggle has its own column. */
       #cy {
         flex: 1;
       }
       .legend {
-        font-size: 12px;
+        font-size: 14px;
         display: grid;
         grid-template-columns: 14px 1fr;
         gap: 8px 8px;
@@ -86,10 +155,10 @@
         margin-bottom: 12px;
       }
       .small {
-        font-size: 12px;
+        font-size: 13px;
       }
       .pathlist {
-        font-size: 12px;
+        font-size: 13px;
         line-height: 1.35;
         max-height: 180px;
         overflow: auto;
@@ -108,7 +177,7 @@
         bottom: 10px;
         left: 10px;
         z-index: 10;
-        font-size: 12px;
+        font-size: 13px;
         color: var(--muted);
       }
     </style>
@@ -137,7 +206,7 @@
       <aside id="sidebar">
         <div class="section">
           <div class="muted small">
-            Find connection between teams (shortest path by 1/leverage):
+            Compare teams (show all paths within degrees of separation):
           </div>
           <div
             style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: flex-end"
@@ -145,10 +214,25 @@
             <select id="srcSel"></select>
             <select id="dstSel"></select>
           </div>
-          <div style="margin-top: 8px">
-            <button id="pathBtn">Path</button>
+          <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center">
+            <label style="font-size: 11px">Degrees:</label>
+            <input
+              id="degrees"
+              type="range"
+              min="0"
+              max="6"
+              step="1"
+              value="1"
+              style="width: 100px"
+            />
+            <span id="degreesVal" class="muted small">1</span>
           </div>
-          <div id="pathInfo" class="pathlist" style="margin-top: 8px">No path computed yet.</div>
+          <div style="margin-top: 8px">
+            <button id="pathBtn">Show Comparisons</button>
+          </div>
+          <div id="pathInfo" class="pathlist" style="margin-top: 8px">
+            Select teams and click "Show Comparisons".
+          </div>
         </div>
         <div class="section">
           <div class="muted small">Legend / Conferences</div>
@@ -159,6 +243,14 @@
           connection.
         </div>
       </aside>
+      <div id="sidebarToggle">
+        <button id="panelToggle" class="panel-toggle" aria-expanded="true" aria-controls="sidebar" title="Collapse panel">
+          <!-- Chevron icon -->
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 1 0 1.41 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.7 6.7a1 1 0 0 0-1.41.01z"/>
+          </svg>
+        </button>
+      </div>
       <div id="cy"></div>
     </main>
 
@@ -167,146 +259,107 @@
     <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
     <script type="module">
       // Expose centralized GraphQL endpoint to non-module scripts
-      import { GRAPHQL_ENDPOINT } from './modules/config.js';
-      window.GRAPHQL_ENDPOINT = GRAPHQL_ENDPOINT;
+      import { DEFAULT_GRAPHQL_ENDPOINT } from './modules/config.js';
+      window.GRAPHQL_ENDPOINT = DEFAULT_GRAPHQL_ENDPOINT;
+
+      // Import graph path-finding algorithms
+      import {
+        edgeKey,
+        buildAdjacencyList,
+        shortestPathByInverseLeverage,
+        findNodesWithinDegrees,
+      } from './modules/graph-path-finder.js';
+
+      // Expose to non-module scripts
+      window.edgeKey = edgeKey;
+      window.buildAdjacencyList = buildAdjacencyList;
+      window.shortestPathByInverseLeverage = shortestPathByInverseLeverage;
+      window.findNodesWithinDegrees = findNodesWithinDegrees;
+
+      // Import Cytoscape builder functions
+      import {
+        COLORS as BUILDER_COLORS,
+        buildGraphElements,
+        calculateDegreePositions as calcDegPos,
+        createCytoscapeStyle,
+        createLayoutConfig,
+      } from './modules/cytoscape-builder.js';
+
+      // Import UI rendering functions
+      import {
+        showEdgeGames as uiShowEdgeGames,
+        buildLegend as uiBuildLegend,
+        buildSelectors as uiBuildSelectors,
+      } from './modules/graph-ui.js';
+
+      // Import data loading functions
+      import { loadAllData } from './modules/graph-data.js';
+
+      // Expose builder functions to non-module scripts
+      window.BUILDER_COLORS = BUILDER_COLORS;
+      window.buildGraphElements = buildGraphElements;
+      window.calculateDegreePositions = calcDegPos;
+      window.createCytoscapeStyle = createCytoscapeStyle;
+      window.createLayoutConfig = createLayoutConfig;
+
+      // Expose UI functions to non-module scripts
+      window.uiShowEdgeGames = uiShowEdgeGames;
+      window.uiBuildLegend = uiBuildLegend;
+      window.uiBuildSelectors = uiBuildSelectors;
+
+      // Expose data loading function to non-module scripts
+      window.loadAllData = loadAllData;
     </script>
     <script>
-      const COLORS = {
-        sec: '#6CCFF6',
-        b1g: '#B28DFF',
-        b12: '#F6AE2D',
-        acc: '#4CC9F0',
-        aac: '#FF6B6B',
-        mwc: '#80ED99',
-        mac: '#FFD166',
-        sbc: '#90CAF9',
-        cusa: '#FF9E00',
-        ind: '#BDB2FF',
-        pac12: '#9CCC65',
-        other: '#CCD6F6',
-      };
-
-      const QUERY = `
-query Graph($season: Int!) {
-  teams(season: $season) {
-    id name shortName conference { id shortName }
-  }
-  games(season: $season) {
-    id type leverage date
-    home { id name conference { id shortName } }
-    away { id name conference { id shortName } }
-  }
-}`;
-
-      const POST = (url, body) =>
-        fetch(url, {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(body),
-        }).then(r => r.json());
+      // Helper function to get COLORS (waits for module to load)
+      function getColors() {
+        return window.BUILDER_COLORS || {};
+      }
 
       let cy;
       let graphData = { teams: [], games: [] };
       let pairGames = new Map(); // key "a__b" -> array of games
       let teamIndex = new Map();
 
+      // Inline key function (edgeKey equivalent) for immediate availability
       function key(a, b) {
-        return a < b ? a + '__' + b : b + '__' + a;
+        return a < b ? `${a}__${b}` : `${b}__${a}`;
       }
 
-      function buildGraph(season, typeFilter, minLev) {
-        const els = [];
-        teamIndex.clear();
-        graphData.teams.forEach(t => teamIndex.set(t.id, t));
+      function buildGraph(season, typeFilter, minLev, pathFilter = null) {
+        console.log('buildGraph called with pathFilter:', pathFilter);
 
-        // Nodes
-        for (const t of graphData.teams) {
-          const conf = (t.conference && t.conference.id) || 'other';
-          els.push({
-            group: 'nodes',
-            data: { id: t.id, label: t.name, conf },
-            classes: conf,
-          });
-        }
+        // Build graph elements using builder module
+        const els = window.buildGraphElements({
+          teams: graphData.teams,
+          games: graphData.games,
+          teamIndex,
+          pairGames,
+          typeFilter,
+          minLeverage: minLev,
+          pathFilter,
+        });
 
-        // Edge aggregation by pair
-        pairGames.clear();
-        const edges = new Map();
-        for (const g of graphData.games) {
-          if (typeFilter !== 'ALL' && g.type !== typeFilter) continue;
-          const lev = typeof g.leverage === 'number' ? g.leverage : 0;
-          if (lev < minLev) continue;
-          const a = g.home.id,
-            b = g.away.id;
-          if (!teamIndex.has(a) || !teamIndex.has(b)) continue;
-          const k = key(a, b);
-          const arr = pairGames.get(k) || [];
-          arr.push(g);
-          pairGames.set(k, arr);
-        }
-        for (const [k, list] of pairGames) {
-          // compute edge weight
-          const a = list[0].home.id,
-            b = list[0].away.id;
-          const sumLev = list.reduce((s, x) => s + (x.leverage || 0), 0);
-          const avgLev = sumLev / list.length;
-          const w = Math.max(1, Math.log2(1 + sumLev * 4));
-          edges.set(k, { a, b, count: list.length, sumLev, avgLev, weight: w });
-        }
-        for (const [k, e] of edges) {
-          els.push({
-            group: 'edges',
-            data: {
-              id: 'e_' + k,
-              source: e.a,
-              target: e.b,
-              label: `${e.count}`,
-              weight: e.weight,
-              avgLev: e.avgLev,
-            },
-          });
-        }
+        // Get container dimensions for layout
+        const container = document.getElementById('cy');
+        const width = container.offsetWidth || 800;
+        const height = container.offsetHeight || 600;
 
         // Init / update Cytoscape
         if (!cy) {
           cy = cytoscape({
-            container: document.getElementById('cy'),
+            container,
             elements: els,
-            layout: { name: 'cose', idealEdgeLength: 120, nodeOverlap: 10 },
-            style: [
-              {
-                selector: 'node',
-                style: {
-                  'background-color': ele => COLORS[ele.data('conf')] || COLORS.other,
-                  label: 'data(label)',
-                  color: '#cfe1ff',
-                  'font-size': '9px',
-                  'text-outline-color': '#0b1020',
-                  'text-outline-width': 2,
-                  width: 'mapData(deg, 0, 24, 8, 34)',
-                  height: 'mapData(deg, 0, 24, 8, 34)',
-                },
-              },
-              {
-                selector: 'edge',
-                style: {
-                  'line-color': '#4562aa',
-                  width: ele => Math.max(1.5, ele.data('weight') || 1.5),
-                  opacity: 0.7,
-                  'curve-style': 'haystack',
-                },
-              },
-              { selector: 'edge:selected', style: { 'line-color': '#fff', opacity: 1 } },
-              {
-                selector: '.highlight',
-                style: { 'line-color': '#fff', 'background-color': '#fff', opacity: 1 },
-              },
-            ],
+            layout: window.createLayoutConfig(pathFilter, width, height),
+            style: window.createCytoscapeStyle(),
           });
-          cy.on('tap', 'edge', e => showEdgeGames(e.target().data()));
+          cy.on('tap', 'edge', e => showEdgeGames(e.target.data()));
         } else {
           cy.elements().remove();
           cy.add(els);
+          // Re-register edge click handler
+          cy.off('tap', 'edge');
+          cy.on('tap', 'edge', e => showEdgeGames(e.target.data()));
         }
 
         // Compute degree for sizing
@@ -314,195 +367,32 @@ query Graph($season: Int!) {
           n.data('deg', n.connectedEdges().length);
         });
 
-        cy.layout({ name: 'cose', idealEdgeLength: 120, nodeOverlap: 10 }).run();
+        // Apply layout
+        cy.layout(window.createLayoutConfig(pathFilter, width, height)).run();
       }
 
-      function showEdgeGames(data) {
-        const { id } = data;
-        const [_, k] = id.split('e_');
-        const games = pairGames.get(k) || [];
-        const container = document.getElementById('pathInfo');
-        // Build DOM nodes instead of using innerHTML to avoid XSS and ensure safe updates
-        const frag = document.createDocumentFragment();
-        const header = document.createElement('div');
-        header.className = 'small muted';
-        header.textContent = `Games on this connection (${games.length}):`;
-        frag.appendChild(header);
-        for (const g of games.slice().sort((a, b) => (a.date || '').localeCompare(b.date || ''))) {
-          const when = g.date ? new Date(g.date).toLocaleString() : 'TBD';
-          const row = document.createElement('div');
-          row.className = 'mono';
-          row.textContent = `${when} — ${g.home.name} vs ${g.away.name} `;
-          const lev = document.createElement('span');
-          lev.className = 'muted';
-          lev.textContent = `(lev ${Number(g.leverage || 0).toFixed(3)})`;
-          row.appendChild(lev);
-          frag.appendChild(row);
-        }
-        container.replaceChildren(frag);
-      }
-
-      // Conference metadata cache (populated from GraphQL)
+      // Conference metadata cache (populated from data loader)
       let conferenceMeta = [];
 
-      function buildLegend() {
-        const container = document.getElementById('legend');
-        container.replaceChildren();
-        const seen = new Set();
-        // Collect all conferences present in the data
-        for (const t of graphData.teams) {
-          const conf = (t.conference && t.conference.id) || 'other';
-          seen.add(conf);
-        }
-        // Map to full names, filter, and sort
-        const legendEntries = Array.from(seen)
-          .map(id => {
-            const meta = conferenceMeta.find(c => c.id === id);
-            return {
-              id,
-              color: COLORS[id] || COLORS.other,
-              label: meta ? `${meta.name} (${meta.shortName})` : id.toUpperCase(),
-              sortKey: meta ? meta.name : id,
-            };
-          })
-          .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
-        for (const entry of legendEntries) {
-          const dot = document.createElement('div');
-          dot.className = 'dot';
-          dot.style.background = entry.color;
-          const lbl = document.createElement('div');
-          lbl.textContent = entry.label;
-          container.appendChild(dot);
-          container.appendChild(lbl);
-        }
-      }
-
-      function buildSelectors() {
-        const srcSel = document.getElementById('srcSel');
-        const dstSel = document.getElementById('dstSel');
-        const opts = graphData.teams.slice().sort((a, b) => a.name.localeCompare(b.name));
-        srcSel.replaceChildren();
-        dstSel.replaceChildren();
-        for (const t of opts) {
-          const o1 = document.createElement('option');
-          o1.value = t.id;
-          o1.textContent = t.name;
-          srcSel.appendChild(o1);
-          const o2 = document.createElement('option');
-          o2.value = t.id;
-          o2.textContent = t.name;
-          dstSel.appendChild(o2);
-        }
-        // Set default selections: OSU and Georgia
-        // Try common IDs, fallback to first if not found
-        const osuId =
-          opts.find(t => t.name.toLowerCase().includes('ohio state'))?.id || opts[0]?.id;
-        const ugaId = opts.find(t => t.name.toLowerCase().includes('georgia'))?.id || opts[1]?.id;
-        if (osuId) srcSel.value = osuId;
-        if (ugaId) dstSel.value = ugaId;
-      }
-
-      function shortestPathByInverseLeverage(srcId, dstId, typeFilter, minLev) {
-        // Build adjacency with weight = 1 / (avg leverage of pair). If multiple games per pair, we use avg.
-        const adj = new Map();
-        for (const [k, list] of pairGames) {
-          const a = list[0].home.id,
-            b = list[0].away.id;
-          const filtered = list.filter(
-            g => (typeFilter === 'ALL' || g.type === typeFilter) && (g.leverage || 0) >= minLev
-          );
-          if (!filtered.length) continue;
-          const avg = filtered.reduce((s, x) => s + (x.leverage || 0), 0) / filtered.length;
-          const w = 1 / Math.max(1e-6, avg);
-          if (!adj.has(a)) adj.set(a, []);
-          if (!adj.has(b)) adj.set(b, []);
-          adj.get(a).push({ to: b, k, w, avg, games: filtered });
-          adj.get(b).push({ to: a, k, w, avg, games: filtered });
-        }
-        // Dijkstra
-        const dist = new Map(),
-          prev = new Map(),
-          prevEdge = new Map();
-        const allIds = Array.from(graphData.teams, t => t.id);
-        const Q = new Set(allIds);
-        for (const id of allIds) dist.set(id, Infinity);
-        dist.set(srcId, 0);
-        while (Q.size) {
-          let u = null,
-            best = Infinity;
-          for (const v of Q) {
-            const d = dist.get(v);
-            if (d < best) {
-              best = d;
-              u = v;
-            }
-          }
-          if (u === null || best === Infinity) break;
-          Q.delete(u);
-          if (u === dstId) break;
-          const nbrs = adj.get(u) || [];
-          for (const e of nbrs) {
-            if (!Q.has(e.to)) continue;
-            const alt = dist.get(u) + e.w;
-            if (alt < dist.get(e.to)) {
-              dist.set(e.to, alt);
-              prev.set(e.to, u);
-              prevEdge.set(e.to, e.k);
-            }
-          }
-        }
-        if (!prev.has(dstId)) return null;
-        // Rebuild path
-        const pathIds = [];
-        const edges = [];
-        let cur = dstId;
-        while (cur !== srcId) {
-          pathIds.push(cur);
-          edges.push(prevEdge.get(cur));
-          cur = prev.get(cur);
-        }
-        pathIds.push(srcId);
-        pathIds.reverse();
-        edges.reverse();
-        return { nodes: pathIds, edges };
-      }
-
-      const CONFERENCES_QUERY = `
-        query { conferences { id name shortName } }
-      `;
-
       async function load() {
+        if (!window.loadAllData) {
+          console.error('loadAllData not loaded from module yet');
+          return;
+        }
+
         const season = Number(document.getElementById('season').value);
 
-        // Use static data adapter if available, otherwise fall back to GraphQL
-        if (window.staticDataAdapter) {
-          try {
-            const [conferences, result] = await Promise.all([
-              window.staticDataAdapter.getConferences(),
-              window.staticDataAdapter.queryGraph(season),
-            ]);
-            conferenceMeta = conferences || [];
-            graphData = result.data;
-          } catch (error) {
-            alert('Error loading static data: ' + error.message);
-            return;
-          }
-        } else {
-          // Fallback to GraphQL if static data not available
-          const endpoint =
-            document.getElementById('endpoint')?.value?.trim() || window.GRAPHQL_ENDPOINT;
-          const confRes = await POST(endpoint, { query: CONFERENCES_QUERY });
-          if (confRes.errors) {
-            alert('GraphQL error (conferences): ' + JSON.stringify(confRes.errors[0], null, 2));
-            return;
-          }
-          conferenceMeta = confRes.data.conferences || [];
-          const res = await POST(endpoint, { query: QUERY, variables: { season } });
-          if (res.errors) {
-            alert('GraphQL error: ' + JSON.stringify(res.errors[0], null, 2));
-            return;
-          }
-          graphData = res.data;
+        try {
+          const result = await window.loadAllData(season, {
+            staticAdapter: window.staticDataAdapter,
+            graphqlEndpoint: document.getElementById('endpoint')?.value?.trim() || window.GRAPHQL_ENDPOINT,
+          });
+
+          conferenceMeta = result.conferences || [];
+          graphData = result.graphData;
+        } catch (error) {
+          alert('Error loading data: ' + (error instanceof Error ? error.message : String(error)));
+          return;
         }
 
         buildLegend();
@@ -510,78 +400,233 @@ query Graph($season: Int!) {
         applyFilters();
       }
 
+      // Adapter functions that call the UI module functions
+      function showEdgeGames(data) {
+        if (!window.uiShowEdgeGames) {
+          console.error('uiShowEdgeGames not loaded from module yet');
+          return;
+        }
+        window.uiShowEdgeGames(data, pairGames, 'pathInfo');
+      }
+
+      function buildLegend() {
+        if (!window.uiBuildLegend) {
+          console.error('uiBuildLegend not loaded from module yet');
+          return;
+        }
+        const COLORS = getColors();
+        window.uiBuildLegend(graphData.teams, conferenceMeta, COLORS, 'legend');
+      }
+
+      function buildSelectors() {
+        if (!window.uiBuildSelectors) {
+          console.error('uiBuildSelectors not loaded from module yet');
+          return;
+        }
+        window.uiBuildSelectors(graphData.teams, 'srcSel', 'dstSel', {
+          defaultSrc: 'ohio state',
+          defaultDst: 'miami',
+          autoTrigger: true,
+          triggerButtonId: 'pathBtn',
+        });
+      }
+
+      // Adapter functions that call path-finding module functions
+      function _shortestPath(srcId, dstId, typeFilter, minLev) {
+        if (!window.shortestPathByInverseLeverage) {
+          console.error('shortestPathByInverseLeverage not loaded from module yet');
+          return null;
+        }
+        return window.shortestPathByInverseLeverage(
+          srcId,
+          dstId,
+          pairGames,
+          graphData.teams,
+          typeFilter,
+          minLev
+        );
+      }
+
+      function _findNodesWithinDegrees(startNodes, maxDegrees, typeFilter, minLev, shortestPath) {
+        if (!window.findNodesWithinDegrees) {
+          console.error('findNodesWithinDegrees not loaded from module yet');
+          return { nodes: [], edges: [], nodesByDegree: new Map(), source: startNodes[0], destination: startNodes[1] };
+        }
+        return window.findNodesWithinDegrees(
+          startNodes,
+          maxDegrees,
+          pairGames,
+          graphData.teams,
+          typeFilter,
+          minLev,
+          shortestPath
+        );
+      }
+
       function applyFilters() {
         const typeFilter = document.getElementById('typeFilter').value;
         const minLev = Number(document.getElementById('lev').value);
         document.getElementById('levVal').textContent = String(minLev);
-        buildGraph(Number(document.getElementById('season').value), typeFilter, minLev);
+        // Clear path filter when applying filters (show all teams again)
+        buildGraph(Number(document.getElementById('season').value), typeFilter, minLev, null);
       }
 
       document.getElementById('loadBtn').addEventListener('click', load);
       document.getElementById('fitBtn').addEventListener('click', () => cy && cy.fit());
       document.getElementById('lev').addEventListener('input', applyFilters);
       document.getElementById('typeFilter').addEventListener('change', applyFilters);
+      document.getElementById('degrees').addEventListener('input', e => {
+        document.getElementById('degreesVal').textContent = e.target.value;
+      });
       document.getElementById('pathBtn').addEventListener('click', () => {
         const typeFilter = document.getElementById('typeFilter').value;
         const minLev = Number(document.getElementById('lev').value);
         const src = document.getElementById('srcSel').value;
         const dst = document.getElementById('dstSel').value;
-        const res = shortestPathByInverseLeverage(src, dst, typeFilter, minLev);
         const box = document.getElementById('pathInfo');
-        if (!res) {
-          box.textContent = 'No path found (maybe filters are too strict).';
+
+        if (!src || !dst) {
+          box.textContent = 'Please select both teams.';
           return;
         }
-        // Highlight
+
+        // First, find the shortest path to determine the minimum degrees needed
+        const shortestPath = _shortestPath(src, dst, typeFilter, minLev);
+
+        if (!shortestPath || shortestPath.nodes.length === 0) {
+          box.textContent = 'No path found between these teams (maybe filters are too strict).';
+          return;
+        }
+
+        // Calculate the number of hops in the shortest path
+        // Path nodes include source and dest, so hops = nodes - 1
+        const shortestPathHops = shortestPath.nodes.length - 1;
+
+        // Determine appropriate degrees to show based on shortest path
+        // If direct connection (1 hop), show degree 1 to see common opponents too
+        // Otherwise, show the exact number of hops in the shortest path
+        const suggestedDegrees = shortestPathHops === 1 ? 1 : shortestPathHops;
+
+        // Update the degree slider to match the shortest path
+        const degreesSlider = document.getElementById('degrees');
+        degreesSlider.value = suggestedDegrees;
+        document.getElementById('degreesVal').textContent = suggestedDegrees;
+
+        const degrees = suggestedDegrees;
+
+        // Find all nodes within N degrees of both selected teams
+        // Pass the shortest path to ensure it's always included
+        const res = _findNodesWithinDegrees(
+          [src, dst],
+          degrees,
+          typeFilter,
+          minLev,
+          shortestPath
+        );
+
+        if (!res || res.nodes.length === 0) {
+          box.textContent = 'No connections found (maybe filters are too strict).';
+          return;
+        }
+
+        // Rebuild graph to show teams within degrees of separation
+        const season = Number(document.getElementById('season').value);
+        buildGraph(season, typeFilter, minLev, res);
+
+        // Highlight the selected teams
         cy.elements().removeClass('highlight');
-        const elist = [];
-        for (const id of res.nodes) elist.push(cy.getElementById(id));
-        for (const k of res.edges) elist.push(cy.getElementById('e_' + k));
-        elist.forEach(e => e.addClass('highlight'));
+        cy.getElementById(src).addClass('highlight');
+        cy.getElementById(dst).addClass('highlight');
         cy.style()
           .selector('.highlight')
-          .style({ 'line-color': '#fff', 'background-color': '#fff' })
+          .style({ 'background-color': '#facc15', 'border-width': 3, 'border-color': '#fff' })
           .update();
-        // Render path with game details
+
+        // Render comparison info
         const frag = document.createDocumentFragment();
         const header = document.createElement('div');
         header.className = 'small muted';
-        header.textContent = 'Shortest connection (by 1/leverage):';
+        header.textContent = `Comparison network (${res.nodes.length} teams, ${res.edges.length} connections):`;
         frag.appendChild(header);
-        for (let i = 0; i < res.nodes.length; i++) {
-          const id = res.nodes[i];
-          const t = teamIndex.get(id);
-          const nodeLine = document.createElement('div');
-          nodeLine.textContent = t.name + (i < res.nodes.length - 1 ? ' → ' : '');
-          frag.appendChild(nodeLine);
-          if (i < res.nodes.length - 1) {
-            const k = res.edges[i];
-            const games = pairGames.get(k) || [];
-            const top = games
-              .slice()
-              .sort((a, b) => (b.leverage || 0) - (a.leverage || 0))
-              .slice(0, 3);
-            const subHeader = document.createElement('div');
-            subHeader.className = 'muted small';
-            subHeader.style.margin = '4px 0 6px 8px';
-            subHeader.textContent = 'Top games on this edge:';
-            frag.appendChild(subHeader);
-            for (const g of top) {
-              const when = g.date ? new Date(g.date).toLocaleDateString() : 'TBD';
-              const row = document.createElement('div');
-              row.className = 'mono';
-              row.style.marginLeft = '8px';
-              row.textContent = `${when} — ${g.home.name} vs ${g.away.name} (lev ${Number(
-                g.leverage || 0
-              ).toFixed(3)})`;
-              frag.appendChild(row);
-            }
+
+        const srcTeam = teamIndex.get(src);
+        const dstTeam = teamIndex.get(dst);
+
+        const summary = document.createElement('div');
+        summary.style.marginTop = '8px';
+        summary.innerHTML = `<strong>${srcTeam.name}</strong> vs <strong>${dstTeam.name}</strong>`;
+        frag.appendChild(summary);
+
+        // Show shortest path info
+        const pathInfo = document.createElement('div');
+        pathInfo.className = 'small muted';
+        pathInfo.style.marginTop = '4px';
+        const pathTeamNames = shortestPath.nodes.map(id => teamIndex.get(id)?.name || id);
+        pathInfo.textContent = `Shortest path (${shortestPathHops} hop${shortestPathHops !== 1 ? 's' : ''}): ${pathTeamNames.join(' → ')}`;
+        frag.appendChild(pathInfo);
+
+        // Count teams by degree
+        const degreeCount = new Map();
+        // Iterate values only to avoid an unused `node` variable
+        for (const deg of res.nodesByDegree.values()) {
+          degreeCount.set(deg, (degreeCount.get(deg) || 0) + 1);
+        }
+
+        const degreeInfo = document.createElement('div');
+        degreeInfo.className = 'small muted';
+        degreeInfo.style.marginTop = '6px';
+        const degreeParts = [];
+        for (let d = 0; d <= degrees; d++) {
+          const count = degreeCount.get(d) || 0;
+          if (count > 0) {
+            degreeParts.push(`${count} at ${d}°`);
           }
         }
+        degreeInfo.textContent = 'Distribution: ' + degreeParts.join(', ');
+        frag.appendChild(degreeInfo);
+
         box.replaceChildren(frag);
       });
 
       // Auto-load will be triggered after static data adapter loads
+    </script>
+    <script>
+      // Panel toggle handler: don't commit state changes automatically
+      (function () {
+        const toggle = document.getElementById('panelToggle');
+        const sidebar = document.getElementById('sidebar');
+        if (!toggle || !sidebar) return;
+
+        function setCollapsed(collapsed, persist = true) {
+          if (collapsed) {
+            sidebar.classList.add('collapsed');
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.title = 'Expand panel';
+          } else {
+            sidebar.classList.remove('collapsed');
+            toggle.setAttribute('aria-expanded', 'true');
+            toggle.title = 'Collapse panel';
+          }
+          if (persist) {
+            try {
+              localStorage.setItem('visualizer.sidebarCollapsed', collapsed ? '1' : '0');
+            } catch (e) {
+              /* ignore localStorage failures */
+            }
+          }
+        }
+
+        // Initialize from persisted state if present
+        try {
+          const v = localStorage.getItem('visualizer.sidebarCollapsed');
+          if (v === '1') setCollapsed(true, false);
+        } catch (e) {}
+
+        toggle.addEventListener('click', () => {
+          const isCollapsed = sidebar.classList.contains('collapsed');
+          setCollapsed(!isCollapsed, true);
+        });
+      })();
     </script>
     <script type="module">
       // Load static data adapter first
@@ -593,6 +638,10 @@ query Graph($season: Int!) {
 
       // Trigger the load function that was defined in the previous script
       load();
+    </script>
+    <script type="module">
+      import { initNavigation } from './modules/shared-nav.js';
+      initNavigation('fbs-graph');
     </script>
   </body>
 </html>

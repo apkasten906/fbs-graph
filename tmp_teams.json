@@ -1,0 +1,2642 @@
+[
+  {
+    "id": "abilene-christian",
+    "name": "Abilene Christian",
+    "shortName": "ACU",
+    "conferenceId": "uac"
+  },
+  {
+    "id": "air-force",
+    "name": "Air Force",
+    "shortName": "AF",
+    "conferenceId": "mwc",
+    "conference": {
+      "id": "mwc",
+      "name": "Mountain West",
+      "shortName": "MWC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "akron",
+    "name": "Akron",
+    "shortName": "AKR",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "alabama",
+    "name": "Alabama",
+    "shortName": "ALA",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "alabama-aandm",
+    "name": "Alabama A&M",
+    "shortName": "AAMU",
+    "conferenceId": "swac",
+    "conference": {
+      "id": "swac",
+      "name": "SWAC",
+      "shortName": "SWAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "alabama-state",
+    "name": "Alabama State",
+    "shortName": "ALST",
+    "conferenceId": "swac",
+    "conference": {
+      "id": "swac",
+      "name": "SWAC",
+      "shortName": "SWAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "alcorn-state",
+    "name": "Alcorn State",
+    "shortName": "ALCN",
+    "conferenceId": "swac",
+    "conference": {
+      "id": "swac",
+      "name": "SWAC",
+      "shortName": "SWAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "app-state",
+    "name": "App State",
+    "shortName": "APP",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "arizona",
+    "name": "Arizona",
+    "shortName": "ARIZ",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "arizona-state",
+    "name": "Arizona State",
+    "shortName": "ASU",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "arkansas",
+    "name": "Arkansas",
+    "shortName": "ARK",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "arkansas-pine-bluff",
+    "name": "Arkansas-Pine Bluff",
+    "shortName": "UAPB",
+    "conferenceId": "swac",
+    "conference": {
+      "id": "swac",
+      "name": "SWAC",
+      "shortName": "SWAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "arkansas-state",
+    "name": "Arkansas State",
+    "shortName": "ARST",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "army",
+    "name": "Army",
+    "shortName": "ARMY",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "auburn",
+    "name": "Auburn",
+    "shortName": "AUB",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "austin-peay",
+    "name": "Austin Peay",
+    "shortName": "APSU",
+    "conferenceId": "uac"
+  },
+  {
+    "id": "ball-state",
+    "name": "Ball State",
+    "shortName": "BALL",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "baylor",
+    "name": "Baylor",
+    "shortName": "BAY",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "bethune-cookman",
+    "name": "Bethune-Cookman",
+    "shortName": "BCU",
+    "conferenceId": "swac",
+    "conference": {
+      "id": "swac",
+      "name": "SWAC",
+      "shortName": "SWAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "boise-state",
+    "name": "Boise State",
+    "shortName": "BOIS",
+    "conferenceId": "mwc",
+    "conference": {
+      "id": "mwc",
+      "name": "Mountain West",
+      "shortName": "MWC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "boston-college",
+    "name": "Boston College",
+    "shortName": "BC",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "bowling-green",
+    "name": "Bowling Green",
+    "shortName": "BGSU",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "brown",
+    "name": "Brown",
+    "shortName": "BRWN",
+    "conferenceId": "ivy",
+    "conference": {
+      "id": "ivy",
+      "name": "Ivy",
+      "shortName": "Ivy",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "bryant",
+    "name": "Bryant",
+    "shortName": "BRY",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "bucknell",
+    "name": "Bucknell",
+    "shortName": "BUCK",
+    "conferenceId": "patriot"
+  },
+  {
+    "id": "buffalo",
+    "name": "Buffalo",
+    "shortName": "BUF",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "butler",
+    "name": "Butler",
+    "shortName": "BUT",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "byu",
+    "name": "BYU",
+    "shortName": "BYU",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "california",
+    "name": "California",
+    "shortName": "CAL",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "cal-poly",
+    "name": "Cal Poly",
+    "shortName": "CP",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "campbell",
+    "name": "Campbell",
+    "shortName": "CAM",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "central-arkansas",
+    "name": "Central Arkansas",
+    "shortName": "CARK",
+    "conferenceId": "uac"
+  },
+  {
+    "id": "central-connecticut",
+    "name": "Central Connecticut",
+    "shortName": "CCSU",
+    "conferenceId": "nec"
+  },
+  {
+    "id": "central-michigan",
+    "name": "Central Michigan",
+    "shortName": "CMU",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "charleston-southern",
+    "name": "Charleston Southern",
+    "shortName": "CHSO",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "charlotte",
+    "name": "Charlotte",
+    "shortName": "CLT",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "chattanooga",
+    "name": "Chattanooga",
+    "shortName": "UTC",
+    "conferenceId": "southern",
+    "conference": {
+      "id": "southern",
+      "name": "Southern",
+      "shortName": "Southern",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "cincinnati",
+    "name": "Cincinnati",
+    "shortName": "CIN",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "clemson",
+    "name": "Clemson",
+    "shortName": "CLEM",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "coastal-carolina",
+    "name": "Coastal Carolina",
+    "shortName": "CCU",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "colgate",
+    "name": "Colgate",
+    "shortName": "COLG",
+    "conferenceId": "patriot"
+  },
+  {
+    "id": "colorado",
+    "name": "Colorado",
+    "shortName": "COLO",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "colorado-state",
+    "name": "Colorado State",
+    "shortName": "CSU",
+    "conferenceId": "mwc",
+    "conference": {
+      "id": "mwc",
+      "name": "Mountain West",
+      "shortName": "MWC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "columbia",
+    "name": "Columbia",
+    "shortName": "COLU",
+    "conferenceId": "ivy",
+    "conference": {
+      "id": "ivy",
+      "name": "Ivy",
+      "shortName": "Ivy",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "cornell",
+    "name": "Cornell",
+    "shortName": "COR",
+    "conferenceId": "ivy",
+    "conference": {
+      "id": "ivy",
+      "name": "Ivy",
+      "shortName": "Ivy",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "dartmouth",
+    "name": "Dartmouth",
+    "shortName": "DART",
+    "conferenceId": "ivy",
+    "conference": {
+      "id": "ivy",
+      "name": "Ivy",
+      "shortName": "Ivy",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "davidson",
+    "name": "Davidson",
+    "shortName": "DAV",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "dayton",
+    "name": "Dayton",
+    "shortName": "DAY",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "delaware",
+    "name": "Delaware",
+    "shortName": "DEL",
+    "conferenceId": "cusa",
+    "conference": {
+      "id": "cusa",
+      "name": "Conference USA",
+      "shortName": "CUSA",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "delaware-state",
+    "name": "Delaware State",
+    "shortName": "DSU",
+    "conferenceId": "meac"
+  },
+  {
+    "id": "drake",
+    "name": "Drake",
+    "shortName": "DRKE",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "duke",
+    "name": "Duke",
+    "shortName": "DUKE",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "duquesne",
+    "name": "Duquesne",
+    "shortName": "DUQ",
+    "conferenceId": "nec"
+  },
+  {
+    "id": "east-carolina",
+    "name": "East Carolina",
+    "shortName": "ECU",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "eastern-illinois",
+    "name": "Eastern Illinois",
+    "shortName": "EIU",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "eastern-kentucky",
+    "name": "Eastern Kentucky",
+    "shortName": "EKU",
+    "conferenceId": "uac"
+  },
+  {
+    "id": "eastern-michigan",
+    "name": "Eastern Michigan",
+    "shortName": "EMU",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "eastern-washington",
+    "name": "Eastern Washington",
+    "shortName": "EWU",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "east-tennessee-state",
+    "name": "East Tennessee State",
+    "shortName": "ETSU",
+    "conferenceId": "southern",
+    "conference": {
+      "id": "southern",
+      "name": "Southern",
+      "shortName": "Southern",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "east-texas-aandm",
+    "name": "East Texas A&M",
+    "shortName": "ETAM",
+    "conferenceId": "southland",
+    "conference": {
+      "id": "southland",
+      "name": "Southland",
+      "shortName": "Southland",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "elon",
+    "name": "Elon",
+    "shortName": "ELON",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "florida",
+    "name": "Florida",
+    "shortName": "FLA",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "florida-aandm",
+    "name": "Florida A&M",
+    "shortName": "FAMU",
+    "conferenceId": "swac",
+    "conference": {
+      "id": "swac",
+      "name": "SWAC",
+      "shortName": "SWAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "florida-atlantic",
+    "name": "Florida Atlantic",
+    "shortName": "FAU",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "florida-international",
+    "name": "Florida International",
+    "shortName": "FIU",
+    "conferenceId": "cusa",
+    "conference": {
+      "id": "cusa",
+      "name": "Conference USA",
+      "shortName": "CUSA",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "florida-state",
+    "name": "Florida State",
+    "shortName": "FSU",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "fordham",
+    "name": "Fordham",
+    "shortName": "FOR",
+    "conferenceId": "patriot"
+  },
+  {
+    "id": "fresno-state",
+    "name": "Fresno State",
+    "shortName": "FRES",
+    "conferenceId": "mwc",
+    "conference": {
+      "id": "mwc",
+      "name": "Mountain West",
+      "shortName": "MWC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "furman",
+    "name": "Furman",
+    "shortName": "FUR",
+    "conferenceId": "southern",
+    "conference": {
+      "id": "southern",
+      "name": "Southern",
+      "shortName": "Southern",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "gardner-webb",
+    "name": "Gardner-Webb",
+    "shortName": "GWEB",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "georgetown",
+    "name": "Georgetown",
+    "shortName": "GTWN",
+    "conferenceId": "patriot"
+  },
+  {
+    "id": "georgia",
+    "name": "Georgia",
+    "shortName": "UGA",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "georgia-southern",
+    "name": "Georgia Southern",
+    "shortName": "GASO",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "georgia-state",
+    "name": "Georgia State",
+    "shortName": "GAST",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "georgia-tech",
+    "name": "Georgia Tech",
+    "shortName": "GT",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "grambling",
+    "name": "Grambling",
+    "shortName": "GRAM",
+    "conferenceId": "swac",
+    "conference": {
+      "id": "swac",
+      "name": "SWAC",
+      "shortName": "SWAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "hampton",
+    "name": "Hampton",
+    "shortName": "HAMP",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "harvard",
+    "name": "Harvard",
+    "shortName": "HARV",
+    "conferenceId": "ivy",
+    "conference": {
+      "id": "ivy",
+      "name": "Ivy",
+      "shortName": "Ivy",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "hawaii",
+    "name": "Hawai'i",
+    "shortName": "HAW",
+    "conferenceId": "mwc",
+    "conference": {
+      "id": "mwc",
+      "name": "Mountain West",
+      "shortName": "MWC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "holy-cross",
+    "name": "Holy Cross",
+    "shortName": "HC",
+    "conferenceId": "patriot"
+  },
+  {
+    "id": "houston",
+    "name": "Houston",
+    "shortName": "HOU",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "houston-christian",
+    "name": "Houston Christian",
+    "shortName": "HCU",
+    "conferenceId": "southland",
+    "conference": {
+      "id": "southland",
+      "name": "Southland",
+      "shortName": "Southland",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "howard",
+    "name": "Howard",
+    "shortName": "HOW",
+    "conferenceId": "meac"
+  },
+  {
+    "id": "idaho",
+    "name": "Idaho",
+    "shortName": "IDHO",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "idaho-state",
+    "name": "Idaho State",
+    "shortName": "IDST",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "illinois",
+    "name": "Illinois",
+    "shortName": "ILL",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "illinois-state",
+    "name": "Illinois State",
+    "shortName": "ILST",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "incarnate-word",
+    "name": "Incarnate Word",
+    "shortName": "UIW",
+    "conferenceId": "southland",
+    "conference": {
+      "id": "southland",
+      "name": "Southland",
+      "shortName": "Southland",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "indiana",
+    "name": "Indiana",
+    "shortName": "IU",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "indiana-state",
+    "name": "Indiana State",
+    "shortName": "INST",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "iowa",
+    "name": "Iowa",
+    "shortName": "IOWA",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "iowa-state",
+    "name": "Iowa State",
+    "shortName": "ISU",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "jackson-state",
+    "name": "Jackson State",
+    "shortName": "JKST",
+    "conferenceId": "swac",
+    "conference": {
+      "id": "swac",
+      "name": "SWAC",
+      "shortName": "SWAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "jacksonville-state",
+    "name": "Jacksonville State",
+    "shortName": "JXST",
+    "conferenceId": "cusa",
+    "conference": {
+      "id": "cusa",
+      "name": "Conference USA",
+      "shortName": "CUSA",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "james-madison",
+    "name": "James Madison",
+    "shortName": "JMU",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "kansas",
+    "name": "Kansas",
+    "shortName": "KU",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "kansas-state",
+    "name": "Kansas State",
+    "shortName": "KSU",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "kennesaw-state",
+    "name": "Kennesaw State",
+    "shortName": "KENN",
+    "conferenceId": "cusa",
+    "conference": {
+      "id": "cusa",
+      "name": "Conference USA",
+      "shortName": "CUSA",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "kent-state",
+    "name": "Kent State",
+    "shortName": "KENT",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "kentucky",
+    "name": "Kentucky",
+    "shortName": "UK",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "lafayette",
+    "name": "Lafayette",
+    "shortName": "LAF",
+    "conferenceId": "patriot"
+  },
+  {
+    "id": "lamar",
+    "name": "Lamar",
+    "shortName": "LAM",
+    "conferenceId": "southland",
+    "conference": {
+      "id": "southland",
+      "name": "Southland",
+      "shortName": "Southland",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "lehigh",
+    "name": "Lehigh",
+    "shortName": "LEH",
+    "conferenceId": "patriot"
+  },
+  {
+    "id": "liberty",
+    "name": "Liberty",
+    "shortName": "LIB",
+    "conferenceId": "cusa",
+    "conference": {
+      "id": "cusa",
+      "name": "Conference USA",
+      "shortName": "CUSA",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "lindenwood",
+    "name": "Lindenwood",
+    "shortName": "LIN",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "long-island-university",
+    "name": "Long Island University",
+    "shortName": "LIU",
+    "conferenceId": "nec"
+  },
+  {
+    "id": "louisiana",
+    "name": "Louisiana",
+    "shortName": "UL",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "louisiana-tech",
+    "name": "Louisiana Tech",
+    "shortName": "LT",
+    "conferenceId": "cusa",
+    "conference": {
+      "id": "cusa",
+      "name": "Conference USA",
+      "shortName": "CUSA",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "louisville",
+    "name": "Louisville",
+    "shortName": "LOU",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "lsu",
+    "name": "LSU",
+    "shortName": "LSU",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "maine",
+    "name": "Maine",
+    "shortName": "ME",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "marist",
+    "name": "Marist",
+    "shortName": "MRST",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "marshall",
+    "name": "Marshall",
+    "shortName": "MRSH",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "maryland",
+    "name": "Maryland",
+    "shortName": "MD",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "massachusetts",
+    "name": "Massachusetts",
+    "shortName": "MASS",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "mcneese",
+    "name": "McNeese",
+    "shortName": "MCN",
+    "conferenceId": "southland",
+    "conference": {
+      "id": "southland",
+      "name": "Southland",
+      "shortName": "Southland",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "memphis",
+    "name": "Memphis",
+    "shortName": "MEM",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "mercer",
+    "name": "Mercer",
+    "shortName": "MER",
+    "conferenceId": "southern",
+    "conference": {
+      "id": "southern",
+      "name": "Southern",
+      "shortName": "Southern",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "mercyhurst",
+    "name": "Mercyhurst",
+    "shortName": "MERC",
+    "conferenceId": "nec"
+  },
+  {
+    "id": "merrimack",
+    "name": "Merrimack",
+    "shortName": "MRMK",
+    "conferenceId": "fcsindependents"
+  },
+  {
+    "id": "miami",
+    "name": "Miami",
+    "shortName": "MIA",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "miami-oh",
+    "name": "Miami (OH)",
+    "shortName": "M-OH",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "michigan",
+    "name": "Michigan",
+    "shortName": "MICH",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "michigan-state",
+    "name": "Michigan State",
+    "shortName": "MSU",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "middle-tennessee",
+    "name": "Middle Tennessee",
+    "shortName": "MTSU",
+    "conferenceId": "cusa",
+    "conference": {
+      "id": "cusa",
+      "name": "Conference USA",
+      "shortName": "CUSA",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "minnesota",
+    "name": "Minnesota",
+    "shortName": "MINN",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "mississippi-state",
+    "name": "Mississippi State",
+    "shortName": "MSST",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "mississippi-valley-state",
+    "name": "Mississippi Valley State",
+    "shortName": "MVSU",
+    "conferenceId": "swac",
+    "conference": {
+      "id": "swac",
+      "name": "SWAC",
+      "shortName": "SWAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "missouri",
+    "name": "Missouri",
+    "shortName": "MIZ",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "missouri-state",
+    "name": "Missouri State",
+    "shortName": "MOST",
+    "conferenceId": "cusa",
+    "conference": {
+      "id": "cusa",
+      "name": "Conference USA",
+      "shortName": "CUSA",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "monmouth",
+    "name": "Monmouth",
+    "shortName": "MONM",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "montana",
+    "name": "Montana",
+    "shortName": "MONT",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "montana-state",
+    "name": "Montana State",
+    "shortName": "MTST",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "morehead-state",
+    "name": "Morehead State",
+    "shortName": "MORE",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "morgan-state",
+    "name": "Morgan State",
+    "shortName": "MORG",
+    "conferenceId": "meac"
+  },
+  {
+    "id": "murray-state",
+    "name": "Murray State",
+    "shortName": "MUR",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "navy",
+    "name": "Navy",
+    "shortName": "NAVY",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "nc-state",
+    "name": "NC State",
+    "shortName": "NCSU",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "nebraska",
+    "name": "Nebraska",
+    "shortName": "NEB",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "nevada",
+    "name": "Nevada",
+    "shortName": "NEV",
+    "conferenceId": "mwc",
+    "conference": {
+      "id": "mwc",
+      "name": "Mountain West",
+      "shortName": "MWC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "new-hampshire",
+    "name": "New Hampshire",
+    "shortName": "UNH",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "new-haven",
+    "name": "New Haven",
+    "shortName": "NHVN",
+    "conferenceId": "nec"
+  },
+  {
+    "id": "new-mexico",
+    "name": "New Mexico",
+    "shortName": "UNM",
+    "conferenceId": "mwc",
+    "conference": {
+      "id": "mwc",
+      "name": "Mountain West",
+      "shortName": "MWC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "new-mexico-state",
+    "name": "New Mexico State",
+    "shortName": "NMSU",
+    "conferenceId": "cusa",
+    "conference": {
+      "id": "cusa",
+      "name": "Conference USA",
+      "shortName": "CUSA",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "nicholls",
+    "name": "Nicholls",
+    "shortName": "NICH",
+    "conferenceId": "southland",
+    "conference": {
+      "id": "southland",
+      "name": "Southland",
+      "shortName": "Southland",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "norfolk-state",
+    "name": "Norfolk State",
+    "shortName": "NORF",
+    "conferenceId": "meac"
+  },
+  {
+    "id": "north-alabama",
+    "name": "North Alabama",
+    "shortName": "UNA",
+    "conferenceId": "uac"
+  },
+  {
+    "id": "north-carolina",
+    "name": "North Carolina",
+    "shortName": "UNC",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "north-carolina-aandt",
+    "name": "North Carolina A&T",
+    "shortName": "NCAT",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "north-carolina-central",
+    "name": "North Carolina Central",
+    "shortName": "NCCU",
+    "conferenceId": "meac"
+  },
+  {
+    "id": "north-dakota",
+    "name": "North Dakota",
+    "shortName": "UND",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "north-dakota-state",
+    "name": "North Dakota State",
+    "shortName": "NDSU",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "northern-arizona",
+    "name": "Northern Arizona",
+    "shortName": "NAU",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "northern-colorado",
+    "name": "Northern Colorado",
+    "shortName": "UNCO",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "northern-illinois",
+    "name": "Northern Illinois",
+    "shortName": "NIU",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "northern-iowa",
+    "name": "Northern Iowa",
+    "shortName": "UNI",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "north-texas",
+    "name": "North Texas",
+    "shortName": "UNT",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "northwestern",
+    "name": "Northwestern",
+    "shortName": "NU",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "northwestern-state",
+    "name": "Northwestern State",
+    "shortName": "NWST",
+    "conferenceId": "southland",
+    "conference": {
+      "id": "southland",
+      "name": "Southland",
+      "shortName": "Southland",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "notre-dame",
+    "name": "Notre Dame",
+    "shortName": "ND",
+    "conferenceId": "ind",
+    "conference": {
+      "id": "ind",
+      "name": "FBS Independents",
+      "shortName": "IND",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "ohio",
+    "name": "Ohio",
+    "shortName": "OHIO",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "ohio-state",
+    "name": "Ohio State",
+    "shortName": "OSU",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "oklahoma",
+    "name": "Oklahoma",
+    "shortName": "OU",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "oklahoma-state",
+    "name": "Oklahoma State",
+    "shortName": "OKST",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "old-dominion",
+    "name": "Old Dominion",
+    "shortName": "ODU",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "ole-miss",
+    "name": "Ole Miss",
+    "shortName": "MISS",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "oregon",
+    "name": "Oregon",
+    "shortName": "ORE",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "oregon-state",
+    "name": "Oregon State",
+    "shortName": "ORST",
+    "conferenceId": "pac12",
+    "conference": {
+      "id": "pac12",
+      "name": "Pac-12",
+      "shortName": "Pac-12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "penn-state",
+    "name": "Penn State",
+    "shortName": "PSU",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "pennsylvania",
+    "name": "Pennsylvania",
+    "shortName": "PENN",
+    "conferenceId": "ivy",
+    "conference": {
+      "id": "ivy",
+      "name": "Ivy",
+      "shortName": "Ivy",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "pittsburgh",
+    "name": "Pittsburgh",
+    "shortName": "PITT",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "portland-state",
+    "name": "Portland State",
+    "shortName": "PRST",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "prairie-view-aandm",
+    "name": "Prairie View A&M",
+    "shortName": "PV",
+    "conferenceId": "swac",
+    "conference": {
+      "id": "swac",
+      "name": "SWAC",
+      "shortName": "SWAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "presbyterian",
+    "name": "Presbyterian",
+    "shortName": "PRES",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "princeton",
+    "name": "Princeton",
+    "shortName": "PRIN",
+    "conferenceId": "ivy",
+    "conference": {
+      "id": "ivy",
+      "name": "Ivy",
+      "shortName": "Ivy",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "purdue",
+    "name": "Purdue",
+    "shortName": "PUR",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "rhode-island",
+    "name": "Rhode Island",
+    "shortName": "URI",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "rice",
+    "name": "Rice",
+    "shortName": "RICE",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "richmond",
+    "name": "Richmond",
+    "shortName": "RICH",
+    "conferenceId": "patriot"
+  },
+  {
+    "id": "robert-morris",
+    "name": "Robert Morris",
+    "shortName": "RMU",
+    "conferenceId": "nec"
+  },
+  {
+    "id": "rutgers",
+    "name": "Rutgers",
+    "shortName": "RUTG",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "sacramento-state",
+    "name": "Sacramento State",
+    "shortName": "SAC",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "sacred-heart",
+    "name": "Sacred Heart",
+    "shortName": "SHU",
+    "conferenceId": "fcsindependents"
+  },
+  {
+    "id": "samford",
+    "name": "Samford",
+    "shortName": "SAM",
+    "conferenceId": "southern",
+    "conference": {
+      "id": "southern",
+      "name": "Southern",
+      "shortName": "Southern",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "sam-houston",
+    "name": "Sam Houston",
+    "shortName": "SHSU",
+    "conferenceId": "cusa",
+    "conference": {
+      "id": "cusa",
+      "name": "Conference USA",
+      "shortName": "CUSA",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "san-diego",
+    "name": "San Diego",
+    "shortName": "USD",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "san-diego-state",
+    "name": "San Diego State",
+    "shortName": "SDSU",
+    "conferenceId": "mwc",
+    "conference": {
+      "id": "mwc",
+      "name": "Mountain West",
+      "shortName": "MWC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "san-josé-state",
+    "name": "San José State",
+    "shortName": "SJSU",
+    "conferenceId": "mwc",
+    "conference": {
+      "id": "mwc",
+      "name": "Mountain West",
+      "shortName": "MWC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "se-louisiana",
+    "name": "SE Louisiana",
+    "shortName": "SELA",
+    "conferenceId": "southland",
+    "conference": {
+      "id": "southland",
+      "name": "Southland",
+      "shortName": "Southland",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "smu",
+    "name": "SMU",
+    "shortName": "SMU",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "south-alabama",
+    "name": "South Alabama",
+    "shortName": "USA",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "south-carolina",
+    "name": "South Carolina",
+    "shortName": "SC",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "south-carolina-state",
+    "name": "South Carolina State",
+    "shortName": "SCST",
+    "conferenceId": "meac"
+  },
+  {
+    "id": "south-dakota",
+    "name": "South Dakota",
+    "shortName": "SDAK",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "south-dakota-state",
+    "name": "South Dakota State",
+    "shortName": "SDST",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "southeast-missouri-state",
+    "name": "Southeast Missouri State",
+    "shortName": "SEMO",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "southern",
+    "name": "Southern",
+    "shortName": "SOU",
+    "conferenceId": "swac",
+    "conference": {
+      "id": "swac",
+      "name": "SWAC",
+      "shortName": "SWAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "southern-illinois",
+    "name": "Southern Illinois",
+    "shortName": "SIU",
+    "conferenceId": "mvfc"
+  },
+  {
+    "id": "southern-miss",
+    "name": "Southern Miss",
+    "shortName": "USM",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "southern-utah",
+    "name": "Southern Utah",
+    "shortName": "SUU",
+    "conferenceId": "uac"
+  },
+  {
+    "id": "south-florida",
+    "name": "South Florida",
+    "shortName": "USF",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "stanford",
+    "name": "Stanford",
+    "shortName": "STAN",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "stephen-f-austin",
+    "name": "Stephen F. Austin",
+    "shortName": "SFA",
+    "conferenceId": "southland",
+    "conference": {
+      "id": "southland",
+      "name": "Southland",
+      "shortName": "Southland",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "stetson",
+    "name": "Stetson",
+    "shortName": "STET",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "st-francis-pa",
+    "name": "St. Francis (PA)",
+    "shortName": "SFPA",
+    "conferenceId": "nec"
+  },
+  {
+    "id": "stonehill",
+    "name": "Stonehill",
+    "shortName": "STO",
+    "conferenceId": "nec"
+  },
+  {
+    "id": "stony-brook",
+    "name": "Stony Brook",
+    "shortName": "STBK",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "st-thomas-mn",
+    "name": "St. Thomas (MN)",
+    "shortName": "STMN",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "syracuse",
+    "name": "Syracuse",
+    "shortName": "SYR",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "tarleton-state",
+    "name": "Tarleton State",
+    "shortName": "TAR",
+    "conferenceId": "uac"
+  },
+  {
+    "id": "tcu",
+    "name": "TCU",
+    "shortName": "TCU",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "temple",
+    "name": "Temple",
+    "shortName": "TEM",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "tennessee",
+    "name": "Tennessee",
+    "shortName": "TENN",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "tennessee-state",
+    "name": "Tennessee State",
+    "shortName": "TNST",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "tennessee-tech",
+    "name": "Tennessee Tech",
+    "shortName": "TNTC",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "texas",
+    "name": "Texas",
+    "shortName": "TEX",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "texas-aandm",
+    "name": "Texas A&M",
+    "shortName": "TA&M",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "texas-southern",
+    "name": "Texas Southern",
+    "shortName": "TXSO",
+    "conferenceId": "swac",
+    "conference": {
+      "id": "swac",
+      "name": "SWAC",
+      "shortName": "SWAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "texas-state",
+    "name": "Texas State",
+    "shortName": "TXST",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "texas-tech",
+    "name": "Texas Tech",
+    "shortName": "TTU",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "the-citadel",
+    "name": "The Citadel",
+    "shortName": "CIT",
+    "conferenceId": "southern",
+    "conference": {
+      "id": "southern",
+      "name": "Southern",
+      "shortName": "Southern",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "toledo",
+    "name": "Toledo",
+    "shortName": "TOL",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "towson",
+    "name": "Towson",
+    "shortName": "TOW",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "troy",
+    "name": "Troy",
+    "shortName": "TROY",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "tulane",
+    "name": "Tulane",
+    "shortName": "TULN",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "tulsa",
+    "name": "Tulsa",
+    "shortName": "TLSA",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "uab",
+    "name": "UAB",
+    "shortName": "UAB",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "ualbany",
+    "name": "UAlbany",
+    "shortName": "UALB",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "uc-davis",
+    "name": "UC Davis",
+    "shortName": "UCD",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "ucf",
+    "name": "UCF",
+    "shortName": "UCF",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "ucla",
+    "name": "UCLA",
+    "shortName": "UCLA",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "uconn",
+    "name": "UConn",
+    "shortName": "CONN",
+    "conferenceId": "ind",
+    "conference": {
+      "id": "ind",
+      "name": "FBS Independents",
+      "shortName": "IND",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "ul-monroe",
+    "name": "UL Monroe",
+    "shortName": "ULM",
+    "conferenceId": "sbc",
+    "conference": {
+      "id": "sbc",
+      "name": "Sun Belt",
+      "shortName": "SBC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "unlv",
+    "name": "UNLV",
+    "shortName": "UNLV",
+    "conferenceId": "mwc",
+    "conference": {
+      "id": "mwc",
+      "name": "Mountain West",
+      "shortName": "MWC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "usc",
+    "name": "USC",
+    "shortName": "USC",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "utah",
+    "name": "Utah",
+    "shortName": "UTAH",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "utah-state",
+    "name": "Utah State",
+    "shortName": "USU",
+    "conferenceId": "mwc",
+    "conference": {
+      "id": "mwc",
+      "name": "Mountain West",
+      "shortName": "MWC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "utah-tech",
+    "name": "Utah Tech",
+    "shortName": "UTU",
+    "conferenceId": "uac"
+  },
+  {
+    "id": "utep",
+    "name": "UTEP",
+    "shortName": "UTEP",
+    "conferenceId": "cusa",
+    "conference": {
+      "id": "cusa",
+      "name": "Conference USA",
+      "shortName": "CUSA",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "ut-martin",
+    "name": "UT Martin",
+    "shortName": "UTM",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "ut-rio-grande-valley",
+    "name": "UT Rio Grande Valley",
+    "shortName": "RGV",
+    "conferenceId": "southland",
+    "conference": {
+      "id": "southland",
+      "name": "Southland",
+      "shortName": "Southland",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "utsa",
+    "name": "UTSA",
+    "shortName": "UTSA",
+    "conferenceId": "aac",
+    "conference": {
+      "id": "aac",
+      "name": "American Athletic",
+      "shortName": "AAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "valparaiso",
+    "name": "Valparaiso",
+    "shortName": "VAL",
+    "conferenceId": "pioneer"
+  },
+  {
+    "id": "vanderbilt",
+    "name": "Vanderbilt",
+    "shortName": "VAN",
+    "conferenceId": "sec",
+    "conference": {
+      "id": "sec",
+      "name": "SEC",
+      "shortName": "SEC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "villanova",
+    "name": "Villanova",
+    "shortName": "VILL",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "virginia",
+    "name": "Virginia",
+    "shortName": "UVA",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "virginia-tech",
+    "name": "Virginia Tech",
+    "shortName": "VT",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "vmi",
+    "name": "VMI",
+    "shortName": "VMI",
+    "conferenceId": "southern",
+    "conference": {
+      "id": "southern",
+      "name": "Southern",
+      "shortName": "Southern",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "wagner",
+    "name": "Wagner",
+    "shortName": "WAG",
+    "conferenceId": "nec"
+  },
+  {
+    "id": "wake-forest",
+    "name": "Wake Forest",
+    "shortName": "WAKE",
+    "conferenceId": "acc",
+    "conference": {
+      "id": "acc",
+      "name": "ACC",
+      "shortName": "ACC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "washington",
+    "name": "Washington",
+    "shortName": "WASH",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "washington-state",
+    "name": "Washington State",
+    "shortName": "WSU",
+    "conferenceId": "pac12",
+    "conference": {
+      "id": "pac12",
+      "name": "Pac-12",
+      "shortName": "Pac-12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "weber-state",
+    "name": "Weber State",
+    "shortName": "WEB",
+    "conferenceId": "bigsky"
+  },
+  {
+    "id": "western-carolina",
+    "name": "Western Carolina",
+    "shortName": "WCU",
+    "conferenceId": "southern",
+    "conference": {
+      "id": "southern",
+      "name": "Southern",
+      "shortName": "Southern",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "western-illinois",
+    "name": "Western Illinois",
+    "shortName": "WIU",
+    "conferenceId": "bigsouthovc"
+  },
+  {
+    "id": "western-kentucky",
+    "name": "Western Kentucky",
+    "shortName": "WKU",
+    "conferenceId": "cusa",
+    "conference": {
+      "id": "cusa",
+      "name": "Conference USA",
+      "shortName": "CUSA",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "western-michigan",
+    "name": "Western Michigan",
+    "shortName": "WMU",
+    "conferenceId": "mac",
+    "conference": {
+      "id": "mac",
+      "name": "Mid-American",
+      "shortName": "MAC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "west-georgia",
+    "name": "West Georgia",
+    "shortName": "WGA",
+    "conferenceId": "uac"
+  },
+  {
+    "id": "west-virginia",
+    "name": "West Virginia",
+    "shortName": "WVU",
+    "conferenceId": "b12",
+    "conference": {
+      "id": "b12",
+      "name": "Big 12",
+      "shortName": "Big12",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "william-and-mary",
+    "name": "William & Mary",
+    "shortName": "W&M",
+    "conferenceId": "caa"
+  },
+  {
+    "id": "wisconsin",
+    "name": "Wisconsin",
+    "shortName": "WIS",
+    "conferenceId": "b1g",
+    "conference": {
+      "id": "b1g",
+      "name": "Big Ten",
+      "shortName": "B1G",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "wofford",
+    "name": "Wofford",
+    "shortName": "WOF",
+    "conferenceId": "southern",
+    "conference": {
+      "id": "southern",
+      "name": "Southern",
+      "shortName": "Southern",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "wyoming",
+    "name": "Wyoming",
+    "shortName": "WYO",
+    "conferenceId": "mwc",
+    "conference": {
+      "id": "mwc",
+      "name": "Mountain West",
+      "shortName": "MWC",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "yale",
+    "name": "Yale",
+    "shortName": "YALE",
+    "conferenceId": "ivy",
+    "conference": {
+      "id": "ivy",
+      "name": "Ivy",
+      "shortName": "Ivy",
+      "division": "FBS"
+    }
+  },
+  {
+    "id": "youngstown-state",
+    "name": "Youngstown State",
+    "shortName": "YSU",
+    "conferenceId": "mvfc"
+  }
+]

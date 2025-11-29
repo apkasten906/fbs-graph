@@ -1,12 +1,15 @@
 import fs from 'node:fs';
 const YEAR = Number(process.env.YEAR || 2025);
 function idify(s: string) {
+  // Match the format used in import-from-csv.ts
+  // Keep apostrophes, convert parentheses to dashes, remove & and periods, convert spaces to dashes
   return s
     .toLowerCase()
-    .replace(/&/g, 'and')
-    .replace(/[.']/g, '')
-    .replace(/[()]/g, '')
-    .replace(/\s+/g, '-');
+    .replace(/[&.]/g, '') // Remove & and periods
+    .replace(/[()]/g, '-') // Convert parentheses to dashes
+    .replace(/\s+/g, '-') // Convert spaces to dashes
+    .replace(/-+/g, '-') // Collapse multiple dashes
+    .replace(/^-|-$/g, ''); // Trim leading/trailing dashes
 }
 const text = fs.readFileSync('csv/teams.csv', 'utf-8').trim().split('\n');
 const header = text.shift();

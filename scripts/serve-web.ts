@@ -51,7 +51,10 @@ async function resolvePath(requestPath: string) {
       // Use the fallback candidate if it exists and is inside the project
       if (isPathInside(projectRoot, fallback)) return fallback;
     } catch (err2) {
-      console.error(`Error accessing path "${candidate}":`, error);
+      // Silently ignore Chrome DevTools and other browser-specific requests
+      if (!decoded.includes('.well-known') && !decoded.includes('favicon')) {
+        console.error(`Error accessing path "${candidate}":`, error);
+      }
       return null;
     }
   }

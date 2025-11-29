@@ -1,0 +1,1514 @@
+[
+  {
+    "teamSeasonId": "texas-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 17,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "penn-state-2025",
+    "poll": "AP",
+    "week": 6,
+    "rank": 7,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "ohio-state-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 1,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "clemson-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 12,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "georgia-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 4,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "notre-dame-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 9,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "oregon-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 6,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "alabama-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 10,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "lsu-2025",
+    "poll": "AP",
+    "week": 9,
+    "rank": 20,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "miami-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 14,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "arizona-state-2025",
+    "poll": "AP",
+    "week": 9,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "illinois-2025",
+    "poll": "AP",
+    "week": 9,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "south-carolina-2025",
+    "poll": "AP",
+    "week": 3,
+    "rank": 11,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "michigan-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 18,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "florida-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 13,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "smu-2025",
+    "poll": "AP",
+    "week": 2,
+    "rank": 17,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "kansas-state-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 17,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "oklahoma-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 8,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "texas-am-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 3,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "indiana-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 2,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "ole-miss-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 5,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "iowa-state-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "texas-tech-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 6,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "tennessee-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 20,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "boise-state-2025",
+    "poll": "AP",
+    "week": 1,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "florida-state-2025",
+    "poll": "AP",
+    "week": 7,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "utah-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 13,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "south-florida-2025",
+    "poll": "AP",
+    "week": 12,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "auburn-2025",
+    "poll": "AP",
+    "week": 4,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "missouri-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "georgia-tech-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 15,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "vanderbilt-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 12,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "usc-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 16,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "tcu-2025",
+    "poll": "AP",
+    "week": 5,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "byu-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 11,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "virginia-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "memphis-2025",
+    "poll": "AP",
+    "week": 11,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "cincinnati-2025",
+    "poll": "AP",
+    "week": 12,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "nebraska-2025",
+    "poll": "AP",
+    "week": 8,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "louisville-2025",
+    "poll": "AP",
+    "week": 12,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "houston-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "washington-2025",
+    "poll": "AP",
+    "week": 11,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "pittsburgh-2025",
+    "poll": "AP",
+    "week": 12,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "james-madison-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 21,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "north-texas-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "tulane-2025",
+    "poll": "AP",
+    "week": 13,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "texas-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 18,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "ohio-state-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 1,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "penn-state-2025",
+    "poll": "COACHES",
+    "week": 7,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "georgia-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 4,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "notre-dame-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 9,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "clemson-2025",
+    "poll": "COACHES",
+    "week": 3,
+    "rank": 11,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "oregon-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 5,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "alabama-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 10,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "lsu-2025",
+    "poll": "COACHES",
+    "week": 9,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "miami-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 15,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "arizona-state-2025",
+    "poll": "COACHES",
+    "week": 9,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "illinois-2025",
+    "poll": "COACHES",
+    "week": 9,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "south-carolina-2025",
+    "poll": "COACHES",
+    "week": 4,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "michigan-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 17,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "ole-miss-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 6,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "smu-2025",
+    "poll": "COACHES",
+    "week": 2,
+    "rank": 16,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "florida-2025",
+    "poll": "COACHES",
+    "week": 2,
+    "rank": 15,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "tennessee-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 20,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "indiana-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 2,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "kansas-state-2025",
+    "poll": "COACHES",
+    "week": 1,
+    "rank": 20,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "iowa-state-2025",
+    "poll": "COACHES",
+    "week": 7,
+    "rank": 21,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "texas-am-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 3,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "byu-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 11,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "texas-tech-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 7,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "boise-state-2025",
+    "poll": "COACHES",
+    "week": 1,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "north-dakota-state-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 1,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "montana-state-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 3,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "south-dakota-state-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "incarnate-word-2025",
+    "poll": "COACHES",
+    "week": 6,
+    "rank": 20,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "south-dakota-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 21,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "illinois-state-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 11,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "uc-davis-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 14,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "tarleton-state-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 5,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "montana-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 2,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "rhode-island-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 9,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "mercer-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 6,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "idaho-2025",
+    "poll": "COACHES",
+    "week": 7,
+    "rank": 13,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "villanova-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 7,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "sacramento-state-2025",
+    "poll": "COACHES",
+    "week": 5,
+    "rank": 21,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "lehigh-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 4,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "abilene-christian-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 18,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "jackson-state-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 15,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "northern-arizona-2025",
+    "poll": "COACHES",
+    "week": 10,
+    "rank": 21,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "western-carolina-2025",
+    "poll": "COACHES",
+    "week": 11,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "southern-illinois-2025",
+    "poll": "COACHES",
+    "week": 12,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "monmouth-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 11,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "richmond-2025",
+    "poll": "COACHES",
+    "week": 1,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "tennessee-tech-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 8,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "stephen-f-austin-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 13,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "stony-brook-2025",
+    "poll": "COACHES",
+    "week": 1,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "north-central-college-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 1,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "university-of-mount-union-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 2,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "johns-hopkins-university-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 11,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "saint-john's-(mn)-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 6,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "susquehanna-2025",
+    "poll": "COACHES",
+    "week": 5,
+    "rank": 14,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "hardin-simmons-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 12,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "salisbury-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 9,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "mary-hardin-baylor-2025",
+    "poll": "COACHES",
+    "week": 7,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "wartburg-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 5,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "wisconsin-lacrosse-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 16,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "cortland-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "bethel-(mn)-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 3,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "springfield-2025",
+    "poll": "COACHES",
+    "week": 3,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "wisconsin-platteville-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 13,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "linfield-college-2025",
+    "poll": "COACHES",
+    "week": 3,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "depauw-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 10,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "wheaton-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 20,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "carnegie-mellon-2025",
+    "poll": "COACHES",
+    "week": 9,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "wisconsin-river-falls-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 4,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "hope-college-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 15,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "randolph-macon-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 17,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "wisconsin-whitewater-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 14,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "grove-city-college-2025",
+    "poll": "COACHES",
+    "week": 5,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "aurora-2025",
+    "poll": "COACHES",
+    "week": 1,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "john-carroll-university-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 8,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "ferris-state-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 1,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "harding-university-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 2,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "grand-valley-state-university-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 20,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "slippery-rock-2025",
+    "poll": "COACHES",
+    "week": 11,
+    "rank": 20,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "central-oklahoma-2025",
+    "poll": "COACHES",
+    "week": 5,
+    "rank": 15,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "csu-pueblo-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 4,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "kutztown-university-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 3,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "west-florida-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 9,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "pittsburg-st-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 6,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "western-colorado-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 15,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "minnesota-state-mankato-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 21,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "valdosta-state-2025",
+    "poll": "COACHES",
+    "week": 5,
+    "rank": 20,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "angelo-state-2025",
+    "poll": "COACHES",
+    "week": 11,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "university-of-charleston-(wv)-2025",
+    "poll": "COACHES",
+    "week": 3,
+    "rank": 18,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "pennwest-california-2025",
+    "poll": "COACHES",
+    "week": 7,
+    "rank": 16,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "bemidji-state-2025",
+    "poll": "COACHES",
+    "week": 1,
+    "rank": 16,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "lenoir-rhyne-2025",
+    "poll": "COACHES",
+    "week": 4,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "ouachita-baptist-2025",
+    "poll": "COACHES",
+    "week": 2,
+    "rank": 15,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "virginia-union-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 17,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "indianapolis-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 8,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "central-washington-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 5,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "central-missouri-2025",
+    "poll": "COACHES",
+    "week": 1,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "augustana-university-(sd)-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "ashland-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 18,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "miles-college-2025",
+    "poll": "COACHES",
+    "week": 1,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "north-dakota-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 16,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "east-tennessee-state-2025",
+    "poll": "COACHES",
+    "week": 2,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "nicholls-2025",
+    "poll": "COACHES",
+    "week": 2,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "ut-permian-basin-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 10,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "delta-state-2025",
+    "poll": "COACHES",
+    "week": 11,
+    "rank": 21,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "west-alabama-2025",
+    "poll": "COACHES",
+    "week": 10,
+    "rank": 21,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "florida-state-2025",
+    "poll": "COACHES",
+    "week": 6,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "oklahoma-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 8,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "utah-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 14,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "south-florida-2025",
+    "poll": "COACHES",
+    "week": 9,
+    "rank": 20,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "austin-peay-2025",
+    "poll": "COACHES",
+    "week": 10,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "new-hampshire-2025",
+    "poll": "COACHES",
+    "week": 4,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "youngstown-state-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 17,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "carson-newman-college-2025",
+    "poll": "COACHES",
+    "week": 6,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "minnesota-duluth-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 7,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "wisconsin-oshkosh-2025",
+    "poll": "COACHES",
+    "week": 9,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "georgia-tech-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 12,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "missouri-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 21,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "vanderbilt-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 13,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "auburn-2025",
+    "poll": "COACHES",
+    "week": 4,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "johnson-c-smith-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 11,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "wingate-2025",
+    "poll": "COACHES",
+    "week": 5,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "michigan-tech-2025",
+    "poll": "COACHES",
+    "week": 4,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "sioux-falls-2025",
+    "poll": "COACHES",
+    "week": 4,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "trinity-university-tx-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 21,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "berry-college-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "central-college-2025",
+    "poll": "COACHES",
+    "week": 12,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "usc-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 16,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "tcu-2025",
+    "poll": "COACHES",
+    "week": 5,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "west-georgia-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "henderson-state-2025",
+    "poll": "COACHES",
+    "week": 5,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.273Z"
+  },
+  {
+    "teamSeasonId": "findlay-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 12,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "hampden-sydney-2025",
+    "poll": "COACHES",
+    "week": 11,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "presbyterian-2025",
+    "poll": "COACHES",
+    "week": 11,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "lamar-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "christopher-newport-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 7,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "wabash-college-2025",
+    "poll": "COACHES",
+    "week": 12,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "frostburg-state-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "northwest-missouri-st-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 14,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "unc-pembroke-2025",
+    "poll": "COACHES",
+    "week": 12,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "virginia-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 19,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "memphis-2025",
+    "poll": "COACHES",
+    "week": 11,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "harvard-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 10,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "muhlenberg-2025",
+    "poll": "COACHES",
+    "week": 10,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "cincinnati-2025",
+    "poll": "COACHES",
+    "week": 12,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "se-louisiana-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 20,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "benedict-college-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "maryville-college-(tn)-2025",
+    "poll": "COACHES",
+    "week": 8,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "louisville-2025",
+    "poll": "COACHES",
+    "week": 12,
+    "rank": 21,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "southern-arkansas-2025",
+    "poll": "COACHES",
+    "week": 9,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "houston-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "navy-2025",
+    "poll": "COACHES",
+    "week": 10,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "baldwin-wallace-2025",
+    "poll": "COACHES",
+    "week": 11,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "albany-state-ga-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 13,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "iowa-2025",
+    "poll": "COACHES",
+    "week": 11,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "assumption-2025",
+    "poll": "COACHES",
+    "week": 11,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.274Z"
+  },
+  {
+    "teamSeasonId": "newberry-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 16,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "pittsburgh-2025",
+    "poll": "COACHES",
+    "week": 12,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "james-madison-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "lafayette-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "chadron-st-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 22,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "western-oregon-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "adrian-2025",
+    "poll": "COACHES",
+    "week": 12,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "franklin-marshall-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 18,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "north-texas-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "tulane-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "yale-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "monmouth-(il)-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 23,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "endicott-college-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 24,
+    "date": "2025-11-20T13:55:11.275Z"
+  },
+  {
+    "teamSeasonId": "alma-2025",
+    "poll": "COACHES",
+    "week": 13,
+    "rank": 25,
+    "date": "2025-11-20T13:55:11.275Z"
+  }
+]
