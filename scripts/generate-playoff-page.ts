@@ -332,8 +332,8 @@ function renderHTML(
     for (const w of weeks) {
       const rankMap = ranksByPollWeek[poll][w] || {};
       for (const rk of Object.keys(rankMap)) {
-        const tsid = rankMap[rk];
-        if (!fbsTeamSeasonIds.has(tsid)) {
+        const teamSeasonId = rankMap[rk];
+        if (!fbsTeamSeasonIds.has(teamSeasonId)) {
           delete rankMap[rk];
         }
       }
