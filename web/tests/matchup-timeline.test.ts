@@ -5,7 +5,7 @@
  * for two selected teams when matchup data exists.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { JSDOM } from 'jsdom';
 import path from 'node:path';
 

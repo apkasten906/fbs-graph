@@ -4,6 +4,11 @@
  */
 
 export class StaticDataAdapter {
+  // Base path for static JSON data files
+  // Default is './web/data' for browser, './src/data' for Node
+  // Accepts absolute or relative paths
+  // Cache loaded JSON files in memory
+  // Single source of truth for default season
   constructor(basePath) {
     // Default basePath: prefer Node-friendly `src/data` when running under Node
     const isNode = typeof process !== 'undefined' && !!process.versions && !!process.versions.node;
@@ -25,7 +30,6 @@ export class StaticDataAdapter {
       console.log(`[StaticDataAdapter] Loaded ${filename} from cache`);
       return this.cache.get(filename);
     }
-    const isNode = typeof process !== 'undefined' && !!process.versions && !!process.versions.node;
 
     // Prefer fetch when available (tests may provide a global fetch mock in Node)
     if (typeof fetch === 'function') {
@@ -56,27 +60,29 @@ export class StaticDataAdapter {
 
     // Node environment fallback: read files from disk using fs
     try {
-      const path = (await import('path')).default;
-      const fs = (await import('fs')).promises;
+      // Use dynamic imports without assuming a default export to remain
+      // compatible with Node ESM and bundlers.
+      const pathMod = await import('path');
+      const fsPromises = (await import('fs')).promises;
       const { fileURLToPath } = await import('url');
 
       let candidatePath;
-      if (path.isAbsolute(this.basePath)) {
-        candidatePath = path.join(this.basePath, filename);
+      if (pathMod.isAbsolute(this.basePath)) {
+        candidatePath = pathMod.join(this.basePath, filename);
       } else {
         // First try: treat basePath as relative to process.cwd()
-        candidatePath = path.join(process.cwd(), this.basePath, filename);
+        candidatePath = pathMod.join(process.cwd(), this.basePath, filename);
         try {
-          await fs.access(candidatePath);
+          await fsPromises.access(candidatePath);
         } catch (e) {
           // Fallback: resolve relative to this module (e.g., when running in test runner)
-          const moduleDir = path.dirname(fileURLToPath(import.meta.url));
-          candidatePath = path.join(moduleDir, '..', this.basePath, filename);
+          const moduleDir = pathMod.dirname(fileURLToPath(import.meta.url));
+          candidatePath = pathMod.join(moduleDir, '..', this.basePath, filename);
         }
       }
 
-      console.log(`[StaticDataAdapter] Reading local file ${candidatePath}`);
-      const content = await fs.readFile(candidatePath, 'utf8');
+      console.debug(`[StaticDataAdapter] Reading local file ${candidatePath}`);
+      const content = await fsPromises.readFile(candidatePath, 'utf8');
       const data = JSON.parse(content);
       this.cache.set(filename, data);
       return data;
@@ -336,7 +342,7 @@ export class StaticDataAdapter {
     // precise checks for GraphQL fields to avoid false positives. We look
     // for the function-like usages `teams(` and `games(` which are much
     // less likely to collide with unrelated text.
-    const qstr = typeof query === 'string' ? query : String(query);
+    const querystring = typeof query === 'string' ? query : String(query);
     // Simple allowlist for supported query types to avoid executing arbitrary
     // user-controlled GraphQL strings. We only support two patterns currently:
     // - Graph queries that request teams(...) and games(...)
@@ -344,7 +350,8 @@ export class StaticDataAdapter {
     const allowedQueryPatterns = [/\bteams\s*\(/i, /\bgames\s*\(/i, /\bessentialMatchups\b/i];
     const isAllowedQueryString = q => allowedQueryPatterns.some(r => r.test(q));
 
-    const looksLikeGraphQuery = /\bteams\s*\(/i.test(qstr) && /\bgames\s*\(/i.test(qstr);
+    const looksLikeGraphQuery =
+      /\bteams\s*\(/i.test(querystring) && /\bgames\s*\(/i.test(querystring);
 
     // Consider a variables object present if any of the known variables are non-null/defined
     // (we compute this first so callers that pass an empty `{}` do not bypass
@@ -364,7 +371,7 @@ export class StaticDataAdapter {
     // behavior. Require a meaningful variables object (hasSeasonVariable)
     // rather than relying on the truthiness of `variables` (an empty object
     // is truthy and would previously bypass this check).
-    if (!isAllowedQueryString(qstr) && !hasSeasonVariable) {
+    if (!isAllowedQueryString(querystring) && !hasSeasonVariable) {
       throw new Error('Refusing to execute unsupported or potentially unsafe query string.');
     }
 
@@ -373,7 +380,7 @@ export class StaticDataAdapter {
     }
 
     // For essential matchups query
-    if (qstr.includes('essentialMatchups')) {
+    if (querystring.includes('essentialMatchups')) {
       const matchups = await this.queryEssentialMatchups(variables);
       return {
         data: {

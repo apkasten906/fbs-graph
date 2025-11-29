@@ -1,8 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { JSDOM } from 'jsdom';
+import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 

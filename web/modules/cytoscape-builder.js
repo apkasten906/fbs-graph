@@ -317,16 +317,20 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
       // If this node is already positioned (e.g., on the shortest path), skip
       if (positions[nodeId]) return;
 
-      // Try to find a shortest-path node this node connects to and anchor to it
+      // Try to find shortest-path node(s) this node connects to and anchor to them
+      // Collect all matching anchors rather than stopping at the first match so
+      // nodes that bridge multiple path nodes (e.g., USC connecting to Purdue and Notre Dame)
+      // can be centered between those anchors instead of being biased to one.
       let anchorIdx = null;
+      const anchorIdxs = [];
       if (pathIndex.size > 0) {
         for (const [pn, idx] of pathIndex) {
           const edgeKey = nodeId < pn ? `${nodeId}__${pn}` : `${pn}__${nodeId}`;
           if ((pathFilter.edges || []).includes(edgeKey)) {
-            anchorIdx = idx;
-            break;
+            anchorIdxs.push(idx);
           }
         }
+        if (anchorIdxs.length === 1) anchorIdx = anchorIdxs[0];
       }
 
       // Avoid anchoring to the source (index 0) where possible; prefer the first path step
@@ -340,7 +344,7 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
         }
       }
 
-      if (anchorIdx !== null && pathSpacing !== null) {
+      if ((anchorIdx !== null || anchorIdxs.length > 1) && pathSpacing !== null) {
         const baseX = sourceX + pathSpacing * anchorIdx;
         const jitter = ((index % 3) - 1) * 12;
         // If this is a degree-1 node, place it between the source and the anchor baseX
@@ -352,7 +356,16 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
         const anchorX = anchorId && positions[anchorId] ? positions[anchorId].x : baseX;
         const prevX = prevAnchorId && positions[prevAnchorId] ? positions[prevAnchorId].x : null;
         let x;
-        if (isDegreeOne) {
+        // If the node connects to multiple path anchors, compute the average anchor x
+        // and use that as the placement to visually center the bridging node.
+        if (anchorIdxs.length > 1) {
+          const anchorXs = anchorIdxs
+            .map(i => shortestPathNodes && shortestPathNodes[i] && positions[shortestPathNodes[i]])
+            .filter(Boolean)
+            .map(p => p.x);
+          const avgAnchorX = anchorXs.length ? anchorXs.reduce((a, b) => a + b, 0) / anchorXs.length : baseX;
+          x = avgAnchorX + jitter;
+        } else if (isDegreeOne) {
           x = sourceX + (baseX - sourceX) * MIDPOINT_FRACTION + jitter;
         } else if (prevX !== null) {
           // Pull higher-degree nodes toward their anchor but keep them between the two

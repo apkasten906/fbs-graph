@@ -60,11 +60,18 @@ async function generate(season = 2025, limit = 12, gameLimit = 6, leverageThresh
     process.exitCode = 1;
     return;
   }
-  const data = result.body.singleResult.data?.playoffPreview;
+  let data: any = result.body.singleResult.data?.playoffPreview;
   if (!data || typeof data !== 'object' || !('season' in data) || typeof data.season !== 'number') {
     console.error('No playoffPreview data returned or missing season field');
     process.exitCode = 1;
     return;
+  }
+  // Attempt to supplement contenders if the resolver returned fewer than requested
+  try {
+    const supplemented = await supplementContendersIfNeeded(data, limit, data.season);
+    if (supplemented) data = supplemented;
+  } catch (e) {
+    // ignore errors from supplementation and continue with original data
   }
   // Load local data to support client-side filtering (weeks and poll snapshots)
   const DATA_DIR = resolveDataDir();
@@ -174,8 +181,23 @@ async function supplementContendersIfNeeded(data: any, limit: number, season: nu
 
     function normalizedSpPlus(spPlus?: number) {
       if (spPlus === undefined) return undefined;
-      const clamped = Math.max(-10, Math.min(35, spPlus));
-      return (clamped + 10) / 45;
+
+      // Prefer data-driven normalization using the observed min/max
+      // values for the season (minSp and span). This scales values to
+      // [0,1] based on the data range so the resume score reflects the
+      // distribution in the dataset rather than a hardcoded range.
+      const clampedToRange = Math.max(minSp, Math.min(maxSp, spPlus));
+
+      // If span is extremely small (edge-case single-value dataset),
+      // fall back to the original fixed-range mapping to avoid division
+      // by a near-zero value.
+      if (span <= 1e-6) {
+        const fixed = Math.max(-10, Math.min(35, spPlus));
+        return Number(((fixed + 10) / 45).toFixed(3));
+      }
+
+      const normalized = (clampedToRange - minSp) / span;
+      return Number(Math.max(0, Math.min(1, normalized)).toFixed(3));
     }
     function winPercentage(record?: any) {
       if (!record) return undefined;
@@ -629,6 +651,13 @@ function renderHTML(
       <h2>Upcoming Games (Top 25 Teams)</h2>
       <ul>
         ${gamesHtml}
+      </ul>
+    </section>
+
+    <section>
+      <h2>Projected Contenders</h2>
+      <ul>
+        ${contendersHtml || '<li style="color:var(--muted)">No contenders available</li>'}
       </ul>
     </section>
 

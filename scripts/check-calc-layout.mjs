@@ -38,7 +38,6 @@ const pathFilter = {
 const positions = calculateDegreePositions(pathFilter, 1200, 600);
 console.log('positions:', positions);
 
-const sourceX = 50;
 console.log('sourceX', positions[source].x, 'purdueX', positions[purdue].x);
 const expectedMid = (positions[source].x + positions[purdue].x) / 2;
 console.log('expectedMid', expectedMid);

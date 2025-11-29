@@ -7,7 +7,9 @@ import fs from 'fs';
 import path from 'path';
 
 describe('Page Structure Tests', () => {
-  const webDir = path.resolve(__dirname);
+  // Tests live in `web/tests/` — resolve to parent `web` directory to
+  // reference generated pages (e.g., `web/playoff-preview.html`).
+  const webDir = path.resolve(__dirname, '..');
 
   const simplePages = [
     { file: 'index.html', name: 'Home', activePage: 'home', hasContentWrapper: true },
@@ -42,10 +44,10 @@ describe('Page Structure Tests', () => {
   ];
 
   describe('Simple Pages (with content-wrapper)', () => {
-    simplePages.forEach(({ file, name, activePage, hasContentWrapper }) => {
+    simplePages.forEach(({ file, name, activePage }) => {
       describe(name, () => {
-        let dom: JSDOM;
-        let document: Document;
+        let dom: JSDOM | null = null;
+        let document: Document | null = null;
 
         beforeEach(() => {
           const filePath = path.join(webDir, file);
@@ -116,7 +118,7 @@ describe('Page Structure Tests', () => {
   });
 
   describe('Visualizer Pages (without content-wrapper)', () => {
-    visualizerPages.forEach(({ file, name, activePage, hasContentWrapper }) => {
+    visualizerPages.forEach(({ file, name, activePage }) => {
       describe(name, () => {
         let dom: JSDOM;
         let document: Document;

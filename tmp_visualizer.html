@@ -567,7 +567,8 @@
 
         // Count teams by degree
         const degreeCount = new Map();
-        for (const [node, deg] of res.nodesByDegree) {
+        // Iterate values only to avoid an unused `node` variable
+        for (const deg of res.nodesByDegree.values()) {
           degreeCount.set(deg, (degreeCount.get(deg) || 0) + 1);
         }
 
