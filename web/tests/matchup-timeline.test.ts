@@ -329,7 +329,7 @@ describe('Matchup Timeline - Team Selection and Results', () => {
       console.log('✓ Testing summary rendering...');
 
       const matchupTimelineCode = await import('fs').then(fs =>
-        fs.promises.readFile('c:\\Development\\fbs-graph\\web\\matchup-timeline.js', 'utf-8')
+        fs.promises.readFile(path.join(process.cwd(), 'web', 'matchup-timeline.js'), 'utf-8')
       );
 
       expect(matchupTimelineCode).toContain('function renderSummary');
@@ -342,7 +342,7 @@ describe('Matchup Timeline - Team Selection and Results', () => {
       console.log('✓ Testing leverage chain rendering...');
 
       const matchupTimelineCode = await import('fs').then(fs =>
-        fs.promises.readFile('c:\\Development\\fbs-graph\\web\\matchup-timeline.js', 'utf-8')
+        fs.promises.readFile(path.join(process.cwd(), 'web', 'matchup-timeline.js'), 'utf-8')
       );
 
       expect(matchupTimelineCode).toContain('leverage-chain');
@@ -355,7 +355,7 @@ describe('Matchup Timeline - Team Selection and Results', () => {
       console.log('✓ Testing legend rendering...');
 
       const matchupTimelineCode = await import('fs').then(fs =>
-        fs.promises.readFile('c:\\Development\\fbs-graph\\web\\matchup-timeline.js', 'utf-8')
+        fs.promises.readFile(path.join(process.cwd(), 'web', 'matchup-timeline.js'), 'utf-8')
       );
 
       expect(matchupTimelineCode).toContain('if (state.segments && state.segments.length)');
@@ -369,7 +369,7 @@ describe('Matchup Timeline - Team Selection and Results', () => {
       console.log('✓ Testing empty state message...');
 
       const matchupTimelineCode = await import('fs').then(fs =>
-        fs.promises.readFile('c:\\Development\\fbs-graph\\web\\matchup-timeline.js', 'utf-8')
+        fs.promises.readFile(path.join(process.cwd(), 'web', 'matchup-timeline.js'), 'utf-8')
       );
 
       expect(matchupTimelineCode).toContain('Pick two programs to trace the leverage chain');
@@ -381,7 +381,7 @@ describe('Matchup Timeline - Team Selection and Results', () => {
       console.log('✓ Testing no connection message...');
 
       const matchupTimelineCode = await import('fs').then(fs =>
-        fs.promises.readFile('c:\\Development\\fbs-graph\\web\\matchup-timeline.js', 'utf-8')
+        fs.promises.readFile(path.join(process.cwd(), 'web', 'matchup-timeline.js'), 'utf-8')
       );
 
       expect(matchupTimelineCode).toContain('not connected by any remaining');
@@ -393,7 +393,7 @@ describe('Matchup Timeline - Team Selection and Results', () => {
       console.log('✓ Testing same team message...');
 
       const matchupTimelineCode = await import('fs').then(fs =>
-        fs.promises.readFile('c:\\Development\\fbs-graph\\web\\matchup-timeline.js', 'utf-8')
+        fs.promises.readFile(path.join(process.cwd(), 'web', 'matchup-timeline.js'), 'utf-8')
       );
 
       expect(matchupTimelineCode).toContain('Choose a different destination');
@@ -407,7 +407,7 @@ describe('Matchup Timeline - Team Selection and Results', () => {
       console.log('✓ Testing findShortestPath function...');
 
       const matchupTimelineCode = await import('fs').then(fs =>
-        fs.promises.readFile('c:\\Development\\fbs-graph\\web\\matchup-timeline.js', 'utf-8')
+        fs.promises.readFile(path.join(process.cwd(), 'web', 'matchup-timeline.js'), 'utf-8')
       );
 
       expect(matchupTimelineCode).toContain('function findShortestPath');
@@ -419,7 +419,7 @@ describe('Matchup Timeline - Team Selection and Results', () => {
       console.log('✓ Testing algorithm implementation...');
 
       const matchupTimelineCode = await import('fs').then(fs =>
-        fs.promises.readFile('c:\\Development\\fbs-graph\\web\\matchup-timeline.js', 'utf-8')
+        fs.promises.readFile(path.join(process.cwd(), 'web', 'matchup-timeline.js'), 'utf-8')
       );
 
       expect(matchupTimelineCode).toContain('dist.set');
@@ -433,7 +433,7 @@ describe('Matchup Timeline - Team Selection and Results', () => {
       console.log('✓ Testing return value structure...');
 
       const matchupTimelineCode = await import('fs').then(fs =>
-        fs.promises.readFile('c:\\Development\\fbs-graph\\web\\matchup-timeline.js', 'utf-8')
+        fs.promises.readFile(path.join(process.cwd(), 'web', 'matchup-timeline.js'), 'utf-8')
       );
 
       expect(matchupTimelineCode).toContain('return { nodes, edges, distance');
@@ -556,7 +556,7 @@ describe('Matchup Timeline - Team Selection and Results', () => {
       console.log('✓ Testing layout with games present...');
 
       const htmlContent = await import('fs').then(fs =>
-        fs.promises.readFile('c:\\Development\\fbs-graph\\web\\matchup-timeline.html', 'utf-8')
+        fs.promises.readFile(path.join(process.cwd(), 'web', 'matchup-timeline.html'), 'utf-8')
       );
 
       // Verify required DOM containers exist
