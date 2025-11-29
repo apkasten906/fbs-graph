@@ -363,7 +363,9 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
             .map(i => shortestPathNodes && shortestPathNodes[i] && positions[shortestPathNodes[i]])
             .filter(Boolean)
             .map(p => p.x);
-          const avgAnchorX = anchorXs.length ? anchorXs.reduce((a, b) => a + b, 0) / anchorXs.length : baseX;
+          const avgAnchorX = anchorXs.length
+            ? anchorXs.reduce((a, b) => a + b, 0) / anchorXs.length
+            : baseX;
           x = avgAnchorX + jitter;
         } else if (isDegreeOne) {
           x = sourceX + (baseX - sourceX) * MIDPOINT_FRACTION + jitter;

@@ -266,15 +266,15 @@
       import {
         edgeKey,
         buildAdjacencyList,
-        shortestPathByInverseLeverage as spbil,
-        findNodesWithinDegrees as fnwd,
+        shortestPathByInverseLeverage,
+        findNodesWithinDegrees,
       } from './modules/graph-path-finder.js';
 
       // Expose to non-module scripts
-      window.edgeKey = edgeKey;
-      window.buildAdjacencyList = buildAdjacencyList;
-      window.shortestPathByInverseLeverage = spbil;
-      window.findNodesWithinDegrees = fnwd;
+            window.edgeKey = edgeKey;
+            window.buildAdjacencyList = buildAdjacencyList;
+            window.shortestPathByInverseLeverage = shortestPathByInverseLeverage;
+            window.findNodesWithinDegrees = findNodesWithinDegrees;
 
       // Import Cytoscape builder functions
       import {

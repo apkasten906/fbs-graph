@@ -77,7 +77,7 @@ function shortestPathByInverseLeverage(pairs, teams, srcId, dstId) {
   edges.reverse();
   return { nodes, edges };
 }
-import { CONFERENCE_COLORS as COLORS, getConferenceColor } from './conference-colors.js';
+import { getConferenceColor } from './conference-colors.js';
 
 const SEGMENT_COLORS = ['#60a5fa', '#f97316', '#a855f7', '#22c55e', '#facc15', '#f43f5e'];
 

@@ -14,7 +14,7 @@
  */
 export function showEdgeGames(edgeData, pairGames, containerId = 'pathInfo') {
   const { id } = edgeData;
-  const [_, k] = id.split('e_');
+  const [, k] = id.split('e_');
   const games = pairGames.get(k) || [];
   const container = document.getElementById(containerId);
 
