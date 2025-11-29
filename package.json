@@ -22,15 +22,18 @@
     "fetch:teams": "tsx scripts/fetch-cfbd-teams-to-csv.ts",
     "fetch:schedules": "tsx scripts/fetch-cfbd-schedules-to-csv.ts",
     "seasons:make": "tsx scripts/generate-team-seasons-from-teams.ts",
-    "fetch:ap": "tsx scripts/fetch-cfbd-ap-to-polls.ts",
+    "fetch:rankings": "tsx scripts/fetch-cfbd-rankings-to-polls.ts",
     "fetch:elo": "tsx scripts/fetch-cfbd-elo-to-seasons.ts",
     "fetch:sp": "tsx scripts/fetch-cfbd-sp-to-seasons.ts",
-    "fetch:ratings": "npm run fetch:elo; npm run fetch:sp",
-    "fetch:ranks": "npm run fetch:ap; npm run fetch:ratings",
-    "fetch:all": "npm run fetch:confs; npm run fetch:teams; npm run seasons:make; npm run fetch:schedules; npm run fetch:ranks",
-    "setup": "powershell.exe -ExecutionPolicy Bypass -File .\\scripts\\setup.ps1",
+    "fetch:ratings": "npm run fetch:elo && npm run fetch:sp",
+    "fetch:all-ranks": "npm run fetch:rankings && npm run fetch:ratings",
+    "fetch:ranks": "npm run fetch:all-ranks",
+    "fetch:all": "npm run fetch:confs && npm run fetch:teams && npm run seasons:make && npm run fetch:schedules && npm run fetch:ranks",
+    "validate:data": "tsx scripts/validate-data-ids.ts",
+    "setup": "npm run validate:data && powershell.exe -ExecutionPolicy Bypass -File .\\scripts\\setup.ps1",
     "generate:static": "tsx scripts/generate-static-data.ts",
-    "build:pages": "npm run generate:static && tsx scripts/build-pages.ts"
+    "build:pages": "npm run generate:static && tsx scripts/build-pages.ts",
+    "generate:playoff-page": "tsx scripts/generate-playoff-page.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.10.0",
@@ -44,6 +47,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@next/eslint-plugin-next": "^15.5.4",
+    "@types/jsdom": "^27.0.0",
     "@types/node": "^20.11.30",
     "@typescript-eslint/eslint-plugin": "^8.46.0",
     "@typescript-eslint/parser": "^8.46.0",

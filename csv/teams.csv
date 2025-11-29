@@ -1,48 +1,97 @@
 name,shortName,conferenceId
+Abilene Christian,ACU,uac
 Air Force,AF,mwc
 Akron,AKR,mac
 Alabama,ALA,sec
+Alabama A&M,AAMU,swac
+Alabama State,ALST,swac
+Alcorn State,ALCN,swac
 App State,APP,sbc
 Arizona,ARIZ,b12
 Arizona State,ASU,b12
 Arkansas,ARK,sec
+Arkansas-Pine Bluff,UAPB,swac
 Arkansas State,ARST,sbc
 Army,ARMY,aac
 Auburn,AUB,sec
+Austin Peay,APSU,uac
 Ball State,BALL,mac
 Baylor,BAY,b12
+Bethune-Cookman,BCU,swac
 Boise State,BOIS,mwc
 Boston College,BC,acc
 Bowling Green,BGSU,mac
+Brown,BRWN,ivy
+Bryant,BRY,caa
+Bucknell,BUCK,patriot
 Buffalo,BUF,mac
+Butler,BUT,pioneer
 BYU,BYU,b12
 California,CAL,acc
+Cal Poly,CP,bigsky
+Campbell,CAM,caa
+Central Arkansas,CARK,uac
+Central Connecticut,CCSU,nec
 Central Michigan,CMU,mac
+Charleston Southern,CHSO,bigsouthovc
 Charlotte,CLT,aac
+Chattanooga,UTC,southern
 Cincinnati,CIN,b12
 Clemson,CLEM,acc
 Coastal Carolina,CCU,sbc
+Colgate,COLG,patriot
 Colorado,COLO,b12
 Colorado State,CSU,mwc
+Columbia,COLU,ivy
+Cornell,COR,ivy
+Dartmouth,DART,ivy
+Davidson,DAV,pioneer
+Dayton,DAY,pioneer
 Delaware,DEL,cusa
+Delaware State,DSU,meac
+Drake,DRKE,pioneer
 Duke,DUKE,acc
+Duquesne,DUQ,nec
 East Carolina,ECU,aac
+Eastern Illinois,EIU,bigsouthovc
+Eastern Kentucky,EKU,uac
 Eastern Michigan,EMU,mac
+Eastern Washington,EWU,bigsky
+East Tennessee State,ETSU,southern
+East Texas A&M,ETAM,southland
+Elon,ELON,caa
 Florida,FLA,sec
+Florida A&M,FAMU,swac
 Florida Atlantic,FAU,aac
 Florida International,FIU,cusa
 Florida State,FSU,acc
+Fordham,FOR,patriot
 Fresno State,FRES,mwc
+Furman,FUR,southern
+Gardner-Webb,GWEB,bigsouthovc
+Georgetown,GTWN,patriot
 Georgia,UGA,sec
 Georgia Southern,GASO,sbc
 Georgia State,GAST,sbc
 Georgia Tech,GT,acc
+Grambling,GRAM,swac
+Hampton,HAMP,caa
+Harvard,HARV,ivy
 Hawai'i,HAW,mwc
+Holy Cross,HC,patriot
 Houston,HOU,b12
+Houston Christian,HCU,southland
+Howard,HOW,meac
+Idaho,IDHO,bigsky
+Idaho State,IDST,bigsky
 Illinois,ILL,b1g
+Illinois State,ILST,mvfc
+Incarnate Word,UIW,southland
 Indiana,IU,b1g
+Indiana State,INST,mvfc
 Iowa,IOWA,b1g
 Iowa State,ISU,b12
+Jackson State,JKST,swac
 Jacksonville State,JXST,cusa
 James Madison,JMU,sbc
 Kansas,KU,b12
@@ -50,15 +99,26 @@ Kansas State,KSU,b12
 Kennesaw State,KENN,cusa
 Kent State,KENT,mac
 Kentucky,UK,sec
+Lafayette,LAF,patriot
+Lamar,LAM,southland
+Lehigh,LEH,patriot
 Liberty,LIB,cusa
+Lindenwood,LIN,bigsouthovc
+Long Island University,LIU,nec
 Louisiana,UL,sbc
 Louisiana Tech,LT,cusa
 Louisville,LOU,acc
 LSU,LSU,sec
+Maine,ME,caa
+Marist,MRST,pioneer
 Marshall,MRSH,sbc
 Maryland,MD,b1g
 Massachusetts,MASS,mac
+McNeese,MCN,southland
 Memphis,MEM,aac
+Mercer,MER,southern
+Mercyhurst,MERC,nec
+Merrimack,MRMK,fcsindependents
 Miami,MIA,acc
 Miami (OH),M-OH,mac
 Michigan,MICH,b1g
@@ -66,18 +126,38 @@ Michigan State,MSU,b1g
 Middle Tennessee,MTSU,cusa
 Minnesota,MINN,b1g
 Mississippi State,MSST,sec
+Mississippi Valley State,MVSU,swac
 Missouri,MIZ,sec
 Missouri State,MOST,cusa
+Monmouth,MONM,caa
+Montana,MONT,bigsky
+Montana State,MTST,bigsky
+Morehead State,MORE,pioneer
+Morgan State,MORG,meac
+Murray State,MUR,mvfc
 Navy,NAVY,aac
 NC State,NCSU,acc
 Nebraska,NEB,b1g
 Nevada,NEV,mwc
+New Hampshire,UNH,caa
+New Haven,NHVN,nec
 New Mexico,UNM,mwc
 New Mexico State,NMSU,cusa
+Nicholls,NICH,southland
+Norfolk State,NORF,meac
+North Alabama,UNA,uac
 North Carolina,UNC,acc
+North Carolina A&T,NCAT,caa
+North Carolina Central,NCCU,meac
+North Dakota,UND,mvfc
+North Dakota State,NDSU,mvfc
+Northern Arizona,NAU,bigsky
+Northern Colorado,UNCO,bigsky
 Northern Illinois,NIU,mac
+Northern Iowa,UNI,mvfc
 North Texas,UNT,aac
 Northwestern,NU,b1g
+Northwestern State,NWST,southland
 Notre Dame,ND,ind
 Ohio,OHIO,mac
 Ohio State,OSU,b1g
@@ -88,32 +168,66 @@ Ole Miss,MISS,sec
 Oregon,ORE,b1g
 Oregon State,ORST,pac12
 Penn State,PSU,b1g
+Pennsylvania,PENN,ivy
 Pittsburgh,PITT,acc
+Portland State,PRST,bigsky
+Prairie View A&M,PV,swac
+Presbyterian,PRES,pioneer
+Princeton,PRIN,ivy
 Purdue,PUR,b1g
+Rhode Island,URI,caa
 Rice,RICE,aac
+Richmond,RICH,patriot
+Robert Morris,RMU,nec
 Rutgers,RUTG,b1g
+Sacramento State,SAC,bigsky
+Sacred Heart,SHU,fcsindependents
+Samford,SAM,southern
 Sam Houston,SHSU,cusa
+San Diego,USD,pioneer
 San Diego State,SDSU,mwc
 San José State,SJSU,mwc
+SE Louisiana,SELA,southland
 SMU,SMU,acc
 South Alabama,USA,sbc
 South Carolina,SC,sec
+South Carolina State,SCST,meac
+South Dakota,SDAK,mvfc
+South Dakota State,SDST,mvfc
+Southeast Missouri State,SEMO,bigsouthovc
+Southern,SOU,swac
+Southern Illinois,SIU,mvfc
 Southern Miss,USM,sbc
+Southern Utah,SUU,uac
 South Florida,USF,aac
 Stanford,STAN,acc
+Stephen F. Austin,SFA,southland
+Stetson,STET,pioneer
+St. Francis (PA),SFPA,nec
+Stonehill,STO,nec
+Stony Brook,STBK,caa
+St. Thomas (MN),STMN,pioneer
 Syracuse,SYR,acc
+Tarleton State,TAR,uac
 TCU,TCU,b12
 Temple,TEM,aac
 Tennessee,TENN,sec
+Tennessee State,TNST,bigsouthovc
+Tennessee Tech,TNTC,bigsouthovc
 Texas,TEX,sec
 Texas A&M,TA&M,sec
+Texas Southern,TXSO,swac
 Texas State,TXST,sbc
 Texas Tech,TTU,b12
+The Citadel,CIT,southern
 Toledo,TOL,mac
+Towson,TOW,caa
 Troy,TROY,sbc
 Tulane,TULN,aac
 Tulsa,TLSA,aac
 UAB,UAB,aac
+UAlbany,UALB,caa
+UC Davis,UCD,bigsky
 UCF,UCF,b12
 UCLA,UCLA,b1g
 UConn,CONN,ind
@@ -122,16 +236,31 @@ UNLV,UNLV,mwc
 USC,USC,b1g
 Utah,UTAH,b12
 Utah State,USU,mwc
+Utah Tech,UTU,uac
 UTEP,UTEP,cusa
+UT Martin,UTM,bigsouthovc
+UT Rio Grande Valley,RGV,southland
 UTSA,UTSA,aac
+Valparaiso,VAL,pioneer
 Vanderbilt,VAN,sec
+Villanova,VILL,caa
 Virginia,UVA,acc
 Virginia Tech,VT,acc
+VMI,VMI,southern
+Wagner,WAG,nec
 Wake Forest,WAKE,acc
 Washington,WASH,b1g
 Washington State,WSU,pac12
+Weber State,WEB,bigsky
+Western Carolina,WCU,southern
+Western Illinois,WIU,bigsouthovc
 Western Kentucky,WKU,cusa
 Western Michigan,WMU,mac
+West Georgia,WGA,uac
 West Virginia,WVU,b12
+William & Mary,W&M,caa
 Wisconsin,WIS,b1g
+Wofford,WOF,southern
 Wyoming,WYO,mwc
+Yale,YALE,ivy
+Youngstown State,YSU,mvfc

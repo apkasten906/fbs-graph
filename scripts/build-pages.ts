@@ -23,8 +23,13 @@ if (fs.existsSync(DIST_DIR)) {
   // Reject paths that escape the repository (start with '..') or
   // resolved absolute paths located outside the cwd. Rely primarily on
   // `path.basename` to confirm the expected folder name is 'dist'.
-  if (relativePath.startsWith('..') || path.isAbsolute(resolved)) {
+  // Reject paths that escape the repository (start with '..').
+  if (relativePath.startsWith('..')) {
     throw new Error(`Refusing to remove path outside project: ${resolved}`);
+  }
+  // Prevent accidental removal of the project root directory
+  if (resolved === cwd) {
+    throw new Error(`Refusing to remove project root path: ${resolved}`);
   }
   if (path.basename(resolved) !== 'dist') {
     throw new Error(`Refusing to remove unexpected directory: ${resolved}`);

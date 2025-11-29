@@ -6,13 +6,66 @@ import { Game, PollSnapshot, TeamSeason, PollType } from './../../types/index';
 type RankMap = Map<string, number>; // teamSeasonId -> rank (1 best)
 
 export function buildAPRankMap(polls: PollSnapshot[], season: number): RankMap {
+  return buildLatestRankMap(polls, season, 'AP');
+}
+
+// Backwards-compatible alias used by older callers (e.g. `src/server.ts`).
+// Historically this function was named `buildLatestAPRankMap` and accepted
+// an extra `teamSeasons` argument which wasn't used in the computation. Export
+// a thin wrapper to maintain compatibility without changing existing callers.
+export function buildLatestAPRankMap(
+  polls: PollSnapshot[],
+  season: number,
+  _teamSeasons?: TeamSeason[]
+): RankMap {
+  return buildAPRankMap(polls, season);
+}
+
+/**
+ * Build a map of the latest ranking for each teamSeasonId for a given poll type.
+ * Returns an empty map if no snapshots are present for the requested poll.
+ */
+export function buildLatestRankMap(
+  polls: PollSnapshot[],
+  season: number,
+  pollType: PollType
+): RankMap {
+  // Choose the latest snapshot per `teamSeasonId` for the requested poll type
+  // Preference order:
+  // 1) Highest numeric `week` (if present)
+  // 2) If neither snapshot has `week`, pick the latest by `date`
   const latestByTeam = new Map<string, PollSnapshot>();
   for (const p of polls) {
-    if (p.poll !== 'AP') continue;
+    if (p.poll !== pollType) continue;
+    // `PollSnapshot` doesn't include a season field; derive season from teamSeasonId
+    if (!p.teamSeasonId || !p.teamSeasonId.endsWith(`-${season}`)) continue;
     const cur = latestByTeam.get(p.teamSeasonId);
-    if (!cur || new Date(p.date) > new Date(cur.date) || p.week > cur.week)
+    if (!cur) {
       latestByTeam.set(p.teamSeasonId, p);
+      continue;
+    }
+
+    const pHasWeek = typeof p.week === 'number';
+    const curHasWeek = typeof cur.week === 'number';
+
+    if (pHasWeek && curHasWeek) {
+      if ((p.week as number) > (cur.week as number)) {
+        latestByTeam.set(p.teamSeasonId, p);
+      } else if (p.week === cur.week) {
+        // tie-breaker: later date wins
+        if (new Date(p.date) > new Date(cur.date)) latestByTeam.set(p.teamSeasonId, p);
+      }
+    } else if (pHasWeek && !curHasWeek) {
+      // prefer snapshots that include a numeric week
+      latestByTeam.set(p.teamSeasonId, p);
+    } else if (!pHasWeek && curHasWeek) {
+      // keep cur (it has a week while p does not)
+    } else {
+      // neither has week: fall back to date ordering
+      if (new Date(p.date) > new Date(cur.date)) latestByTeam.set(p.teamSeasonId, p);
+    }
   }
+
   const out: RankMap = new Map();
   for (const [id, snap] of latestByTeam) out.set(id, snap.rank);
   return out;
@@ -103,6 +156,9 @@ export function computeLeverageForGame(
   eloNorm: Map<string, number>,
   ranking: PollType
 ): Game {
+  // Debug guard: log apRanks when it is unexpectedly undefined to aid recovery
+  // Print basic info about apRanks for debugging (will show in CLI logs)
+  // No-op: leave debug logging out of production path.
   const homeTS = teamSeasons.find(ts => ts.teamId === g.homeTeamId && ts.season === g.season);
   const awayTS = teamSeasons.find(ts => ts.teamId === g.awayTeamId && ts.season === g.season);
 

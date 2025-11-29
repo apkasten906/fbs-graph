@@ -6,6 +6,7 @@
     <title>High-Impact Matchup Timeline</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="common-theme.css" />
+    <link rel="stylesheet" href="css/shared-nav.css" />
     <style>
       :root {
         color-scheme: dark;
@@ -389,6 +390,27 @@
           align-items: flex-start;
         }
       }
+
+      /* Override content-wrapper padding for this page */
+      .content-wrapper {
+        padding: 0;
+        margin-left: 220px;
+        max-width: none;
+      }
+
+      .content-wrapper.nav-collapsed {
+        margin-left: 0;
+      }
+
+      /* Adjust body and main for nav offset */
+      body {
+        margin-left: 220px;
+        transition: margin-left 0.3s ease;
+      }
+
+      body.nav-collapsed {
+        margin-left: 0;
+      }
     </style>
   </head>
   <body>
@@ -405,9 +427,65 @@
       <section class="timeline" id="timeline"></section>
     </main>
     <script type="module">
+      import { initNavigation } from './modules/shared-nav.js';
+      initNavigation('matchup-timeline');
+    </script>
+    <script type="module">
+      import { staticData } from './modules/static-data-adapter.js';
       import createTimelineApp from './matchup-timeline.js';
-      // Patch: Enhance legend to show full conference names and sort alphabetically
-      createTimelineApp();
+
+      // Use static data adapter for loading data
+      createTimelineApp({
+        loadData: async () => {
+          // Load data from static files - games already include enriched team/conference data and leverage scores
+          const [conferences, teams, gamesEnriched] = await Promise.all([
+            staticData.getConferences(),
+            staticData.getTeams(),
+            staticData.getGames(2025),
+          ]);
+
+          // The static games already have leverage calculated and teams embedded,
+          // but prepareSeasonModel expects to calculate leverage from raw data.
+          // We'll strip the embedded objects to get raw games, since prepareSeasonModel
+          // will re-enrich them anyway.
+          const games = gamesEnriched.map(g => {
+            const { homeTeam, awayTeam, homeConference, awayConference, ...rawGame } = g;
+            return rawGame;
+          });
+
+          // Create minimal teamSeasons data from the games' leverage scores
+          // This allows buildLatestAPRankMap to work even though we don't have poll data
+          const teamSeasons = [];
+          const seenTeams = new Set();
+
+          for (const game of gamesEnriched) {
+            if (game.homeTeamId && !seenTeams.has(game.homeTeamId)) {
+              seenTeams.add(game.homeTeamId);
+              teamSeasons.push({
+                id: `${game.homeTeamId}-${game.season}`,
+                teamId: game.homeTeamId,
+                season: game.season,
+              });
+            }
+            if (game.awayTeamId && !seenTeams.has(game.awayTeamId)) {
+              seenTeams.add(game.awayTeamId);
+              teamSeasons.push({
+                id: `${game.awayTeamId}-${game.season}`,
+                teamId: game.awayTeamId,
+                season: game.season,
+              });
+            }
+          }
+
+          return {
+            conferences,
+            teams,
+            teamSeasons,
+            polls: [], // Empty polls - leverage already calculated
+            games,
+          };
+        },
+      });
     </script>
   </body>
 </html>

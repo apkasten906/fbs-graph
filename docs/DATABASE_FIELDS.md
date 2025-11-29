@@ -46,6 +46,16 @@ This document describes the fields for each main database entity (JSON file) in 
 - `rank` (number): Team rank in the poll.
 - `date` (string): ISO 8601 date/time of poll release.
 
+### Polls, sources, and canonicalization
+
+- **Supported poll types:** `AP`, `COACHES`, `CFP` (official CFP committee), plus computed rating types like `ELO` and `SP_PLUS` which are produced by rating scripts.
+- **Fetch tooling:** Use `npm run fetch:rankings` to fetch poll snapshots (AP/CFP/COACHES). Use `npm run fetch:all-ranks` to run both ranking snapshots and computed ratings (ELO/SP+).
+- **CSV history vs canonical JSON:** The repository keeps an append-only `csv/polls.csv` as the raw snapshot history. Two helpers exist:
+  - `scripts/merge-polls-csv.ts` — optional helper that normalizes and deduplicates `csv/polls.csv` into a canonical set and writes `src/data/polls.json` (atomic overwrite).
+  - `scripts/import-from-csv.ts` — the primary import that reads `csv/polls.csv` and deduplicates rows by `(poll, teamSeasonId)`, keeping the latest row by date/week when duplicates exist; this produces the canonical `src/data/polls.json` used at runtime.
+
+When adding new poll snapshots, prefer appending to `csv/polls.csv` and then running the import or merge step to refresh `src/data/polls.json`.
+
 ---
 
 ## teamSeasons.json

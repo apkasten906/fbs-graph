@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
 // @ts-ignore - JS module
-import { StaticDataAdapter } from './static-data-adapter.js';
+import { StaticDataAdapter } from '../modules/static-data-adapter.js';
 
 describe('Static Data Adapter', () => {
   let adapter: StaticDataAdapter;
