@@ -80,7 +80,7 @@ function createTimelineApp(options = {}) {
   async function init() {
     try {
       const raw = await loadData();
-      console.log('[MatchupTimeline] Raw data loaded:', {
+      console.debug('[MatchupTimeline] Raw data loaded:', {
         conferences: raw.conferences?.length,
         teams: raw.teams?.length,
         teamSeasons: raw.teamSeasons?.length,
@@ -88,14 +88,14 @@ function createTimelineApp(options = {}) {
         games: raw.games?.length,
       });
       state.data = prepareSeasonModel(raw, state.season);
-      console.log('[MatchupTimeline] Season model prepared:', {
+      console.debug('[MatchupTimeline] Season model prepared:', {
         teams: state.data.teams?.length,
         games: state.data.games?.length,
         upcomingGames: state.data.upcomingGames?.length,
         adjacencySize: state.data.adjacency?.size,
       });
       const available = getTeamsForScope('power4');
-      console.log('[MatchupTimeline] Available teams in scope:', available.length);
+      console.debug('[MatchupTimeline] Available teams in scope:', available.length);
       const defaultStart =
         available.find(team => team.id === 'alabama')?.id ?? available[0]?.id ?? null;
       let defaultEnd =
@@ -105,7 +105,7 @@ function createTimelineApp(options = {}) {
         defaultEnd = chooseFallbackTeam(available, defaultStart);
       }
       Object.assign(state, { loading: false, startTeam: defaultStart, endTeam: defaultEnd });
-      console.log('[MatchupTimeline] Initial teams selected:', {
+      console.debug('[MatchupTimeline] Initial teams selected:', {
         startTeam: defaultStart,
         endTeam: defaultEnd,
       });

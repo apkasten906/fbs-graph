@@ -570,19 +570,19 @@ async function load() {
     updateStatus('Loading data…');
     const season = Number(document.getElementById('season').value);
 
-    console.log(
+    console.debug(
       '[Timeline Explorer] Starting load, staticDataAdapter available:',
       !!window.staticDataAdapter
     );
 
     // Use static data adapter if available, otherwise fall back to GraphQL
     if (window.staticDataAdapter) {
-      console.log('[Timeline Explorer] Using static data adapter');
+      console.debug('[Timeline Explorer] Using static data adapter');
       const [conferences, result] = await Promise.all([
         window.staticDataAdapter.getConferences(),
         window.staticDataAdapter.queryGraph(season),
       ]);
-      console.log('[Timeline Explorer] Data loaded:', {
+      console.debug('[Timeline Explorer] Data loaded:', {
         conferences: conferences?.length,
         teams: result.data?.teams?.length,
         games: result.data?.games?.length,
@@ -591,7 +591,7 @@ async function load() {
       setConferenceMap(conferences ?? []);
       state.graph = result.data || { teams: [], games: [] };
     } else {
-      console.log('[Timeline Explorer] Static data adapter not available, using GraphQL');
+      console.debug('[Timeline Explorer] Static data adapter not available, using GraphQL');
       // Fallback to GraphQL if static data not available
       const endpoint =
         document.getElementById('endpoint')?.value?.trim() || DEFAULT_GRAPHQL_ENDPOINT;

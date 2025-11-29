@@ -27,14 +27,14 @@ export class StaticDataAdapter {
    */
   async loadJSON(filename) {
     if (this.cache.has(filename)) {
-      console.log(`[StaticDataAdapter] Loaded ${filename} from cache`);
+      console.debug(`[StaticDataAdapter] Loaded ${filename} from cache`);
       return this.cache.get(filename);
     }
 
     // Prefer fetch when available (tests may provide a global fetch mock in Node)
     if (typeof fetch === 'function') {
       const url = `${this.basePath.replace(/\/+$/, '')}/${filename}`;
-      console.log(`[StaticDataAdapter] Fetching ${url}`);
+      console.debug(`[StaticDataAdapter] Fetching ${url}`);
       try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -44,7 +44,7 @@ export class StaticDataAdapter {
           throw new Error(`Failed to load ${filename}: ${response.status} ${response.statusText}`);
         }
         const data = await response.json();
-        console.log(
+        console.debug(
           `[StaticDataAdapter] Successfully loaded ${filename}, ${JSON.stringify(data).length} bytes`
         );
         this.cache.set(filename, data);
