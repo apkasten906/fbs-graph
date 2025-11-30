@@ -167,7 +167,11 @@ describe('graph-ui', () => {
 
       // @ts-ignore - import canonical colors
       const { CONFERENCE_COLORS } = await import('../modules/conference-colors.js');
-      const colors = { b1g: CONFERENCE_COLORS.b1g, sec: CONFERENCE_COLORS.sec, other: CONFERENCE_COLORS.other };
+      const colors = {
+        b1g: CONFERENCE_COLORS.b1g,
+        sec: CONFERENCE_COLORS.sec,
+        other: CONFERENCE_COLORS.other,
+      };
 
       buildLegend(teams, conferenceMeta, colors);
 
@@ -323,9 +327,7 @@ describe('graph-ui', () => {
     it('should auto-trigger button click when enabled', () => {
       vi.useFakeTimers();
 
-      const teams: Team[] = [
-        { id: 'ohio-state', name: 'Ohio State', conference: { id: 'b1g' } },
-      ];
+      const teams: Team[] = [{ id: 'ohio-state', name: 'Ohio State', conference: { id: 'b1g' } }];
 
       const btn = document.getElementById('pathBtn') as HTMLButtonElement;
       const clickSpy = vi.spyOn(btn, 'click');
@@ -343,9 +345,7 @@ describe('graph-ui', () => {
     it('should not auto-trigger when disabled', () => {
       vi.useFakeTimers();
 
-      const teams: Team[] = [
-        { id: 'ohio-state', name: 'Ohio State', conference: { id: 'b1g' } },
-      ];
+      const teams: Team[] = [{ id: 'ohio-state', name: 'Ohio State', conference: { id: 'b1g' } }];
 
       const btn = document.getElementById('pathBtn') as HTMLButtonElement;
       const clickSpy = vi.spyOn(btn, 'click');

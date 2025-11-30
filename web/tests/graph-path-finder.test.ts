@@ -31,7 +31,7 @@ describe('Path Finder - Graph Algorithms', () => {
     // OSU - Michigan (direct)
     // OSU - Purdue - Notre Dame - Miami (path)
     // OSU - Illinois - Purdue (alternative path)
-    
+
     mockTeams = [
       { id: 'ohio-state', name: 'Ohio State' },
       { id: 'michigan', name: 'Michigan' },
@@ -42,12 +42,48 @@ describe('Path Finder - Graph Algorithms', () => {
     ];
 
     mockGames = [
-      { id: 'g1', home: { id: 'ohio-state' }, away: { id: 'michigan' }, type: 'CONFERENCE', leverage: 0.8 },
-      { id: 'g2', home: { id: 'ohio-state' }, away: { id: 'purdue' }, type: 'CONFERENCE', leverage: 0.9 },
-      { id: 'g3', home: { id: 'purdue' }, away: { id: 'notre-dame' }, type: 'NON_CONFERENCE', leverage: 0.7 },
-      { id: 'g4', home: { id: 'notre-dame' }, away: { id: 'miami' }, type: 'NON_CONFERENCE', leverage: 0.85 },
-      { id: 'g5', home: { id: 'ohio-state' }, away: { id: 'illinois' }, type: 'CONFERENCE', leverage: 0.75 },
-      { id: 'g6', home: { id: 'illinois' }, away: { id: 'purdue' }, type: 'CONFERENCE', leverage: 0.65 },
+      {
+        id: 'g1',
+        home: { id: 'ohio-state' },
+        away: { id: 'michigan' },
+        type: 'CONFERENCE',
+        leverage: 0.8,
+      },
+      {
+        id: 'g2',
+        home: { id: 'ohio-state' },
+        away: { id: 'purdue' },
+        type: 'CONFERENCE',
+        leverage: 0.9,
+      },
+      {
+        id: 'g3',
+        home: { id: 'purdue' },
+        away: { id: 'notre-dame' },
+        type: 'NON_CONFERENCE',
+        leverage: 0.7,
+      },
+      {
+        id: 'g4',
+        home: { id: 'notre-dame' },
+        away: { id: 'miami' },
+        type: 'NON_CONFERENCE',
+        leverage: 0.85,
+      },
+      {
+        id: 'g5',
+        home: { id: 'ohio-state' },
+        away: { id: 'illinois' },
+        type: 'CONFERENCE',
+        leverage: 0.75,
+      },
+      {
+        id: 'g6',
+        home: { id: 'illinois' },
+        away: { id: 'purdue' },
+        type: 'CONFERENCE',
+        leverage: 0.65,
+      },
     ];
 
     mockPairGames = new Map();
@@ -76,7 +112,7 @@ describe('Path Finder - Graph Algorithms', () => {
 
       expect(adj.has('ohio-state')).toBe(true);
       expect(adj.has('michigan')).toBe(true);
-      
+
       // OSU should have edges to Michigan, Purdue, Illinois
       const osuNeighbors = adj.get('ohio-state');
       expect(osuNeighbors).toBeDefined();
@@ -103,7 +139,7 @@ describe('Path Finder - Graph Algorithms', () => {
 
     it('should filter by minimum leverage', () => {
       const adj = buildAdjacencyList(mockPairGames, 'ALL', 0.7);
-      
+
       // Illinois-Purdue edge should be excluded (leverage 0.65 < 0.7)
       const illinoisNeighbors = adj.get('illinois');
       expect(illinoisNeighbors).toBeDefined();
@@ -113,7 +149,14 @@ describe('Path Finder - Graph Algorithms', () => {
 
   describe('shortestPathByInverseLeverage', () => {
     it('should find direct path when teams are connected', () => {
-      const path = shortestPathByInverseLeverage('ohio-state', 'michigan', mockPairGames, mockTeams, 'ALL', 0);
+      const path = shortestPathByInverseLeverage(
+        'ohio-state',
+        'michigan',
+        mockPairGames,
+        mockTeams,
+        'ALL',
+        0
+      );
 
       expect(path).not.toBeNull();
       if (!path) return;
@@ -122,7 +165,14 @@ describe('Path Finder - Graph Algorithms', () => {
       expect(path.edges[0]).toBe(edgeKey('ohio-state', 'michigan'));
     });
     it('should find multi-hop path when needed', () => {
-      const path = shortestPathByInverseLeverage('ohio-state', 'miami', mockPairGames, mockTeams, 'ALL', 0);
+      const path = shortestPathByInverseLeverage(
+        'ohio-state',
+        'miami',
+        mockPairGames,
+        mockTeams,
+        'ALL',
+        0
+      );
 
       expect(path).not.toBeNull();
       if (!path) return;
@@ -132,7 +182,14 @@ describe('Path Finder - Graph Algorithms', () => {
       expect(path.nodes.length).toBe(4);
     });
     it('should prefer high-leverage paths', () => {
-      const path = shortestPathByInverseLeverage('ohio-state', 'purdue', mockPairGames, mockTeams, 'ALL', 0);
+      const path = shortestPathByInverseLeverage(
+        'ohio-state',
+        'purdue',
+        mockPairGames,
+        mockTeams,
+        'ALL',
+        0
+      );
 
       expect(path).not.toBeNull();
       if (!path) return;
@@ -144,20 +201,41 @@ describe('Path Finder - Graph Algorithms', () => {
       // Add disconnected team
       mockTeams.push({ id: 'disconnected', name: 'Disconnected' });
 
-      const path = shortestPathByInverseLeverage('ohio-state', 'disconnected', mockPairGames, mockTeams, 'ALL', 0);
+      const path = shortestPathByInverseLeverage(
+        'ohio-state',
+        'disconnected',
+        mockPairGames,
+        mockTeams,
+        'ALL',
+        0
+      );
 
       expect(path).toBeNull();
     });
 
     it('should respect type filter', () => {
-      const path = shortestPathByInverseLeverage('ohio-state', 'miami', mockPairGames, mockTeams, 'CONFERENCE', 0);
+      const path = shortestPathByInverseLeverage(
+        'ohio-state',
+        'miami',
+        mockPairGames,
+        mockTeams,
+        'CONFERENCE',
+        0
+      );
 
       // Can't reach Miami with CONFERENCE only (needs NON_CONFERENCE edges)
       expect(path).toBeNull();
     });
 
     it('should respect minimum leverage filter', () => {
-      const path = shortestPathByInverseLeverage('ohio-state', 'purdue', mockPairGames, mockTeams, 'ALL', 0.95);
+      const path = shortestPathByInverseLeverage(
+        'ohio-state',
+        'purdue',
+        mockPairGames,
+        mockTeams,
+        'ALL',
+        0.95
+      );
 
       // No edges have leverage >= 0.95
       expect(path).toBeNull();
@@ -195,17 +273,24 @@ describe('Path Finder - Graph Algorithms', () => {
       expect(result.nodes).toContain('ohio-state');
       expect(result.nodes).toContain('purdue');
       expect(result.nodes).toContain('illinois');
-      
+
       // Should have degree assignments
       expect(result.nodesByDegree.get('ohio-state')).toBe(0);
     });
 
     it('should include shortest path nodes when provided', () => {
-      const shortestPath = shortestPathByInverseLeverage('ohio-state', 'miami', mockPairGames, mockTeams, 'ALL', 0);
-      
+      const shortestPath = shortestPathByInverseLeverage(
+        'ohio-state',
+        'miami',
+        mockPairGames,
+        mockTeams,
+        'ALL',
+        0
+      );
+
       expect(shortestPath).not.toBeNull();
       if (!shortestPath) return;
-      
+
       const result = findNodesWithinDegrees(
         ['ohio-state', 'miami'],
         1,
@@ -222,11 +307,18 @@ describe('Path Finder - Graph Algorithms', () => {
     });
 
     it('should assign correct degrees based on distance from source', () => {
-      const shortestPath = shortestPathByInverseLeverage('ohio-state', 'miami', mockPairGames, mockTeams, 'ALL', 0);
-      
+      const shortestPath = shortestPathByInverseLeverage(
+        'ohio-state',
+        'miami',
+        mockPairGames,
+        mockTeams,
+        'ALL',
+        0
+      );
+
       expect(shortestPath).not.toBeNull();
       if (!shortestPath) return;
-      
+
       const result = findNodesWithinDegrees(
         ['ohio-state', 'miami'],
         3,

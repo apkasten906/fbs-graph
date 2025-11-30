@@ -10,6 +10,23 @@ import { CONFERENCE_COLORS, getConferenceColor } from './conference-colors.js';
 // Backwards-compatible export used by other modules/tests
 export const COLORS = CONFERENCE_COLORS;
 
+// Layout constants (exported for tests and UI knobs)
+export const BASE_SPACING = 36; // default vertical spacing step for stacked nodes
+export const X_BUCKET = 8; // px tolerance to group nodes sharing same horizontal projection
+export const MIN_Y = 28; // minimum vertical separation during collision sweep
+export const X_THRESHOLD = 120; // horizontal threshold to consider collisions
+export const JITTER_STEP = 12; // horizontal jitter magnitude used for visual separation
+export const JITTER_CYCLE = 3; // jitter pattern cycle length
+export const DEGREE_MIN_STEP = BASE_SPACING; // min vertical step for degree stacking
+export const DEGREE_MAX_STEP = 80; // max vertical step for degree stacking
+export const DEGREE_HEIGHT_FRAC = 0.12; // fraction of height used to compute max step
+export const SIDE_MARGIN = 50; // left/right margin for source/destination
+export const MID_NUDGE_MIN = 60; // min nudge when computing fallback midX
+export const PATH_NUDGE_FRAC = 0.1; // fraction used for fallback mid nudge
+export const TOP_Y_FACTOR = 0.4;
+export const BOTTOM_Y_FACTOR = 1.6;
+export const CENTER_OFFSET_Y = 50;
+
 // Lightweight conditional logger. Enable by adding `?layoutDebug=1` to the URL
 // or by setting `localStorage.setItem('fbs_layout_debug','1')` in the console.
 function L(...args) {
@@ -68,6 +85,73 @@ export const DEGREE_COLORS = [
  */
 export function createEdgeKey(a, b) {
   return a < b ? `${a}__${b}` : `${b}__${a}`;
+}
+
+// Build adjacency map from an array of edge keys ("a__b")
+export function buildAdjacencyFromEdges(edgeKeys = []) {
+  const adj = new Map();
+  for (const k of edgeKeys) {
+    const parts = k.split('__');
+    if (parts.length !== 2) continue;
+    const [a, b] = parts;
+    if (!adj.has(a)) adj.set(a, new Set());
+    if (!adj.has(b)) adj.set(b, new Set());
+    adj.get(a).add(b);
+    adj.get(b).add(a);
+  }
+  return adj;
+}
+
+// Compute shortest-path distances from each anchor using BFS (unweighted)
+export function computeAnchorDistances(adjacency, anchorNodes) {
+  // adjacency: Map nodeId -> Set(neighborId)
+  // returns: distances[nodeId] = { anchorId: distance, ... }
+  const distances = Object.create(null);
+  for (const anchor of anchorNodes) {
+    // BFS from anchor
+    const q = [anchor];
+    const dist = new Map();
+    dist.set(anchor, 0);
+    while (q.length) {
+      const u = q.shift();
+      const d = dist.get(u);
+      const neighbors = adjacency.get(u) || new Set();
+      for (const v of neighbors) {
+        if (!dist.has(v)) {
+          dist.set(v, d + 1);
+          q.push(v);
+        }
+      }
+    }
+    for (const [nodeId, d] of dist) {
+      if (!distances[nodeId]) distances[nodeId] = Object.create(null);
+      distances[nodeId][anchor] = d;
+    }
+  }
+  return distances;
+}
+
+// Deterministic ranking for nodes sharing same xGroup: higher degree => earlier, tie by id
+export function deterministicRankForX(nodes, nodesByDegree, xBucket = X_BUCKET) {
+  // nodes: array of { id, x }
+  const groups = new Map();
+  for (const n of nodes) {
+    const g = Math.round(n.x / xBucket);
+    const arr = groups.get(g) || [];
+    arr.push(n);
+    groups.set(g, arr);
+  }
+  const ranks = Object.create(null);
+  for (const [g, arr] of groups) {
+    arr.sort((a, b) => {
+      const da = nodesByDegree.get(a.id) || 0;
+      const db = nodesByDegree.get(b.id) || 0;
+      if (da !== db) return db - da; // higher degree first
+      return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+    });
+    for (let i = 0; i < arr.length; i++) ranks[arr[i].id] = i;
+  }
+  return ranks;
 }
 
 /**
@@ -196,9 +280,10 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
 
   const centerY = height / 2;
 
+  // Use module-level layout constants (can be overridden/exported for tests)
   // Special handling for source and destination to be on same horizontal plane
-  const sourceX = 50;
-  const destX = width - 50;
+  const sourceX = SIDE_MARGIN;
+  const destX = width - SIDE_MARGIN;
 
   positions[source] = { x: sourceX, y: centerY };
   positions[destination] = { x: destX, y: centerY };
@@ -289,7 +374,7 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
 
         // 4) Ultimate fallback: nudge right from source
       } else {
-        midX = positions[source].x + Math.max(60, (destX - sourceX) * 0.1);
+        midX = positions[source].x + Math.max(MID_NUDGE_MIN, (destX - sourceX) * PATH_NUDGE_FRAC);
         L('[layout] ultimate fallback midX', { midX });
       }
 
@@ -297,7 +382,10 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
         const half = Math.ceil(nodesAtDegree.length / 2);
         const upper = nodesAtDegree.slice(0, half);
         const lower = nodesAtDegree.slice(half);
-        const stepY = Math.max(36, Math.min(80, height * 0.12));
+        const stepY = Math.max(
+          DEGREE_MIN_STEP,
+          Math.min(DEGREE_MAX_STEP, height * DEGREE_HEIGHT_FRAC)
+        );
         upper.forEach((nid, idx) => {
           positions[nid] = { x: midX, y: centerY - (idx + 1) * stepY };
         });
@@ -309,103 +397,119 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
     }
 
     // Placement helpers
-    const topY = centerY * 0.4;
-    const bottomY = centerY * 1.6;
-    const stepY = Math.max(36, Math.min(80, height * 0.12));
+    const topY = centerY * TOP_Y_FACTOR;
+    const bottomY = centerY * BOTTOM_Y_FACTOR;
+    const stepY = Math.max(BASE_SPACING, Math.min(DEGREE_MAX_STEP, height * DEGREE_HEIGHT_FRAC));
 
-    nodesAtDegree.forEach((nodeId, index) => {
-      // If this node is already positioned (e.g., on the shortest path), skip
-      if (positions[nodeId]) return;
+    // We'll compute provisional positions for nodesAtDegree using multi-anchor weighting
+    // where possible, then deterministically rank and assign perpendicular offsets.
+    const adjacency = buildAdjacencyFromEdges(pathFilter.edges || []);
+    const anchorNodes = (shortestPathNodes && shortestPathNodes.length > 0)
+      ? shortestPathNodes
+      : [source, destination];
+    const anchorPositions = {};
+    for (const a of anchorNodes) {
+      if (positions[a]) anchorPositions[a] = positions[a];
+    }
+    const distances = computeAnchorDistances(adjacency, anchorNodes);
 
-      // Try to find shortest-path node(s) this node connects to and anchor to them
-      // Collect all matching anchors rather than stopping at the first match so
-      // nodes that bridge multiple path nodes (e.g., USC connecting to Purdue and Notre Dame)
-      // can be centered between those anchors instead of being biased to one.
-      let anchorIdx = null;
-      const anchorIdxs = [];
-      if (pathIndex.size > 0) {
-        for (const [pn, idx] of pathIndex) {
-          const edgeKey = nodeId < pn ? `${nodeId}__${pn}` : `${pn}__${nodeId}`;
-          if ((pathFilter.edges || []).includes(edgeKey)) {
-            anchorIdxs.push(idx);
-          }
-        }
-        if (anchorIdxs.length === 1) anchorIdx = anchorIdxs[0];
+    // Build provisional candidate positions
+    const candidates = nodesAtDegree.map((nodeId, index) => {
+      if (positions[nodeId]) return null;
+      // Determine connected anchors (direct edge to anchor)
+      const connectedAnchors = [];
+      for (const a of anchorNodes) {
+        const eKey = nodeId < a ? `${nodeId}__${a}` : `${a}__${nodeId}`;
+        if ((pathFilter.edges || []).includes(eKey)) connectedAnchors.push(a);
       }
 
-      // Avoid anchoring to the source (index 0) where possible; prefer the first path step
-      if (anchorIdx === 0) {
-        if (pathIndex.size > 1) {
-          L('[layout] remapping anchorIdx 0 -> 1 to avoid anchoring to source', { nodeId });
-          anchorIdx = 1;
-        } else {
-          // no other path node to anchor to
-          anchorIdx = null;
-        }
+      // Fallback: use nearest anchors by distance if none directly connected
+      if (connectedAnchors.length === 0 && distances[nodeId]) {
+        const ds = Object.entries(distances[nodeId]).filter(([k]) => anchorPositions[k]);
+        ds.sort(([, d1], [, d2]) => d1 - d2);
+        for (let i = 0; i < Math.min(2, ds.length); i++) connectedAnchors.push(ds[i][0]);
       }
 
-      if ((anchorIdx !== null || anchorIdxs.length > 1) && pathSpacing !== null) {
-        const baseX = sourceX + pathSpacing * anchorIdx;
-        const jitter = ((index % 3) - 1) * 12;
-        // If this is a degree-1 node, place it between the source and the anchor baseX
-        // using a configurable fraction (MIDPOINT_FRACTION) for tuning.
-        const isDegreeOne = degree === 1;
-        const anchorId = shortestPathNodes ? shortestPathNodes[anchorIdx] : null;
-        const prevAnchorId =
-          shortestPathNodes && anchorIdx > 0 ? shortestPathNodes[anchorIdx - 1] : null;
-        const anchorX = anchorId && positions[anchorId] ? positions[anchorId].x : baseX;
-        const prevX = prevAnchorId && positions[prevAnchorId] ? positions[prevAnchorId].x : null;
-        let x;
-        // If the node connects to multiple path anchors, compute the average anchor x
-        // and use that as the placement to visually center the bridging node.
-        if (anchorIdxs.length > 1) {
-          const anchorXs = anchorIdxs
-            .map(i => shortestPathNodes && shortestPathNodes[i] && positions[shortestPathNodes[i]])
-            .filter(Boolean)
-            .map(p => p.x);
-          const avgAnchorX = anchorXs.length
-            ? anchorXs.reduce((a, b) => a + b, 0) / anchorXs.length
-            : baseX;
-          x = avgAnchorX + jitter;
-        } else if (isDegreeOne) {
-          x = sourceX + (baseX - sourceX) * MIDPOINT_FRACTION + jitter;
-        } else if (prevX !== null) {
-          // Pull higher-degree nodes toward their anchor but keep them between the two
-          // neighboring path nodes so they do not stack on the anchor's x.
-          const pull = Math.min(0.9, degree / (degree + 1));
-          x = prevX + (anchorX - prevX) * pull + jitter;
-        } else {
-          x = anchorX + jitter;
-        }
-        L('[layout] anchoring node to path', {
-          nodeId,
-          anchorIdx,
-          baseX,
-          jitter,
-          x,
-          isDegreeOne,
-          anchorId,
-          prevAnchorId,
+      // If only one connected anchor and this is a deeper-degree node,
+      // include the source as a soft anchor so nodes don't sit exactly on the anchor.
+      if (connectedAnchors.length === 1 && degree > 1 && !connectedAnchors.includes(source)) {
+        connectedAnchors.push(source);
+      }
+
+      // Compute weighted average x/yBase using inverse-distance weights
+      let x;
+      let yBase = centerY;
+      if (connectedAnchors.length > 0) {
+        const anchorXs = connectedAnchors.map(a => anchorPositions[a].x);
+        const anchorYs = connectedAnchors.map(a => anchorPositions[a].y);
+        const ws = connectedAnchors.map(a => {
+          const d = (distances[nodeId] && distances[nodeId][a]) || 0;
+          return 1 / (1 + d);
         });
-        const above = index % 2 === 0;
-        const offsetIdx = Math.floor(index / 2) + 1;
-        const y = above ? centerY - offsetIdx * stepY : centerY + offsetIdx * stepY;
-        positions[nodeId] = { x, y };
-        return;
+        const sw = ws.reduce((s, v) => s + v, 0) || 1;
+        x = anchorXs.reduce((s, v, i) => s + v * ws[i], 0) / sw;
+        yBase = anchorYs.reduce((s, v, i) => s + v * ws[i], 0) / sw;
+      } else {
+        // fallback to degree-based x positioning
+        x = sourceX + horizontalSpacing * degree;
       }
 
-      // Fallback to degree-based x positioning
-      const x = sourceX + horizontalSpacing * degree;
-      const fraction = (index + 1) / (nodesAtDegree.length + 1);
-      let y;
-      if (fraction < 0.5) {
-        y = topY + fraction * 2 * (centerY - topY - 50);
-      } else {
-        y = centerY + 50 + (fraction - 0.5) * 2 * (bottomY - centerY - 50);
-      }
-      positions[nodeId] = { x, y };
-    });
+      return { id: nodeId, x, yBase, index };
+    }).filter(Boolean);
+
+    // Compute deterministic ranks for groups of similar x
+    const ranks = deterministicRankForX(candidates.map(c => ({ id: c.id, x: c.x })), nodesByDegree, X_BUCKET);
+
+    // Assign final positions using perpendicular offset based on rank
+    for (const c of candidates) {
+      const idx = c.index;
+      const rank = ranks[c.id] || 0;
+      const side = rank % 2 === 0 ? 1 : -1;
+      const offset = side * Math.ceil((rank + 1) / 2) * BASE_SPACING;
+      const y = c.yBase + offset;
+      positions[c.id] = { x: c.x, y };
+    }
+    
   }
+
+  // Deterministic collision-avoidance sweep
+  function applyCollisionSweep(positionsMap, xThreshold, minY, nodesByDegreeMap) {
+    const items = Object.keys(positionsMap).map(id => {
+      const p = positionsMap[id];
+      return { id, x: p.x, y: p.y, rank: nodesByDegreeMap.get(id) || 0 };
+    });
+
+    // Compute coarse x-grouping to respect small horizontal jitter (uses X_BUCKET)
+    items.forEach(it => (it.xGroup = Math.round(it.x / X_BUCKET)));
+
+    // Sort by xGroup then x then rank then id for deterministic ordering
+    items.sort((a, b) => {
+      if (a.xGroup !== b.xGroup) return a.xGroup - b.xGroup;
+      if (a.x !== b.x) return a.x - b.x;
+      if (a.rank !== b.rank) return a.rank - b.rank;
+      return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+    });
+
+    for (let i = 0; i < items.length; i++) {
+      const a = items[i];
+      for (let j = i + 1; j < items.length; j++) {
+        const b = items[j];
+        // Stop inner loop once horizontal separation is large enough
+        if (Math.abs(b.x - a.x) >= xThreshold) break;
+        if (Math.abs(b.y - a.y) < minY) {
+          const sign = b.rank >= a.rank ? 1 : -1;
+          b.y = a.y + sign * minY;
+        }
+      }
+    }
+
+    // Write back adjusted positions
+    for (const it of items) {
+      positionsMap[it.id] = { x: it.x, y: it.y };
+    }
+  }
+
+  applyCollisionSweep(positions, X_THRESHOLD, MIN_Y, nodesByDegree);
 
   return positions;
 }

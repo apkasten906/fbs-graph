@@ -52,16 +52,18 @@
 
 ### 6. Documentation
 
-  - Added live demo link section at the top
-  - Expanded scripts section with deployment commands
-  - Explained GitHub Actions workflow
-  - Comprehensive deployment guide
-  - Architecture explanation
-  - Troubleshooting section
+- Added live demo link section at the top
+- Expanded scripts section with deployment commands
+- Explained GitHub Actions workflow
+- Comprehensive deployment guide
+- Architecture explanation
+- Troubleshooting section
 
 ## 🌐 Live URL
+
 Once deployed to GitHub Pages:
 **https://apkasten906.github.io/fbs-graph/**
+
 ### Automatic Deployment
 
 Push to `main` branch triggers GitHub Actions workflow which:

@@ -131,14 +131,14 @@ async function generate(season = 2025, limit = 12, gameLimit = 6, leverageThresh
 
   const recordByTeamSeasonId = buildRecordsForSeason(data.season);
 
-const { playoffHtml, rankingsHtml } = renderHTML(data, {
-  polls,
-  teams,
-  teamSeasons,
-  recordByTeamSeasonId,
-  conferences,
-  dataDir: DATA_DIR,
-});
+  const { playoffHtml, rankingsHtml } = renderHTML(data, {
+    polls,
+    teams,
+    teamSeasons,
+    recordByTeamSeasonId,
+    conferences,
+    dataDir: DATA_DIR,
+  });
   fs.writeFileSync(path.join(outDir, 'playoff-preview.html'), playoffHtml, 'utf-8');
   fs.writeFileSync(path.join(outDir, 'rankings.html'), rankingsHtml, 'utf-8');
   console.log('Wrote web/playoff-preview.html');
@@ -519,7 +519,13 @@ function renderHTML(
     .join('\n');
 
   // Generate rankings HTML for separate page
-  const rankingsHtml = generateRankingsPage(data, ranksByPollWeek, teamNameToSeasonId, ctx, recordByTeamSeasonId);
+  const rankingsHtml = generateRankingsPage(
+    data,
+    ranksByPollWeek,
+    teamNameToSeasonId,
+    ctx,
+    recordByTeamSeasonId
+  );
 
   const playoffHtml = `<!doctype html>
 <html lang="en">
@@ -698,11 +704,18 @@ function generateRankingsPage(
   ranksByPollWeek: any,
   teamNameToSeasonId: any,
   ctx: any,
-  recordByTeamSeasonId?: Map<string, { wins: number; losses: number; ties: number; confWins: number; confLosses: number; }>
+  recordByTeamSeasonId?: Map<
+    string,
+    { wins: number; losses: number; ties: number; confWins: number; confLosses: number }
+  >
 ) {
   // Use provided recordByTeamSeasonId from renderHTML (if present), otherwise create an empty map
   const recordByTeamSeasonIdLocal =
-    recordByTeamSeasonId || new Map<string, { wins: number; losses: number; ties: number; confWins: number; confLosses: number; }>();
+    recordByTeamSeasonId ||
+    new Map<
+      string,
+      { wins: number; losses: number; ties: number; confWins: number; confLosses: number }
+    >();
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -868,8 +881,7 @@ function generateRankingsPage(
           ctx.teamSeasons
             .filter((ts: any) => ts.season === data.season)
             .map((ts: any) => {
-              const rec =
-                recordByTeamSeasonIdLocal.get(ts.id) ||
+              const rec = recordByTeamSeasonIdLocal.get(ts.id) ||
                 ts.record || { wins: 0, losses: 0, ties: 0, confWins: 0, confLosses: 0 };
               return [ts.id, { ...ts, record: rec }];
             })

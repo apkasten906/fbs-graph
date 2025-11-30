@@ -239,20 +239,16 @@ describe('graph-data', () => {
         json: async () => ({ errors: [{ message: 'Conference query failed' }] }),
       });
 
-      await expect(
-        loadConferences({ graphqlEndpoint: 'http://test.com/graphql' })
-      ).rejects.toThrow('Conference query failed');
+      await expect(loadConferences({ graphqlEndpoint: 'http://test.com/graphql' })).rejects.toThrow(
+        'Conference query failed'
+      );
     });
   });
 
   describe('loadAllData', () => {
-    const mockConferences = [
-      { id: 'b1g', name: 'Big Ten', shortName: 'B1G' },
-    ];
+    const mockConferences = [{ id: 'b1g', name: 'Big Ten', shortName: 'B1G' }];
 
-    const mockTeams = [
-      { id: 'ohio-state', name: 'Ohio State', conference: { id: 'b1g' } },
-    ];
+    const mockTeams = [{ id: 'ohio-state', name: 'Ohio State', conference: { id: 'b1g' } }];
 
     const mockGames = [
       {

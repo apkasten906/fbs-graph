@@ -76,7 +76,10 @@
         padding: 10px;
         overflow: auto;
         position: relative;
-        transition: width 0.22s ease, padding 0.18s ease, border-right 0.18s ease;
+        transition:
+          width 0.22s ease,
+          padding 0.18s ease,
+          border-right 0.18s ease;
       }
       /* Collapsed state: keep a narrow but usable strip with toggle visible */
       /* When collapsed, fully hide the sidebar (shrink to 0) so core content takes full width.
@@ -96,7 +99,7 @@
         align-items: flex-start;
         justify-content: center;
         background: transparent;
-        border-left: 1px solid rgba(255,255,255,0.02);
+        border-left: 1px solid rgba(255, 255, 255, 0.02);
       }
 
       /* Toggle button (chevron) placed in its own adjacent column */
@@ -111,7 +114,7 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        box-shadow: 0 1px 0 rgba(0,0,0,0.3);
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
         margin: 8px;
       }
       .panel-toggle:focus {
@@ -244,10 +247,19 @@
         </div>
       </aside>
       <div id="sidebarToggle">
-        <button id="panelToggle" class="panel-toggle" aria-expanded="true" aria-controls="sidebar" title="Collapse panel">
+        <button
+          id="panelToggle"
+          class="panel-toggle"
+          aria-expanded="true"
+          aria-controls="sidebar"
+          title="Collapse panel"
+        >
           <!-- Chevron icon -->
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path fill="currentColor" d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 1 0 1.41 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.7 6.7a1 1 0 0 0-1.41.01z"/>
+            <path
+              fill="currentColor"
+              d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 1 0 1.41 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.7 6.7a1 1 0 0 0-1.41.01z"
+            />
           </svg>
         </button>
       </div>
@@ -385,7 +397,8 @@
         try {
           const result = await window.loadAllData(season, {
             staticAdapter: window.staticDataAdapter,
-            graphqlEndpoint: document.getElementById('endpoint')?.value?.trim() || window.GRAPHQL_ENDPOINT,
+            graphqlEndpoint:
+              document.getElementById('endpoint')?.value?.trim() || window.GRAPHQL_ENDPOINT,
           });
 
           conferenceMeta = result.conferences || [];
@@ -450,7 +463,13 @@
       function _findNodesWithinDegrees(startNodes, maxDegrees, typeFilter, minLev, shortestPath) {
         if (!window.findNodesWithinDegrees) {
           console.error('findNodesWithinDegrees not loaded from module yet');
-          return { nodes: [], edges: [], nodesByDegree: new Map(), source: startNodes[0], destination: startNodes[1] };
+          return {
+            nodes: [],
+            edges: [],
+            nodesByDegree: new Map(),
+            source: startNodes[0],
+            destination: startNodes[1],
+          };
         }
         return window.findNodesWithinDegrees(
           startNodes,
@@ -516,13 +535,7 @@
 
         // Find all nodes within N degrees of both selected teams
         // Pass the shortest path to ensure it's always included
-        const res = _findNodesWithinDegrees(
-          [src, dst],
-          degrees,
-          typeFilter,
-          minLev,
-          shortestPath
-        );
+        const res = _findNodesWithinDegrees([src, dst], degrees, typeFilter, minLev, shortestPath);
 
         if (!res || res.nodes.length === 0) {
           box.textContent = 'No connections found (maybe filters are too strict).';
