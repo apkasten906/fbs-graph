@@ -30,13 +30,13 @@ describe('calculateDegreePositions - multi-anchor bridging', () => {
     const p1 = calculateDegreePositions(pathFilter, width, height);
     const p2 = calculateDegreePositions(pathFilter, width, height);
 
-    // Anchors should be at 50 and width-50
-    const expectedLeft = 50;
-    const expectedRight = width - 50;
-    const expectedMid = (expectedLeft + expectedRight) / 2;
-
-    // USC should be near the midpoint (allow jitter up to 13px from layout jitter)
-    expect(Math.abs(p1['usc'].x - expectedMid)).toBeLessThanOrEqual(13);
+    // With the new layering algorithm:
+    // - Minnesota: dist_from_source=0, layer_offset=0 (path node)
+    // - Notre Dame: dist_from_source=2, layer_offset=0 (path node)
+    // - USC: dist_from_source=1, dist_to_target=1, layer_offset=0 (also on path!)
+    // So USC should be at x = 1 * HORIZONTAL_SPACING = 220
+    // (Note: HORIZONTAL_SPACING from cytoscape-builder.js is 220)
+    expect(p1['usc'].x).toBe(220);
 
     // Deterministic: second run should match exactly
     expect(p1).toEqual(p2);

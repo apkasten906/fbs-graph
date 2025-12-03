@@ -225,10 +225,10 @@
               min="0"
               max="6"
               step="1"
-              value="1"
+              value="3"
               style="width: 100px"
             />
-            <span id="degreesVal" class="muted small">1</span>
+            <span id="degreesVal" class="muted small">3</span>
           </div>
           <div style="margin-top: 8px">
             <button id="pathBtn">Show Comparisons</button>
@@ -521,17 +521,17 @@
         // Path nodes include source and dest, so hops = nodes - 1
         const shortestPathHops = shortestPath.nodes.length - 1;
 
-        // Determine appropriate degrees to show based on shortest path
-        // If direct connection (1 hop), show degree 1 to see common opponents too
-        // Otherwise, show the exact number of hops in the shortest path
-        const suggestedDegrees = shortestPathHops === 1 ? 1 : shortestPathHops;
-
-        // Update the degree slider to match the shortest path
+        // Use the user's selected degrees from the slider
         const degreesSlider = document.getElementById('degrees');
-        degreesSlider.value = suggestedDegrees;
-        document.getElementById('degreesVal').textContent = suggestedDegrees;
-
-        const degrees = suggestedDegrees;
+        const userSelectedDegrees = Number(degreesSlider.value);
+        
+        // If user's selection is less than the shortest path, warn them but use their value
+        const degrees = userSelectedDegrees;
+        
+        // Warn if degrees is too low to show the shortest path
+        if (degrees < shortestPathHops) {
+          console.warn(`Degrees (${degrees}) is less than shortest path hops (${shortestPathHops}). Shortest path may not be visible.`);
+        }
 
         // Find all nodes within N degrees of both selected teams
         // Pass the shortest path to ensure it's always included

@@ -154,24 +154,55 @@ export function findNodesWithinDegrees(
 
   const adj = buildAdjacencyList(pairGames, typeFilter, minLev);
 
-  // Special case: degree 0 means direct matchup only
-  if (maxDegrees === 0) {
-    const directKey = edgeKey(source, dest);
-    if (pairGames.has(directKey)) {
-      return {
-        nodes: [source, dest],
-        edges: [directKey],
-        nodesByDegree: new Map([
-          [source, 0],
-          [dest, 0],
-        ]),
-        source,
-        destination: dest,
-        // Provide shortestPathNodes and nodeLabels so layout code can render a straight line
-        shortestPathNodes: [source, dest],
-        nodeLabels: Object.fromEntries(teams.map(t => [t.id, t.name])),
-      };
+  // Strategy: maxDegrees represents the maximum path length (hops) between source and dest
+  // First check if the shortest path is within the degree limit
+  const nodesByDegree = new Map();
+  const validEdges = new Set();
+  const validNodes = new Set();
+
+  // Step 1: Run BFS from source to compute distance_from_source
+  const distFromSource = new Map();
+  const queueSource = [source];
+  distFromSource.set(source, 0);
+  let idx = 0;
+
+  while (idx < queueSource.length) {
+    const curr = queueSource[idx++];
+    const dist = distFromSource.get(curr);
+    const neighbors = (adj.get(curr) || []).map(e => e.to);
+
+    for (const neighbor of neighbors) {
+      if (!distFromSource.has(neighbor)) {
+        distFromSource.set(neighbor, dist + 1);
+        queueSource.push(neighbor);
+      }
     }
+  }
+
+  // Step 2: Run BFS from dest to compute distance_to_target
+  const distToTarget = new Map();
+  const queueDest = [dest];
+  distToTarget.set(dest, 0);
+  idx = 0;
+
+  while (idx < queueDest.length) {
+    const curr = queueDest[idx++];
+    const dist = distToTarget.get(curr);
+    const neighbors = (adj.get(curr) || []).map(e => e.to);
+
+    for (const neighbor of neighbors) {
+      if (!distToTarget.has(neighbor)) {
+        distToTarget.set(neighbor, dist + 1);
+        queueDest.push(neighbor);
+      }
+    }
+  }
+
+  // Step 3: Compute shortest path length
+  const shortestPathLength = distFromSource.get(dest);
+
+  if (shortestPathLength === undefined) {
+    // No path exists
     return {
       nodes: [],
       edges: [],
@@ -183,75 +214,45 @@ export function findNodesWithinDegrees(
     };
   }
 
-  // Build valid paths layer by layer
-  const nodesByDegree = new Map();
-  const validEdges = new Set();
-  const validNodes = new Set([source, dest]);
-
-  nodesByDegree.set(source, 0);
-  nodesByDegree.set(dest, 0);
-
-  // If we have a shortest path, ensure all its nodes and edges are included
-  if (shortestPath && shortestPath.nodes && shortestPath.edges) {
-    for (let i = 0; i < shortestPath.nodes.length; i++) {
-      const nodeId = shortestPath.nodes[i];
-      validNodes.add(nodeId);
-
-      // Assign degree based on distance from source
-      if (!nodesByDegree.has(nodeId)) {
-        nodesByDegree.set(nodeId, i);
-      }
-    }
-
-    for (const edgeKey of shortestPath.edges) {
-      validEdges.add(edgeKey);
-    }
+  // Check if shortest path exceeds maxDegrees
+  if (shortestPathLength > maxDegrees) {
+    // Path is too long for the degree filter
+    return {
+      nodes: [],
+      edges: [],
+      nodesByDegree: new Map(),
+      source,
+      destination: dest,
+      shortestPathNodes: [],
+      nodeLabels: Object.fromEntries(teams.map(t => [t.id, t.name])),
+    };
   }
 
-  // Find direct connection if it exists
-  const directKey = edgeKey(source, dest);
-  if (pairGames.has(directKey)) {
-    validEdges.add(directKey);
-  }
+  // Step 4: Include only nodes that lie on paths of length <= maxDegrees
+  // A node is on such a path if: distance_from_source + distance_to_target <= maxDegrees
+  const allReachableNodes = new Set([...distFromSource.keys()].filter(n => distToTarget.has(n)));
 
-  // Layer 1: Find common opponents (teams that played both source and dest)
-  const sourceNeighbors = new Set((adj.get(source) || []).map(e => e.to));
-  const destNeighbors = new Set((adj.get(dest) || []).map(e => e.to));
+  for (const node of allReachableNodes) {
+    const dfs = distFromSource.get(node);
+    const dtt = distToTarget.get(node);
+    const pathLengthThroughNode = dfs + dtt;
 
-  for (const node of sourceNeighbors) {
-    if (destNeighbors.has(node)) {
-      // This is a common opponent
+    // Only include nodes that are on paths of length <= maxDegrees
+    if (pathLengthThroughNode <= maxDegrees) {
       validNodes.add(node);
-      nodesByDegree.set(node, 1);
-      validEdges.add(edgeKey(source, node));
-      validEdges.add(edgeKey(dest, node));
+      // Use layer_offset for rendering purposes (distance from shortest path)
+      const layerOffset = pathLengthThroughNode - shortestPathLength;
+      nodesByDegree.set(node, layerOffset);
     }
   }
 
-  // Layer 2 and beyond: Find teams that bridge between layer 1 teams and source/dest
-  if (maxDegrees >= 2) {
-    const degree1Teams = Array.from(validNodes).filter(n => nodesByDegree.get(n) === 1);
+  // Step 5: Add all edges between valid nodes
+  for (const node of validNodes) {
+    const neighbors = (adj.get(node) || []).map(e => e.to);
 
-    for (const team1 of degree1Teams) {
-      const neighbors = (adj.get(team1) || []).map(e => e.to);
-
-      for (const neighbor of neighbors) {
-        if (validNodes.has(neighbor)) continue; // Already included
-
-        const neighborNeighbors = new Set((adj.get(neighbor) || []).map(e => e.to));
-
-        if (neighborNeighbors.has(source) || neighborNeighbors.has(dest)) {
-          validNodes.add(neighbor);
-          nodesByDegree.set(neighbor, 2);
-          validEdges.add(edgeKey(team1, neighbor));
-
-          if (neighborNeighbors.has(source)) {
-            validEdges.add(edgeKey(neighbor, source));
-          }
-          if (neighborNeighbors.has(dest)) {
-            validEdges.add(edgeKey(neighbor, dest));
-          }
-        }
+    for (const neighbor of neighbors) {
+      if (validNodes.has(neighbor)) {
+        validEdges.add(edgeKey(node, neighbor));
       }
     }
   }
