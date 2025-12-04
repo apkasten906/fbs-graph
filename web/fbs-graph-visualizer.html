@@ -332,13 +332,14 @@
       let graphData = { teams: [], games: [] };
       let pairGames = new Map(); // key "a__b" -> array of games
       let teamIndex = new Map();
+      let currentPathModel = null;
 
       // Inline key function (edgeKey equivalent) for immediate availability
       function key(a, b) {
         return a < b ? `${a}__${b}` : `${b}__${a}`;
       }
 
-      function buildGraph(season, typeFilter, minLev, pathFilter = null) {
+      function buildGraph(season, typeFilter, minLev, pathFilter = null, viewDegree = null) {
         console.log('buildGraph called with pathFilter:', pathFilter);
 
         // Build graph elements using builder module
@@ -350,6 +351,7 @@
           typeFilter,
           minLeverage: minLev,
           pathFilter,
+          viewDegree,
         });
 
         // Get container dimensions for layout
@@ -460,7 +462,7 @@
         );
       }
 
-      function _findNodesWithinDegrees(startNodes, maxDegrees, typeFilter, minLev, shortestPath) {
+      function _findNodesWithinDegrees(startNodes, maxDegrees, typeFilter, minLev) {
         if (!window.findNodesWithinDegrees) {
           console.error('findNodesWithinDegrees not loaded from module yet');
           return {
@@ -477,8 +479,7 @@
           pairGames,
           graphData.teams,
           typeFilter,
-          minLev,
-          shortestPath
+          minLev
         );
       }
 
@@ -496,58 +497,26 @@
       document.getElementById('typeFilter').addEventListener('change', applyFilters);
       document.getElementById('degrees').addEventListener('input', e => {
         document.getElementById('degreesVal').textContent = e.target.value;
+        if (currentPathModel) {
+          renderComparison(Number(e.target.value));
+        }
       });
-      document.getElementById('pathBtn').addEventListener('click', () => {
+      function renderComparison(viewDegrees) {
+        const box = document.getElementById('pathInfo');
+        if (!currentPathModel || !currentPathModel.nodes.length) {
+          box.textContent = 'No connections available at this degree level.';
+          return;
+        }
+        const cutoff = Number(viewDegrees);
         const typeFilter = document.getElementById('typeFilter').value;
         const minLev = Number(document.getElementById('lev').value);
-        const src = document.getElementById('srcSel').value;
-        const dst = document.getElementById('dstSel').value;
-        const box = document.getElementById('pathInfo');
-
-        if (!src || !dst) {
-          box.textContent = 'Please select both teams.';
-          return;
-        }
-
-        // First, find the shortest path to determine the minimum degrees needed
-        const shortestPath = _shortestPath(src, dst, typeFilter, minLev);
-
-        if (!shortestPath || shortestPath.nodes.length === 0) {
-          box.textContent = 'No path found between these teams (maybe filters are too strict).';
-          return;
-        }
-
-        // Calculate the number of hops in the shortest path
-        // Path nodes include source and dest, so hops = nodes - 1
-        const shortestPathHops = shortestPath.nodes.length - 1;
-
-        // Use the user's selected degrees from the slider
-        const degreesSlider = document.getElementById('degrees');
-        const userSelectedDegrees = Number(degreesSlider.value);
-        
-        // If user's selection is less than the shortest path, warn them but use their value
-        const degrees = userSelectedDegrees;
-        
-        // Warn if degrees is too low to show the shortest path
-        if (degrees < shortestPathHops) {
-          console.warn(`Degrees (${degrees}) is less than shortest path hops (${shortestPathHops}). Shortest path may not be visible.`);
-        }
-
-        // Find all nodes within N degrees of both selected teams
-        // Pass the shortest path to ensure it's always included
-        const res = _findNodesWithinDegrees([src, dst], degrees, typeFilter, minLev, shortestPath);
-
-        if (!res || res.nodes.length === 0) {
-          box.textContent = 'No connections found (maybe filters are too strict).';
-          return;
-        }
-
-        // Rebuild graph to show teams within degrees of separation
         const season = Number(document.getElementById('season').value);
-        buildGraph(season, typeFilter, minLev, res);
 
-        // Highlight the selected teams
+        buildGraph(season, typeFilter, minLev, currentPathModel, cutoff);
+
         cy.elements().removeClass('highlight');
+        const src = currentPathModel.source;
+        const dst = currentPathModel.destination;
         cy.getElementById(src).addClass('highlight');
         cy.getElementById(dst).addClass('highlight');
         cy.style()
@@ -555,11 +524,23 @@
           .style({ 'background-color': '#facc15', 'border-width': 3, 'border-color': '#fff' })
           .update();
 
-        // Render comparison info
+        const keptNodes = currentPathModel.nodes.filter(
+          id => (currentPathModel.degreeByNode.get(id) ?? Infinity) <= cutoff
+        );
+        const keptEdges = (currentPathModel.edges || []).filter(k => {
+          const len = currentPathModel.edgeMaxPath?.get(k) ?? Infinity;
+          return len <= cutoff;
+        });
+
+        if (keptNodes.length === 0) {
+          box.textContent = 'No connections available at this degree level.';
+          return;
+        }
+
         const frag = document.createDocumentFragment();
         const header = document.createElement('div');
         header.className = 'small muted';
-        header.textContent = `Comparison network (${res.nodes.length} teams, ${res.edges.length} connections):`;
+        header.textContent = `Comparison network (${keptNodes.length} teams, ${keptEdges.length} connections):`;
         frag.appendChild(header);
 
         const srcTeam = teamIndex.get(src);
@@ -567,36 +548,60 @@
 
         const summary = document.createElement('div');
         summary.style.marginTop = '8px';
-        summary.innerHTML = `<strong>${srcTeam.name}</strong> vs <strong>${dstTeam.name}</strong>`;
+        summary.innerHTML = `<strong>${srcTeam?.name || src}</strong> vs <strong>${dstTeam?.name || dst}</strong>`;
         frag.appendChild(summary);
 
-        // Show shortest path info
-        const pathInfo = document.createElement('div');
-        pathInfo.className = 'small muted';
-        pathInfo.style.marginTop = '4px';
-        const pathTeamNames = shortestPath.nodes.map(id => teamIndex.get(id)?.name || id);
-        pathInfo.textContent = `Shortest path (${shortestPathHops} hop${shortestPathHops !== 1 ? 's' : ''}): ${pathTeamNames.join(' -> ')}`;
-        frag.appendChild(pathInfo);
-
-        // Count teams by degree
-        const degreeCount = new Map();
-        // Iterate values only to avoid an unused `node` variable
-        for (const deg of res.nodesByDegree.values()) {
-          degreeCount.set(deg, (degreeCount.get(deg) || 0) + 1);
+        const shortest = currentPathModel.shortestPath;
+        if (shortest && shortest.nodes) {
+          const hops = shortest.nodes.length - 1;
+          const pathTeamNames = shortest.nodes.map(id => teamIndex.get(id)?.name || id);
+          const pathInfo = document.createElement('div');
+          pathInfo.className = 'small muted';
+          pathInfo.style.marginTop = '4px';
+          pathInfo.textContent = `Shortest path (${hops} hop${hops !== 1 ? 's' : ''}): ${pathTeamNames.join(' -> ')}`;
+          frag.appendChild(pathInfo);
         }
 
+        const degreeCount = new Map();
+        for (const id of keptNodes) {
+          const d = currentPathModel.degreeByNode.get(id) ?? 0;
+          degreeCount.set(d, (degreeCount.get(d) || 0) + 1);
+        }
         const degreeInfo = document.createElement('div');
         degreeInfo.className = 'small muted';
         degreeInfo.style.marginTop = '6px';
-        const degreeParts = [];
-        for (let d = 0; d <= degrees; d++) {
-          const count = degreeCount.get(d) || 0;
-          if (count > 0) degreeParts.push(`${count} at ${d}`);
-        }
-        degreeInfo.textContent = 'Distribution: ' + degreeParts.join(', ');
+        const degreeParts = Array.from(Array.from(degreeCount.keys()).sort((a, b) => a - b))
+          .filter(d => d <= cutoff)
+          .map(d => `${degreeCount.get(d)} at ${d}`);
+        degreeInfo.textContent = 'Distribution: ' + (degreeParts.join(', ') || 'none');
         frag.appendChild(degreeInfo);
 
         box.replaceChildren(frag);
+      }
+
+      document.getElementById('pathBtn').addEventListener('click', () => {
+        const typeFilter = document.getElementById('typeFilter').value;
+        const minLev = Number(document.getElementById('lev').value);
+        const src = document.getElementById('srcSel').value;
+        const dst = document.getElementById('dstSel').value;
+        const box = document.getElementById('pathInfo');
+        const degreesSlider = document.getElementById('degrees');
+        const maxDegrees = Number(degreesSlider.max || degreesSlider.value || 6);
+
+        if (!src || !dst) {
+          box.textContent = 'Please select both teams.';
+          return;
+        }
+
+        const model = _findNodesWithinDegrees([src, dst], maxDegrees, typeFilter, minLev);
+        if (!model || !model.nodes.length) {
+          box.textContent = 'No connections available at this degree level.';
+          currentPathModel = null;
+          return;
+        }
+
+        currentPathModel = model;
+        renderComparison(Number(degreesSlider.value));
       });
 
       // Auto-load will be triggered after static data adapter loads
