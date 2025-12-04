@@ -246,14 +246,24 @@ export function findNodesWithinDegrees(
     }
   }
 
-  // Step 5: Add all edges between valid nodes
-  for (const node of validNodes) {
-    const neighbors = (adj.get(node) || []).map(e => e.to);
+  // Step 5: Add only edges that participate in at least one path
+  // whose total length is <= maxDegrees (plus all shortest-path edges).
+  // Iterate original pairGames keys to avoid missing any valid edge.
+  for (const k of pairGames.keys()) {
+    const parts = k.split('__');
+    if (parts.length !== 2) continue;
+    const [a, b] = parts;
+    if (!validNodes.has(a) || !validNodes.has(b)) continue;
 
-    for (const neighbor of neighbors) {
-      if (validNodes.has(neighbor)) {
-        validEdges.add(edgeKey(node, neighbor));
-      }
+    const pathLenAB = (distFromSource.get(a) ?? Infinity) + 1 + (distToTarget.get(b) ?? Infinity);
+    const pathLenBA = (distFromSource.get(b) ?? Infinity) + 1 + (distToTarget.get(a) ?? Infinity);
+    const minPath = Math.min(pathLenAB, pathLenBA);
+
+    const isShortestEdge =
+      shortestPath && Array.isArray(shortestPath.edges) ? shortestPath.edges.includes(k) : false;
+
+    if (isShortestEdge || minPath <= maxDegrees) {
+      validEdges.add(k);
     }
   }
 

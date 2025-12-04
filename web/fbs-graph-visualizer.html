@@ -575,7 +575,7 @@
         pathInfo.className = 'small muted';
         pathInfo.style.marginTop = '4px';
         const pathTeamNames = shortestPath.nodes.map(id => teamIndex.get(id)?.name || id);
-        pathInfo.textContent = `Shortest path (${shortestPathHops} hop${shortestPathHops !== 1 ? 's' : ''}): ${pathTeamNames.join(' → ')}`;
+        pathInfo.textContent = `Shortest path (${shortestPathHops} hop${shortestPathHops !== 1 ? 's' : ''}): ${pathTeamNames.join(' -> ')}`;
         frag.appendChild(pathInfo);
 
         // Count teams by degree
@@ -591,9 +591,7 @@
         const degreeParts = [];
         for (let d = 0; d <= degrees; d++) {
           const count = degreeCount.get(d) || 0;
-          if (count > 0) {
-            degreeParts.push(`${count} at ${d}°`);
-          }
+          if (count > 0) degreeParts.push(`${count} at ${d}`);
         }
         degreeInfo.textContent = 'Distribution: ' + degreeParts.join(', ');
         frag.appendChild(degreeInfo);

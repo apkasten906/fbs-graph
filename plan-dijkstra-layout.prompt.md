@@ -1,97 +1,244 @@
-Plan: Dijkstra-based Multi-Anchor Layout
+# plan-dijkstra-layout.prompt.md  
+## Final Layout Plan for FBS Graph Visualizer  
+### Degree-Based, Half-Degree Structured, Stable-on-Slider, Shortest-Path–Centered Layout
 
-Goal
+This plan replaces earlier versions.  
+It is designed for Codex/Copilot implementation and ensures the layout behaves exactly like the user’s target diagram.
 
-- Improve graph layout for dense, multi-anchor cases (e.g., Minnesota ↔ Notre Dame with USC bridging multiple anchors).
-- Produce deterministic, readable node positions using Dijkstra distances, multi-anchor averaging, and a light collision-avoidance pass.
+---
 
-High-level approach
+# 🎯 **Primary Goals**
 
-1. Multi-source distances: compute shortest-path distances from each anchor node (selected path nodes or primary endpoints) so each node has distances to anchors.
-2. Anchor set per node: collect anchors that a node is directly connected to (or within a 1-hop tolerance). Use this set rather than the first-found anchor.
-3. Placement by interpolation/weighting: compute node X as an average (or weighted average by inverse distance) of anchor X positions. If exactly two main endpoints exist, optionally use linear interpolation along the A→B axis using relative distances.
-4. Perpendicular offset (Y): deterministically offset nodes perpendicular to the main axis based on degree or a stable tie-breaker (name hash) to avoid overlaps.
-5. Collision pass: sweep nodes horizontally and separate nodes vertically when within a minimum spacing threshold.
-6. Optional refinement: run a short constrained force pass (or a single Cytoscape layout iteration) to tidy spacing while keeping anchors mostly fixed.
+1. **Layout must be based on degrees of separation**, not shortest-path flattening.  
+2. **Shortest path becomes implicitly central**, but not forced into a straight axis.  
+3. **Layout must remain stable** when the degree slider changes.  
+4. **Nodes should never be recomputed when the slider changes** — only shown/hidden.  
+5. **Nodes and edges appear only if part of an A→Z path** within the user-selected degree.  
+6. **Multi-role bridge nodes (Purdue, USC)** must sit between degree layers using **half-degrees** (1.5, 2.5).  
+7. **Vertical ordering must reflect closeness-to-Z and connectivity patterns**, matching the example diagram.
 
-Detailed placement algorithm
+---
 
-- Input:
-  - `anchorNodes`: nodes on the selected shortest path(s) or two primary endpoints.
-  - `anchorPositions`: map of anchor node id -> {x, y} (initial fixed positions, e.g., evenly spaced across width).
-  - `distances[nodeId][anchorId]`: computed Dijkstra distances from node to each anchor.
-  - `degreeRank[nodeId]`: deterministic rank for stacking nodes with identical anchor projections (e.g., sort by degree then id/name).
+# 🧠 **Core Concepts**
 
-- For each node v:
-  1. Determine `connectedAnchors`: anchors with which v shares at least one edge or which are within 1 hop (tunable). If empty, use the nearest 1-2 anchors by distance.
-  2. Collect anchorXs = connectedAnchors.map(a => anchorPositions[a].x) and anchorYs similarly.
-  3. Compute weights = connectedAnchors.map(a => 1 / (1 + distances[v][a])) to prefer closer anchors.
-  4. Compute weighted average x: x = sum(weights[i]\*anchorXs[i]) / sum(weights).
-  5. Compute anchor Y baseline: yBase = weighted average of anchorYs (same weights).
-  6. Perpendicular offset:
-     - step = configurable baseSpacing (e.g., 28 px)
-     - rank = deterministic rank for node among other nodes with similar x
-     - side = (rank % 2 === 0) ? +1 : -1
-     - offset = side _ Math.ceil((rank + 1)/2) _ step
-     - y = yBase + offset
-  7. Store provisional position {x, y}.
+### ✔ Degrees of Separation (integer layers)
+- degree = 0 → A  
+- degree = 1 → neighbors of A  
+- degree = 2 → neighbors of degree 1  
+- …  
+- up to a global maxDegree (e.g., 6)
 
-- Collision avoidance (simple deterministic sweep):
-  1. Sort nodes by x ascending.
-  2. For each node a in order, check subsequent nodes b while |b.x - a.x| < xThreshold.
-  3. If |b.y - a.y| < minY, move b.y to a.y + sign \* minY (choose sign deterministically — e.g., positive if b.rank >= a.rank).
-  4. Repeat or iterate once for a deterministic packing.
+### ✔ Half-Degrees (bridge layers)
+Used when a node appears in **multiple A→Z path levels**.
 
-Optional interpolation for two endpoints (A, B):
+Example for Minnesota → Notre Dame:
+- Purdue sits in **degree 1 AND degree 2** groups ⇒ assign **degree = 1.5**
+- USC sits in **degree 2 AND degree 3** groups ⇒ assign **degree = 2.5**
 
-- If layout should follow a strict A→B axis (two main endpoints):
-  - t = distToA / (distToA + distToB || 1)
-  - x = xA*(1-t) + xB*t
-  - Use weights or fallback to averaged anchors for intermediate cases.
+### ✔ Stable Layout
+The full layout must be computed **once** using maxDegree.  
+Slider changes **only hide/show nodes**.
 
-Why this reduces bias and clutter
+---
 
-- Uses all relevant anchors per node instead of the first-found anchor, so bridge nodes like USC are centered between the anchors they connect to.
-- Weighted averages keep nodes closer to nearer anchors naturally.
-- Perpendicular stacking prevents many nodes collapsing to the exact same coordinates.
-- Deterministic ranking and sweep-based collision avoidance keeps layout reproducible for tests and snapshots.
+# 🔍 **Phase 1 — Path Discovery and Degree Assignment**
 
-Implementation notes (code locations)
+### 1. Build all simple A→Z paths up to maxDegree (6)
+Use BFS or DFS with cutoff.
 
-- Primary candidate: `web/modules/cytoscape-builder.js` — function `calculateDegreePositions(pathFilter, width, height)`.
-  - Replace or augment the existing anchor selection logic that picks `anchorIdxs[0]` with a multi-anchor collection and the weighted placement algorithm.
-  - Add helper functions:
-    - `computeAnchorDistances(adjacency, anchorNodes)` — returns distances map using Dijkstra multi-source or repeated runs.
-    - `deterministicRankForX(nodesAtX)` — returns stable ranks (degree desc, id asc).
-    - `applyCollisionSweep(positions, xThreshold, minY)` — performs a single deterministic separation pass.
-  - Make `MIDPOINT_FRACTION`, `BASE_SPACING`, `X_THRESHOLD`, and `MIN_Y` configurable constants near top of module.
+### 2. Keep only nodes and edges that appear in ANY valid path ≤ maxDegree.
 
-Testing ideas
+### 3. Compute integer degree:
+```
+degree[node] = shortestDistanceFromA(node)
+```
 
-- Unit test: Minnesota ↔ Notre Dame scenario
-  - Prepare a small graph fixture where USC connects to both anchors.
-  - Run `calculateDegreePositions` and assert that USC.x is within epsilon of midpoint of the average anchor X positions (or weighted average result).
-- Determinism tests:
-  - Run layout twice on same input and assert exact equality of positions.
-- Collision tests:
-  - Create multiple nodes with same anchor projection, ensure their y positions differ by at least `MIN_Y`.
-- Full visual smoke: run `web/tests/cytoscape-builder.test.ts` to validate no regressions.
+### 4. Compute half-degree:
+If a node participates in *multiple path layers*, meaning:
 
-UI knobs
+- It appears at different depths in different A→Z paths,  
+or  
+- It serves as a mandatory bridge between two adjacent degree layers,
 
-- `Spread` slider: multiplies `BASE_SPACING` for perpendicular offsets.
-- `Anchor mode` toggle: `average` vs `two-end-interpolate` vs `force-refine`.
+Then:
+```
+degree[node] = degree[node] + 0.5
+```
 
-Tradeoffs & extensions
+Example:
+- Purdue = 1.5  
+- USC = 2.5
 
-- Force refinement yields smoother visuals but may reduce determinism; seedable force or a single deterministic iteration can mitigate this.
-- For extremely dense graphs, add an aggregation step (group low-degree leaves into a collapsed "cluster" node with expand-on-click).
-- Edge bundling or curved edges help readability when many segments share anchors.
+---
 
-Concrete next steps (I can implement now)
+# 📐 **Phase 2 — Horizontal Positioning (X)**
 
-1. Implement weighted multi-anchor averaging + deterministic y-offset + collision sweep inside `calculateDegreePositions` (minimal and safe). Run tests and adjust constants.
-2. Add unit test for the Minnesota example and deterministic layout tests.
-3. Optionally add a short constrained force pass as a separate patch.
+X position is computed once and never recomputed on slider changes.
 
-Which step would you like me to implement now? I can apply step 1 and run the test suite immediately.
+```
+x[node] = (degree[node] / maxDegree) * maxX
+```
+
+Thus:
+- A = 0  
+- Z = maxX  
+- Degree 1, 1.5, 2, 2.5, 3 are evenly spaced between them  
+
+This matches the target screenshot.
+
+---
+
+# 🧭 **Phase 3 — Vertical Ordering (Y)**
+
+Nodes are arranged *within their degree bucket* vertically.
+
+The Y-order is determined by:
+
+1. **Closeness to Z** (distanceToZ ascending)  
+   → Nodes closer to Z should be more central.
+
+2. **Connectivity into the next layer** (# of outgoing edges into degree+1 group)  
+   → Bridge nodes become centered.
+
+3. **Alphabetical tiebreaker**  
+   → Ensures deterministic layout.
+
+### Algorithm:
+
+For each degree group (e.g., 1, 1.5, 2):
+
+```
+nodes = all nodes with this degree
+sort(nodes, by closenessToZ, then fanOutCount, then name)
+```
+
+Vertical placement:
+
+```
+y_center = groupBaseY
+assign nodes alternately above/below:
+  node 0 → y_center
+  node 1 → y_center - spacing
+  node 2 → y_center + spacing
+  node 3 → y_center - 2*spacing
+  node 4 → y_center + 2*spacing
+```
+
+This yields the symmetrical “fan-out” pattern shown in the screenshot.
+
+---
+
+# 🧱 **Phase 4 — Collision Prevention**
+
+After assigning initial Y positions:
+
+```
+sort all nodes by x then y
+
+for each node a:
+    for each node b within xThreshold:
+        if |y[a] - y[b]| < minY:
+            adjust y[b] downward until spacing satisfied
+```
+
+Perform 1–2 passes.
+
+This ensures nodes never overlap.
+
+---
+
+# 🎛 **Phase 5 — Slider Behavior (Critical)**
+
+When user changes degree slider (D):
+
+- DO NOT recompute layout  
+- DO NOT recompute degrees  
+- DO NOT adjust X/Y
+
+Instead:
+
+```
+If degree[node] > D → hide node
+If degree[node] > D → hide edges attached to node
+Else → show node + edges that belong to valid A→Z paths
+```
+
+This guarantees:
+
+- Minimal changes between D=2 and D=3  
+- Layout stability  
+- Smooth expansion effect
+
+---
+
+# 🎨 **Phase 6 — Edge Coloring**
+
+Color edges based on degree of separation of the path they are part of.
+
+Colors:
+
+```
+0 hops → #00FF00
+1 hop  → #FFFF00
+2 hop  → #FFA500
+3 hop  → #FF4500
+4 hop  → #FF6B35
+5 hop  → #DC143C
+6 hop  → #8B0000
+```
+
+If an edge is part of multiple path degrees:
+- Use the **highest degree** color, or
+- Render a multi-stripe (optional)
+
+---
+
+# 🧪 **Testing Requirements**
+
+### Minnesota → Notre Dame:
+
+- Minnesota = degree 0  
+- Degree 1 group: Rutgers, Ohio State, Northwestern, Iowa, Nebraska, Oregon  
+- Degree 1.5: Purdue  
+- Degree 2: Michigan State, California  
+- Degree 2.5: USC  
+- Degree 3: Notre Dame  
+
+Tests:
+
+```
+Positions do not change when slider changes (D=2 → D=3).
+Degree 1.5 and 2.5 appear between integer layers.
+Nodes closer to Z sort to vertical center.
+Purdue–USC line is near center axis.
+Fan-out nodes appear symmetrically above/below.
+```
+
+---
+
+# ⚙️ **Constants**
+
+```
+maxDegree = 6
+verticalSpacing = 50
+xThreshold = 80
+minY = 40
+maxX = width - margin
+```
+
+---
+
+# 📌 **Summary**
+
+This plan produces:
+
+- Degree-layered horizontal layout  
+- Half-degree bridge layers  
+- Stable geometry across slider changes  
+- Shortest path implicitly central  
+- Vertical sorting by relevance to Z  
+- Clean, readable fan-out nodes  
+- Deterministic, testable behavior  
+
+This exactly matches the layout shown in the user's reference image.
+

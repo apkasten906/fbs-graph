@@ -348,11 +348,11 @@ export function buildGraphElements({
     if (pathFilter && pathFilter.source) {
       const adjacency = buildAdjacencyFromEdges(pathFilter.edges);
       const distFromSource = bfsFrom(pathFilter.source, adjacency);
-      
+
       // Get hop distances for both endpoints
       const distA = distFromSource.get(a) || 0;
       const distB = distFromSource.get(b) || 0;
-      
+
       // Edge color is based on the maximum hop distance of its endpoints
       // This means edges closer to the source are brighter (green), farther are darker (red)
       const maxHopDist = Math.max(distA, distB);
@@ -366,7 +366,7 @@ export function buildGraphElements({
   for (const [k, e] of edges) {
     // Format label to show count and average leverage
     const label = e.avgLev > 0 ? `${e.count} (lev: ${e.avgLev.toFixed(2)})` : `${e.count}`;
-    
+
     els.push({
       group: 'edges',
       data: {
@@ -436,7 +436,7 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
   for (const [nid, off] of layerOffsets) {
     if (off === 0) pathNodes.push(nid);
   }
-  
+
   // Group path nodes by distance from source (to identify parallel paths at same x-position)
   const nodesByDistance = new Map();
   for (const nid of pathNodes) {
@@ -444,7 +444,7 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
     if (!nodesByDistance.has(dist)) nodesByDistance.set(dist, []);
     nodesByDistance.get(dist).push(nid);
   }
-  
+
   const pathNodeSet = new Set(pathNodes);
 
   // Phase 3: Assign axial positions with leverage-weighted spacing
@@ -474,18 +474,20 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
 
   // Position path nodes with leverage-weighted spacing and symmetric vertical layout
   const sortedDistances = Array.from(nodesByDistance.keys()).sort((a, b) => a - b);
-  
-  L(`[Layout] Positioning ${pathNodes.length} path nodes across ${sortedDistances.length} distance levels`);
-  
+
+  L(
+    `[Layout] Positioning ${pathNodes.length} path nodes across ${sortedDistances.length} distance levels`
+  );
+
   for (let distIdx = 0; distIdx < sortedDistances.length; distIdx++) {
     const dist = sortedDistances[distIdx];
     const nodesAtDist = nodesByDistance.get(dist);
-    
+
     L(`[Layout] Distance ${dist}: ${nodesAtDist.length} nodes`);
-    
+
     // Calculate x position for this distance level
     let xPos = dist * HORIZONTAL_SPACING;
-    
+
     // Position nodes at this distance symmetrically around centerY
     if (nodesAtDist.length === 1) {
       positions[nodesAtDist[0]] = { x: xPos, y: centerY };
@@ -494,48 +496,48 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
       // Multiple nodes at same distance = parallel paths
       // Sort to minimize edge crossings by grouping connected paths together
       // Strategy: nodes that connect to the same neighbors should be close together
-      
+
       // For nodes at this distance, find which nodes at previous/next distance they connect to
       const prevDist = dist - 1;
       const nextDist = dist + 1;
       const prevNodes = nodesByDistance.get(prevDist) || [];
       const nextNodes = nodesByDistance.get(nextDist) || [];
-      
+
       // Score each node by which path it belongs to
       const pathScores = new Map();
       for (const nid of nodesAtDist) {
         const neighbors = Array.from(adjacency.get(nid) || []);
         let score = 0;
-        
+
         // Check connections to previous distance level
         for (let i = 0; i < prevNodes.length; i++) {
           if (neighbors.includes(prevNodes[i])) {
             score += i * 100; // Weight by position at previous level
           }
         }
-        
-        // Check connections to next distance level  
+
+        // Check connections to next distance level
         for (let i = 0; i < nextNodes.length; i++) {
           if (neighbors.includes(nextNodes[i])) {
             score += i * 100; // Weight by position at next level
           }
         }
-        
+
         // Tie-breaker: alphabetical
         score += (nodeLabels[nid] || nid).toLowerCase().charCodeAt(0) / 1000;
         pathScores.set(nid, score);
       }
-      
+
       // Sort by path score to keep related nodes together
       nodesAtDist.sort((a, b) => {
         return pathScores.get(a) - pathScores.get(b);
       });
-      
+
       // Spread them symmetrically around centerY
       const spacing = VERTICAL_SPACING;
       const totalHeight = (nodesAtDist.length - 1) * spacing;
       const startY = centerY - totalHeight / 2;
-      
+
       nodesAtDist.forEach((nid, idx) => {
         const y = startY + idx * spacing;
         positions[nid] = { x: xPos, y: y };
@@ -544,28 +546,20 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
     }
   }
 
-  // Position non-path nodes based on layer_offset and connected path nodes
+  // Position non-path nodes based on layer_offset
+  // Per plan Phase 2: x[node] = distance_from_source[node] * horizontal_spacing
+  // This ensures strict left→right alignment with no nodes at extreme edges
   for (const [nid, off] of layerOffsets) {
     if (off === 0) continue; // already positioned
 
-    // Find which path node(s) this node connects to
-    const neighbors = Array.from(adjacency.get(nid) || []);
-    const connectedPathNodes = neighbors.filter(n => pathNodeSet.has(n));
+    // Per plan: ALL nodes use BFS distance for X positioning
+    const dS = distFromSource.get(nid) || 0;
+    const baseX = dS * HORIZONTAL_SPACING;
 
-    let baseX;
-    if (connectedPathNodes.length > 0) {
-      // Position based on average x of connected path nodes
-      const avgX =
-        connectedPathNodes.reduce((sum, pn) => sum + positions[pn].x, 0) /
-        connectedPathNodes.length;
-      baseX = avgX;
-    } else {
-      // Fallback: use BFS distance
-      const dS = distFromSource.get(nid) || 0;
-      baseX = dS * HORIZONTAL_SPACING;
-    }
-
-    const baseY = centerY + off * VERTICAL_SPACING;
+    // Create clear vertical bands: odd layers above, even layers below for balance
+    const direction = off % 2 === 1 ? -1 : 1; // odd above (negative Y), even below (positive Y)
+    const bandMultiplier = Math.ceil(off / 2); // layers 1,2 → 1; layers 3,4 → 2; etc
+    const baseY = centerY + direction * bandMultiplier * VERTICAL_SPACING;
     positions[nid] = { x: baseX, y: baseY };
   }
 
@@ -588,7 +582,8 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
     }
   }
 
-  // Phase 5: Per-layer stacking with perpendicular offset for nodes at same x
+  // Phase 5: Per-layer stacking to prevent overlaps within each layer
+  // Per plan: within each layer_offset group, sort deterministically and apply vertical offsets
   const layerGroups = new Map();
   for (const [nid, off] of layerOffsets) {
     if (!layerGroups.has(off)) layerGroups.set(off, []);
@@ -596,19 +591,21 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
   }
 
   for (const [off, nodes] of layerGroups) {
-    if (off === 0) continue; // path nodes stay on centerY
+    if (off === 0) continue; // path nodes already positioned symmetrically
 
-    // Group nodes by x-position to handle overlaps
+    // Group nodes by x-position (within X_BUCKET tolerance) to handle overlaps
     const byX = new Map();
     for (const nid of nodes) {
-      const x = Math.round(positions[nid].x);
-      if (!byX.has(x)) byX.set(x, []);
-      byX.get(x).push(nid);
+      const xBucket = Math.round(positions[nid].x / X_BUCKET) * X_BUCKET;
+      if (!byX.has(xBucket)) byX.set(xBucket, []);
+      byX.get(xBucket).push(nid);
     }
 
-    // For each x-group, apply radial spacing
+    // For each x-group, apply deterministic vertical distribution per plan
     for (const nodesAtX of byX.values()) {
-      // Sort by degree desc, then by id/label
+      if (nodesAtX.length === 1) continue; // single node, no stacking needed
+
+      // Sort deterministically: higher degree first, then alphabetical
       nodesAtX.sort((a, b) => {
         const da = nodesByDegree.get(a) || 0;
         const db = nodesByDegree.get(b) || 0;
@@ -618,16 +615,11 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
         return la < lb ? -1 : la > lb ? 1 : 0;
       });
 
-      // Apply alternating above/below with first node above
-      nodesAtX.forEach((nid, idx) => {
-        const rank = idx;
-        // First node above (negative y), then alternate
-        const side = rank % 2 === 0 ? -1 : 1;
-        // Increase spacing: rank 0→1×spacing, rank 1→1×spacing (other side), rank 2→2×spacing, etc
-        const spacingMultiplier = Math.floor(rank / 2) + 1;
-        // Use MIN_Y * 2 for more aggressive spacing to avoid overlaps
-        const yOff = side * spacingMultiplier * MIN_Y * 2.0;
-        positions[nid].y += yOff;
+      // Apply stacking offset per plan: side = +1 if rank even else -1
+      nodesAtX.forEach((nid, rank) => {
+        const side = rank % 2 === 0 ? 1 : -1;
+        const offset = side * Math.ceil((rank + 1) / 2) * BASE_SPACING;
+        positions[nid].y += offset;
       });
     }
   }
@@ -650,6 +642,36 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
       }
       // Otherwise keep the symmetric y-position that was set earlier
     }
+  }
+
+  // Final deterministic restack within each x-band to guarantee separation
+  const bands = new Map();
+  for (const [id, pos] of Object.entries(positions)) {
+    const key = Math.round(pos.x / X_THRESHOLD);
+    const arr = bands.get(key) || [];
+    arr.push(id);
+    bands.set(key, arr);
+  }
+
+  for (const ids of bands.values()) {
+    const anchorId = ids.find(id => pathNodeSet.has(id)) || null;
+    const anchorY = anchorId ? positions[anchorId].y : centerY;
+
+    const rest = ids.filter(id => !pathNodeSet.has(id));
+    rest.sort((a, b) => {
+      const da = nodesByDegree.get(a) || 0;
+      const db = nodesByDegree.get(b) || 0;
+      if (da !== db) return db - da;
+      const la = (nodeLabels[a] || a).toLowerCase();
+      const lb = (nodeLabels[b] || b).toLowerCase();
+      return la < lb ? -1 : la > lb ? 1 : 0;
+    });
+
+    rest.forEach((id, idx) => {
+      const side = idx % 2 === 0 ? 1 : -1;
+      const step = Math.ceil((idx + 1) / 2) * MIN_Y;
+      positions[id].y = anchorY + side * step;
+    });
   }
 
   return positions;
@@ -764,35 +786,78 @@ function applyCollisionSweep(
 ) {
   const items = Object.keys(positionsMap).map(id => {
     const p = positionsMap[id];
-    return { id, x: p.x, y: p.y, rank: nodesByDegreeMap.get(id) || 0 };
+    return {
+      id,
+      x: p.x,
+      y: p.y,
+      rank: nodesByDegreeMap.get(id) || 0,
+      fixed: fixedIds.has(id),
+    };
   });
 
-  // Sort by x position first, then by rank (higher degree first), then by id
-  items.sort((a, b) => {
-    if (Math.abs(a.x - b.x) > 1) return a.x - b.x;
-    if (a.rank !== b.rank) return b.rank - a.rank; // higher rank first
-    return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
-  });
+  // Deterministic priority: x asc, higher rank first, then id
+  const sortItems = list =>
+    list.sort((a, b) => {
+      if (Math.abs(a.x - b.x) > 1) return a.x - b.x;
+      if (a.rank !== b.rank) return b.rank - a.rank;
+      return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+    });
 
-  for (let i = 0; i < items.length; i++) {
-    const a = items[i];
-    if (fixedIds.has(a.id)) continue; // never move fixed nodes
+  sortItems(items);
 
-    for (let j = i + 1; j < items.length; j++) {
-      const b = items[j];
-      const dx = Math.abs(b.x - a.x);
-      if (dx >= xThreshold) break;
+  // Run a few passes until all close pairs respect minY
+  for (let pass = 0; pass < 4; pass++) {
+    let moved = false;
+    for (let i = 0; i < items.length; i++) {
+      const a = items[i];
+      for (let j = i + 1; j < items.length; j++) {
+        const b = items[j];
+        const dx = Math.abs(b.x - a.x);
+        if (dx >= xThreshold) break;
 
-      const dy = Math.abs(b.y - a.y);
-      if (dy < minY) {
-        if (fixedIds.has(b.id)) {
-          // b is fixed, move a away from b
-          const sign = a.y < b.y ? -1 : 1;
-          a.y = b.y + sign * minY;
-        } else {
-          // neither fixed, or only a is fixed - move b
-          const sign = b.y < a.y ? -1 : 1;
-          b.y = a.y + sign * minY;
+        const dy = Math.abs(b.y - a.y);
+        if (dy >= minY) continue;
+
+        // Prefer to keep earlier/higher-rank items stable; push the other node away
+        const anchor = b.fixed && !a.fixed ? b : a;
+        const mover = b.fixed && !a.fixed ? a : b;
+        const sign = mover.y >= anchor.y ? 1 : -1;
+        const target = anchor.y + sign * minY;
+
+        if (!mover.fixed && mover.y !== target) {
+          mover.y = target;
+          moved = true;
+        }
+      }
+    }
+
+    if (!moved) break;
+    sortItems(items);
+  }
+
+  // Deterministic bucket pass to guarantee minY separation inside each x band
+  const buckets = new Map();
+  for (const it of items) {
+    const key = Math.round(it.x / xThreshold);
+    const arr = buckets.get(key) || [];
+    arr.push(it);
+    buckets.set(key, arr);
+  }
+
+  for (const list of buckets.values()) {
+    list.sort((a, b) => {
+      if (Math.abs(a.y - b.y) > 1) return a.y - b.y;
+      return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+    });
+    for (let i = 1; i < list.length; i++) {
+      const prev = list[i - 1];
+      const cur = list[i];
+      const dy = cur.y - prev.y;
+      if (Math.abs(dy) < minY) {
+        if (!cur.fixed) {
+          cur.y = prev.y + Math.sign(dy || 1) * minY;
+        } else if (!prev.fixed) {
+          prev.y = cur.y - Math.sign(dy || 1) * minY;
         }
       }
     }
