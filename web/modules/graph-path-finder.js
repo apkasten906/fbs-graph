@@ -129,139 +129,153 @@ export function shortestPathByInverseLeverage(srcId, dstId, pairGames, teams, ty
 }
 
 /**
- * Enumerate all simple A->Z paths up to maxDegrees and build a stable comparison model.
+ * Find all nodes within N degrees of separation from two teams
+ *
+ * @param {string[]} startNodes - Array of exactly 2 team IDs [source, destination]
+ * @param {number} maxDegrees - Maximum degrees of separation to include
+ * @param {Map<string, Array>} pairGames - Map of edge keys to game arrays
+ * @param {Array} teams - Array of all team objects
+ * @param {string} typeFilter - 'ALL', 'CONFERENCE', or 'NON_CONFERENCE'
+ * @param {number} minLev - Minimum leverage threshold
+ * @param {{nodes: string[], edges: string[]} | null} shortestPath - Optional shortest path to ensure inclusion
+ * @returns {{nodes: string[], edges: string[], nodesByDegree: Map, source: string, destination: string}}
  */
-export function findNodesWithinDegrees(startNodes, maxDegrees, pairGames, teams, typeFilter, minLev) {
+export function findNodesWithinDegrees(
+  startNodes,
+  maxDegrees,
+  pairGames,
+  teams,
+  typeFilter,
+  minLev,
+  shortestPath = null
+) {
   const source = startNodes[0];
   const dest = startNodes[1];
 
   const adj = buildAdjacencyList(pairGames, typeFilter, minLev);
 
-  const shortest = shortestPathByInverseLeverage(source, dest, pairGames, teams, typeFilter, minLev);
-  if (!shortest || !shortest.nodes || shortest.nodes.length === 0) {
-    return emptyModel(source, dest, maxDegrees, teams);
-  }
+  // Strategy: maxDegrees represents the maximum path length (hops) between source and dest
+  // First check if the shortest path is within the degree limit
+  const nodesByDegree = new Map();
+  const validEdges = new Set();
+  const validNodes = new Set();
 
-  const paths = [];
-  const stack = [[source, [source]]];
-  while (stack.length) {
-    const [node, path] = stack.pop();
-    const hops = path.length - 1;
-    if (hops > maxDegrees) continue;
-    if (node === dest) {
-      paths.push({ nodes: path.slice(), edges: pathToEdges(path), length: hops });
-      continue;
-    }
-    const neighbors = (adj.get(node) || [])
-      .map(e => e.to)
-      .filter(n => !path.includes(n));
-    for (const n of neighbors) {
-      stack.push([n, path.concat(n)]);
-    }
-  }
+  // Step 1: Run BFS from source to compute distance_from_source
+  const distFromSource = new Map();
+  const queueSource = [source];
+  distFromSource.set(source, 0);
+  let idx = 0;
 
-  if (paths.length === 0) {
-    return emptyModel(source, dest, maxDegrees, teams);
-  }
+  while (idx < queueSource.length) {
+    const curr = queueSource[idx++];
+    const dist = distFromSource.get(curr);
+    const neighbors = (adj.get(curr) || []).map(e => e.to);
 
-  const nodeDepths = new Map();
-  const edges = new Set();
-  const edgeMaxPath = new Map();
-
-  for (const p of paths) {
-    p.edges.forEach(k => {
-      edges.add(k);
-      const prev = edgeMaxPath.get(k) || 0;
-      edgeMaxPath.set(k, Math.max(prev, p.length));
-    });
-    p.nodes.forEach((nid, idx) => {
-      const set = nodeDepths.get(nid) || new Set();
-      set.add(idx);
-      nodeDepths.set(nid, set);
-    });
-  }
-
-  const degreeByNode = new Map();
-  for (const [nid, depths] of nodeDepths) {
-    const minDepth = Math.min(...depths);
-    const hasMultiLayer = depths.size > 1;
-    const deg = hasMultiLayer ? minDepth + 0.5 : minDepth;
-    degreeByNode.set(nid, deg);
-  }
-
-  const distToZ = bfsDistance(dest, edges);
-
-  const fanOut = new Map();
-  for (const k of edges) {
-    const [a, b] = k.split('__');
-    const da = degreeByNode.get(a) ?? Infinity;
-    const db = degreeByNode.get(b) ?? Infinity;
-    if (da < db) fanOut.set(a, (fanOut.get(a) || 0) + 1);
-    else if (db < da) fanOut.set(b, (fanOut.get(b) || 0) + 1);
-  }
-
-  return {
-    nodes: Array.from(nodeDepths.keys()),
-    edges: Array.from(edges),
-    degreeByNode,
-    distToZ,
-    edgeMaxPath,
-    fanOut,
-    paths,
-    source,
-    destination: dest,
-    maxDegree: maxDegrees,
-    shortestPath: shortest,
-    nodeLabels: Object.fromEntries(teams.map(t => [t.id, t.name])),
-  };
-}
-
-function pathToEdges(nodes) {
-  const keys = [];
-  for (let i = 0; i < nodes.length - 1; i++) {
-    keys.push(edgeKey(nodes[i], nodes[i + 1]));
-  }
-  return keys;
-}
-
-function bfsDistance(start, edgeList) {
-  const adj = new Map();
-  for (const k of edgeList) {
-    const [a, b] = k.split('__');
-    if (!adj.has(a)) adj.set(a, new Set());
-    if (!adj.has(b)) adj.set(b, new Set());
-    adj.get(a).add(b);
-    adj.get(b).add(a);
-  }
-  const dist = new Map();
-  const q = [start];
-  dist.set(start, 0);
-  while (q.length) {
-    const u = q.shift();
-    const d = dist.get(u);
-    for (const v of adj.get(u) || []) {
-      if (!dist.has(v)) {
-        dist.set(v, d + 1);
-        q.push(v);
+    for (const neighbor of neighbors) {
+      if (!distFromSource.has(neighbor)) {
+        distFromSource.set(neighbor, dist + 1);
+        queueSource.push(neighbor);
       }
     }
   }
-  return dist;
-}
 
-function emptyModel(source, dest, maxDegrees, teams) {
+  // Step 2: Run BFS from dest to compute distance_to_target
+  const distToTarget = new Map();
+  const queueDest = [dest];
+  distToTarget.set(dest, 0);
+  idx = 0;
+
+  while (idx < queueDest.length) {
+    const curr = queueDest[idx++];
+    const dist = distToTarget.get(curr);
+    const neighbors = (adj.get(curr) || []).map(e => e.to);
+
+    for (const neighbor of neighbors) {
+      if (!distToTarget.has(neighbor)) {
+        distToTarget.set(neighbor, dist + 1);
+        queueDest.push(neighbor);
+      }
+    }
+  }
+
+  // Step 3: Compute shortest path length
+  const shortestPathLength = distFromSource.get(dest);
+
+  if (shortestPathLength === undefined) {
+    // No path exists
+    return {
+      nodes: [],
+      edges: [],
+      nodesByDegree: new Map(),
+      source,
+      destination: dest,
+      shortestPathNodes: [],
+      nodeLabels: Object.fromEntries(teams.map(t => [t.id, t.name])),
+    };
+  }
+
+  // Check if shortest path exceeds maxDegrees
+  if (shortestPathLength > maxDegrees) {
+    // Path is too long for the degree filter
+    return {
+      nodes: [],
+      edges: [],
+      nodesByDegree: new Map(),
+      source,
+      destination: dest,
+      shortestPathNodes: [],
+      nodeLabels: Object.fromEntries(teams.map(t => [t.id, t.name])),
+    };
+  }
+
+  // Step 4: Include only nodes that lie on paths of length <= maxDegrees
+  // A node is on such a path if: distance_from_source + distance_to_target <= maxDegrees
+  const allReachableNodes = new Set([...distFromSource.keys()].filter(n => distToTarget.has(n)));
+
+  for (const node of allReachableNodes) {
+    const dfs = distFromSource.get(node);
+    const dtt = distToTarget.get(node);
+    const pathLengthThroughNode = dfs + dtt;
+
+    // Only include nodes that are on paths of length <= maxDegrees
+    if (pathLengthThroughNode <= maxDegrees) {
+      validNodes.add(node);
+      // Use layer_offset for rendering purposes (distance from shortest path)
+      const layerOffset = pathLengthThroughNode - shortestPathLength;
+      nodesByDegree.set(node, layerOffset);
+    }
+  }
+
+  // Step 5: Add only edges that participate in at least one path
+  // whose total length is <= maxDegrees (plus all shortest-path edges).
+  // Iterate original pairGames keys to avoid missing any valid edge.
+  for (const k of pairGames.keys()) {
+    const parts = k.split('__');
+    if (parts.length !== 2) continue;
+    const [a, b] = parts;
+    if (!validNodes.has(a) || !validNodes.has(b)) continue;
+
+    const pathLenAB = (distFromSource.get(a) ?? Infinity) + 1 + (distToTarget.get(b) ?? Infinity);
+    const pathLenBA = (distFromSource.get(b) ?? Infinity) + 1 + (distToTarget.get(a) ?? Infinity);
+    const minPath = Math.min(pathLenAB, pathLenBA);
+
+    const isShortestEdge =
+      shortestPath && Array.isArray(shortestPath.edges) ? shortestPath.edges.includes(k) : false;
+
+    if (isShortestEdge || minPath <= maxDegrees) {
+      validEdges.add(k);
+    }
+  }
+
   return {
-    nodes: [],
-    edges: [],
-    degreeByNode: new Map(),
-    distToZ: new Map(),
-    edgeMaxPath: new Map(),
-    fanOut: new Map(),
-    paths: [],
+    nodes: Array.from(validNodes),
+    edges: Array.from(validEdges),
+    nodesByDegree,
     source,
     destination: dest,
-    maxDegree: maxDegrees,
-    shortestPath: null,
+    // expose which nodes came from the provided shortestPath (if any)
+    shortestPathNodes: shortestPath && shortestPath.nodes ? shortestPath.nodes : [],
+    // provide id->name lookup so layout can sort alphabetically
     nodeLabels: Object.fromEntries(teams.map(t => [t.id, t.name])),
   };
 }

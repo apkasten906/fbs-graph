@@ -11,10 +11,10 @@ import { CONFERENCE_COLORS, getConferenceColor } from './conference-colors.js';
 export const COLORS = CONFERENCE_COLORS;
 
 // Layout constants (exported for tests and UI knobs)
-export const BASE_SPACING = 50; // default vertical spacing step for stacked nodes
+export const BASE_SPACING = 36; // default vertical spacing step for stacked nodes
 export const X_BUCKET = 8; // px tolerance to group nodes sharing same horizontal projection
-export const MIN_Y = 40; // minimum vertical separation during collision sweep
-export const X_THRESHOLD = 80; // horizontal threshold to consider collisions
+export const MIN_Y = 36; // minimum vertical separation during collision sweep
+export const X_THRESHOLD = 180; // horizontal threshold to consider collisions
 export const JITTER_STEP = 12; // horizontal jitter magnitude used for visual separation
 export const JITTER_CYCLE = 3; // jitter pattern cycle length
 export const DEGREE_MIN_STEP = BASE_SPACING; // min vertical step for degree stacking
@@ -28,8 +28,8 @@ export const BOTTOM_Y_FACTOR = 1.6;
 export const CENTER_OFFSET_Y = 50;
 
 // New layout constants for strict layering (per plan-dijkstra-layout.prompt.md)
-export const HORIZONTAL_SPACING = 220; // unused in new degree layout
-export const VERTICAL_SPACING = 50; // y-spacing per degree bucket
+export const HORIZONTAL_SPACING = 220; // x-spacing per hop in shortest path
+export const VERTICAL_SPACING = 90; // y-spacing per layer_offset band
 export const LAMBDA = 0.2; // multi-anchor refinement weight (0.1-0.25)
 
 // Lightweight conditional logger. Enable by adding `?layoutDebug=1` to the URL
@@ -277,21 +277,13 @@ export function buildGraphElements({
   typeFilter,
   minLeverage,
   pathFilter = null,
-  viewDegree = null,
 }) {
   const els = [];
   teamIndex.clear();
   teams.forEach(t => teamIndex.set(t.id, t));
 
-  const cutoff = viewDegree ?? (pathFilter ? pathFilter.maxDegree || null : null);
   // Filter teams to show (all or just path nodes)
-  const teamsToShow = pathFilter
-    ? teams.filter(t => {
-        const deg = pathFilter.degreeByNode?.get(t.id);
-        if (deg === undefined) return false;
-        return cutoff === null || deg <= cutoff;
-      })
-    : teams;
+  const teamsToShow = pathFilter ? teams.filter(t => pathFilter.nodes.includes(t.id)) : teams;
 
   // Build nodes
   for (const t of teamsToShow) {
@@ -322,14 +314,28 @@ export function buildGraphElements({
     pairGames.set(k, arr);
   }
 
+  // Compute layer offsets for edge coloring (if pathFilter with edges provided)
+  let layerOffsets = null;
+  if (
+    pathFilter &&
+    pathFilter.edges &&
+    pathFilter.edges.length > 0 &&
+    pathFilter.source &&
+    pathFilter.destination
+  ) {
+    const adjacency = buildAdjacencyFromEdges(pathFilter.edges);
+    const distFromSource = bfsFrom(pathFilter.source, adjacency);
+    const distToTarget = bfsFrom(pathFilter.destination, adjacency);
+    const shortestPathLength = distFromSource.get(pathFilter.destination) || Infinity;
+    if (Number.isFinite(shortestPathLength)) {
+      layerOffsets = computeLayerOffset(distFromSource, distToTarget, shortestPathLength);
+    }
+  }
+
   // Process edges
   for (const [k, list] of pairGames) {
-    // Skip edge if pathFilter is active and edge is not in a valid path or exceeds view cutoff
-    if (pathFilter) {
-      if (!pathFilter.edges.includes(k)) continue;
-      const maxPathLen = pathFilter.edgeMaxPath?.get(k);
-      if (cutoff !== null && maxPathLen !== undefined && maxPathLen > cutoff) continue;
-    }
+    // Skip edge if pathFilter is active and edge is not in path
+    if (pathFilter && !pathFilter.edges.includes(k)) continue;
 
     const a = list[0].home.id;
     const b = list[0].away.id;
@@ -337,11 +343,20 @@ export function buildGraphElements({
     const avgLev = sumLev / list.length;
     const w = Math.max(1, Math.log2(1 + sumLev * 4));
 
-    // Calculate edge color based on path length participation
+    // Calculate edge color based on hop distance from source team
     let edgeColor = '#4562aa'; // Default blue
-    if (pathFilter && pathFilter.edgeMaxPath) {
-      const hopLen = pathFilter.edgeMaxPath.get(k) ?? 0;
-      edgeColor = DEGREE_COLORS[Math.min(hopLen, DEGREE_COLORS.length - 1)];
+    if (pathFilter && pathFilter.source) {
+      const adjacency = buildAdjacencyFromEdges(pathFilter.edges);
+      const distFromSource = bfsFrom(pathFilter.source, adjacency);
+
+      // Get hop distances for both endpoints
+      const distA = distFromSource.get(a) || 0;
+      const distB = distFromSource.get(b) || 0;
+
+      // Edge color is based on the maximum hop distance of its endpoints
+      // This means edges closer to the source are brighter (green), farther are darker (red)
+      const maxHopDist = Math.max(distA, distB);
+      edgeColor = DEGREE_COLORS[Math.min(maxHopDist, DEGREE_COLORS.length - 1)];
     }
 
     edges.set(k, { a, b, count: list.length, sumLev, avgLev, weight: w, edgeColor });
@@ -379,56 +394,293 @@ export function buildGraphElements({
  * @returns {Object} Map of nodeId to {x, y} position
  */
 export function calculateDegreePositions(pathFilter, width = 800, height = 600) {
-  if (pathFilter.positions) return pathFilter.positions;
-
   const positions = {};
-  const degreeByNode = pathFilter.degreeByNode || new Map();
-  const distToZ = pathFilter.distToZ || new Map();
-  const fanOut = pathFilter.fanOut || new Map();
+  const source = pathFilter.source;
+  const destination = pathFilter.destination;
+  const nodesByDegree = pathFilter.nodesByDegree || new Map();
   const nodeLabels = pathFilter.nodeLabels || {};
-  const maxDegree = pathFilter.maxDegree || 6;
-  const centerY = height / 2;
-  const usableX = Math.max(1, width - 2 * SIDE_MARGIN);
+  const shortestPathNodes = pathFilter.shortestPathNodes || [];
 
-  const groups = new Map();
-  for (const nid of pathFilter.nodes || []) {
-    const deg = degreeByNode.get(nid) ?? 0;
-    if (!groups.has(deg)) groups.set(deg, []);
-    groups.get(deg).push(nid);
+  const centerY = height / 2;
+  const adjacency = buildAdjacencyFromEdges(pathFilter.edges || []);
+
+  // Use fallback for backward compatibility when:
+  // 1. No edges provided, OR
+  // 2. Edges are empty and shortestPathNodes are provided, OR
+  // 3. BFS fails to find a path but shortestPathNodes are provided
+  const hasEdges = pathFilter.edges && pathFilter.edges.length > 0;
+  if (!hasEdges) {
+    return calculateDegreePositionsFallback(pathFilter, width, height);
   }
 
-  const sortedDegrees = Array.from(groups.keys()).sort((a, b) => a - b);
-  for (const deg of sortedDegrees) {
-    const nodes = groups.get(deg);
-    nodes.sort((a, b) => {
-      const dzA = distToZ.get(a) ?? Infinity;
-      const dzB = distToZ.get(b) ?? Infinity;
-      if (dzA !== dzB) return dzA - dzB;
-      const fA = fanOut.get(a) ?? 0;
-      const fB = fanOut.get(b) ?? 0;
-      if (fA !== fB) return fB - fA;
+  // Phase 1: Compute BFS distances from source and target
+  const distFromSource = bfsFrom(source, adjacency);
+  const distToTarget = bfsFrom(destination, adjacency);
+  const shortestPathLength = distFromSource.get(destination) || Infinity;
+
+  if (!Number.isFinite(shortestPathLength)) {
+    // No path exists; use fallback if shortestPathNodes provided, else minimal layout
+    if (shortestPathNodes.length > 0) {
+      return calculateDegreePositionsFallback(pathFilter, width, height);
+    }
+    positions[source] = { x: SIDE_MARGIN, y: centerY };
+    positions[destination] = { x: width - SIDE_MARGIN, y: centerY };
+    return positions;
+  }
+
+  // Phase 2: Compute layer_offset for each node
+  const layerOffsets = computeLayerOffset(distFromSource, distToTarget, shortestPathLength);
+
+  // Extract shortest-path nodes (layer_offset == 0)
+  const pathNodes = [];
+  for (const [nid, off] of layerOffsets) {
+    if (off === 0) pathNodes.push(nid);
+  }
+
+  // Group path nodes by distance from source (to identify parallel paths at same x-position)
+  const nodesByDistance = new Map();
+  for (const nid of pathNodes) {
+    const dist = distFromSource.get(nid) || 0;
+    if (!nodesByDistance.has(dist)) nodesByDistance.set(dist, []);
+    nodesByDistance.get(dist).push(nid);
+  }
+
+  const pathNodeSet = new Set(pathNodes);
+
+  // Phase 3: Assign axial positions with leverage-weighted spacing
+  // Build edge leverage map for path edges
+  const edgeLeverageMap = new Map();
+  if (pathFilter.edges) {
+    for (const edgeKey of pathFilter.edges) {
+      edgeLeverageMap.set(edgeKey, 1); // default weight
+    }
+  }
+
+  // If we have access to pairGames, use actual leverage for path edges
+  if (pathFilter.pairGames && pathFilter.pairGames instanceof Map) {
+    for (let i = 0; i < pathNodes.length - 1; i++) {
+      const a = pathNodes[i];
+      const b = pathNodes[i + 1];
+      const key = a < b ? `${a}__${b}` : `${b}__${a}`;
+      const games = pathFilter.pairGames.get(key) || [];
+      const totalLev = games.reduce((sum, g) => sum + (g.leverage || 0), 0);
+      const avgLev = games.length > 0 ? totalLev / games.length : 0;
+      // Higher leverage = shorter distance (inverse relationship)
+      // Weight range: [0.5, 2.0] where high leverage gets 0.5x spacing
+      const weight = avgLev > 0 ? Math.max(0.5, Math.min(2.0, 1 / (1 + avgLev))) : 1.0;
+      edgeLeverageMap.set(key, weight);
+    }
+  }
+
+  // Position path nodes with leverage-weighted spacing and symmetric vertical layout
+  const sortedDistances = Array.from(nodesByDistance.keys()).sort((a, b) => a - b);
+
+  L(
+    `[Layout] Positioning ${pathNodes.length} path nodes across ${sortedDistances.length} distance levels`
+  );
+
+  for (let distIdx = 0; distIdx < sortedDistances.length; distIdx++) {
+    const dist = sortedDistances[distIdx];
+    const nodesAtDist = nodesByDistance.get(dist);
+
+    L(`[Layout] Distance ${dist}: ${nodesAtDist.length} nodes`);
+
+    // Calculate x position for this distance level
+    let xPos = dist * HORIZONTAL_SPACING;
+
+    // Position nodes at this distance symmetrically around centerY
+    if (nodesAtDist.length === 1) {
+      positions[nodesAtDist[0]] = { x: xPos, y: centerY };
+      L(`[Layout]   ${nodesAtDist[0]}: x=${xPos}, y=${centerY} (single node)`);
+    } else {
+      // Multiple nodes at same distance = parallel paths
+      // Sort to minimize edge crossings by grouping connected paths together
+      // Strategy: nodes that connect to the same neighbors should be close together
+
+      // For nodes at this distance, find which nodes at previous/next distance they connect to
+      const prevDist = dist - 1;
+      const nextDist = dist + 1;
+      const prevNodes = nodesByDistance.get(prevDist) || [];
+      const nextNodes = nodesByDistance.get(nextDist) || [];
+
+      // Score each node by which path it belongs to
+      const pathScores = new Map();
+      for (const nid of nodesAtDist) {
+        const neighbors = Array.from(adjacency.get(nid) || []);
+        let score = 0;
+
+        // Check connections to previous distance level
+        for (let i = 0; i < prevNodes.length; i++) {
+          if (neighbors.includes(prevNodes[i])) {
+            score += i * 100; // Weight by position at previous level
+          }
+        }
+
+        // Check connections to next distance level
+        for (let i = 0; i < nextNodes.length; i++) {
+          if (neighbors.includes(nextNodes[i])) {
+            score += i * 100; // Weight by position at next level
+          }
+        }
+
+        // Tie-breaker: alphabetical
+        score += (nodeLabels[nid] || nid).toLowerCase().charCodeAt(0) / 1000;
+        pathScores.set(nid, score);
+      }
+
+      // Sort by path score to keep related nodes together
+      nodesAtDist.sort((a, b) => {
+        return pathScores.get(a) - pathScores.get(b);
+      });
+
+      // Spread them symmetrically around centerY
+      const spacing = VERTICAL_SPACING;
+      const totalHeight = (nodesAtDist.length - 1) * spacing;
+      const startY = centerY - totalHeight / 2;
+
+      nodesAtDist.forEach((nid, idx) => {
+        const y = startY + idx * spacing;
+        positions[nid] = { x: xPos, y: y };
+        L(`[Layout]   ${nid}: x=${xPos}, y=${y} (${idx + 1}/${nodesAtDist.length})`);
+      });
+    }
+  }
+
+  // Position non-path nodes based on layer_offset
+  // Per plan Phase 2: x[node] = distance_from_source[node] * horizontal_spacing
+  // This ensures strict left→right alignment with no nodes at extreme edges
+  for (const [nid, off] of layerOffsets) {
+    if (off === 0) continue; // already positioned
+
+    // Per plan: ALL nodes use BFS distance for X positioning
+    const dS = distFromSource.get(nid) || 0;
+    const baseX = dS * HORIZONTAL_SPACING;
+
+    // Create clear vertical bands: odd layers above, even layers below for balance
+    const direction = off % 2 === 1 ? -1 : 1; // odd above (negative Y), even below (positive Y)
+    const bandMultiplier = Math.ceil(off / 2); // layers 1,2 → 1; layers 3,4 → 2; etc
+    const baseY = centerY + direction * bandMultiplier * VERTICAL_SPACING;
+    positions[nid] = { x: baseX, y: baseY };
+  }
+
+  // Phase 4: Light multi-anchor refinement for smoother positioning
+  // Only apply to nodes with multiple path connections
+  for (const [nid, off] of layerOffsets) {
+    if (off === 0) continue; // skip path nodes
+    const pos = positions[nid];
+    if (!pos) continue;
+
+    const neighbors = Array.from(adjacency.get(nid) || []);
+    const connectedPathNodes = neighbors.filter(n => pathNodeSet.has(n));
+
+    // Only refine if node connects to 2+ path nodes (for smoothing)
+    if (connectedPathNodes.length >= 2) {
+      const anchorXs = connectedPathNodes.map(a => positions[a].x);
+      const avgX = anchorXs.reduce((s, v) => s + v, 0) / anchorXs.length;
+      const xAdjust = avgX - pos.x;
+      pos.x = pos.x + LAMBDA * xAdjust; // apply small lambda adjustment
+    }
+  }
+
+  // Phase 5: Per-layer stacking to prevent overlaps within each layer
+  // Per plan: within each layer_offset group, sort deterministically and apply vertical offsets
+  const layerGroups = new Map();
+  for (const [nid, off] of layerOffsets) {
+    if (!layerGroups.has(off)) layerGroups.set(off, []);
+    layerGroups.get(off).push(nid);
+  }
+
+  for (const [off, nodes] of layerGroups) {
+    if (off === 0) continue; // path nodes already positioned symmetrically
+
+    // Group nodes by x-position (within X_BUCKET tolerance) to handle overlaps
+    const byX = new Map();
+    for (const nid of nodes) {
+      const xBucket = Math.round(positions[nid].x / X_BUCKET) * X_BUCKET;
+      if (!byX.has(xBucket)) byX.set(xBucket, []);
+      byX.get(xBucket).push(nid);
+    }
+
+    // For each x-group, apply deterministic vertical distribution per plan
+    for (const nodesAtX of byX.values()) {
+      if (nodesAtX.length === 1) continue; // single node, no stacking needed
+
+      // Sort deterministically: higher degree first, then alphabetical
+      nodesAtX.sort((a, b) => {
+        const da = nodesByDegree.get(a) || 0;
+        const db = nodesByDegree.get(b) || 0;
+        if (da !== db) return db - da;
+        const la = (nodeLabels[a] || a).toLowerCase();
+        const lb = (nodeLabels[b] || b).toLowerCase();
+        return la < lb ? -1 : la > lb ? 1 : 0;
+      });
+
+      // Apply stacking offset per plan: side = +1 if rank even else -1
+      nodesAtX.forEach((nid, rank) => {
+        const side = rank % 2 === 0 ? 1 : -1;
+        const offset = side * Math.ceil((rank + 1) / 2) * BASE_SPACING;
+        positions[nid].y += offset;
+      });
+    }
+  }
+
+  // Phase 6: Collision sweep (deterministic, respects fixed path nodes)
+  // Run multiple passes to ensure all overlaps are resolved
+  applyCollisionSweep(positions, X_THRESHOLD, MIN_Y, nodesByDegree, pathNodeSet);
+  applyCollisionSweep(positions, X_THRESHOLD, MIN_Y, nodesByDegree, pathNodeSet);
+  applyCollisionSweep(positions, X_THRESHOLD, MIN_Y, nodesByDegree, pathNodeSet);
+
+  // Re-center single path nodes on exact centerY, but preserve symmetric positioning
+  // for nodes that were spread vertically (multiple nodes at same distance)
+  for (const nid of pathNodes) {
+    if (positions[nid]) {
+      const dist = distFromSource.get(nid) || 0;
+      const nodesAtDist = nodesByDistance.get(dist);
+      // Only re-center if this was the only node at this distance
+      if (nodesAtDist && nodesAtDist.length === 1) {
+        positions[nid].y = centerY;
+      }
+      // Otherwise keep the symmetric y-position that was set earlier
+    }
+  }
+
+  // Final deterministic restack within each x-band to guarantee separation
+  const bands = new Map();
+  for (const [id, pos] of Object.entries(positions)) {
+    const key = Math.round(pos.x / X_THRESHOLD);
+    const arr = bands.get(key) || [];
+    arr.push(id);
+    bands.set(key, arr);
+  }
+
+  for (const ids of bands.values()) {
+    const anchorId = ids.find(id => pathNodeSet.has(id)) || null;
+    const anchorY = anchorId ? positions[anchorId].y : centerY;
+
+    const rest = ids.filter(id => !pathNodeSet.has(id));
+    rest.sort((a, b) => {
+      const da = nodesByDegree.get(a) || 0;
+      const db = nodesByDegree.get(b) || 0;
+      if (da !== db) return db - da;
       const la = (nodeLabels[a] || a).toLowerCase();
       const lb = (nodeLabels[b] || b).toLowerCase();
-      if (la < lb) return -1;
-      if (la > lb) return 1;
-      return 0;
+      return la < lb ? -1 : la > lb ? 1 : 0;
     });
 
-    const x = SIDE_MARGIN + (deg / Math.max(1, maxDegree)) * usableX;
-    nodes.forEach((nid, idx) => {
-      const rung = Math.floor(idx / 2) + 1;
-      const dir = idx === 0 ? 0 : idx % 2 === 1 ? -1 : 1;
-      const y = dir === 0 ? centerY : centerY + dir * rung * VERTICAL_SPACING;
-      positions[nid] = { x, y };
+    rest.forEach((id, idx) => {
+      const side = idx % 2 === 0 ? 1 : -1;
+      const step = Math.ceil((idx + 1) / 2) * MIN_Y;
+      positions[id].y = anchorY + side * step;
     });
   }
 
-  const fixed = new Set([pathFilter.source, pathFilter.destination].filter(Boolean));
-  applyCollisionSweep(positions, X_THRESHOLD, MIN_Y, degreeByNode, fixed);
-  pathFilter.positions = positions;
   return positions;
 }
 
+/**
+ * Fallback positioning for tests that don't provide edges.
+ * Uses shortestPathNodes for the straight line and places degree-based nodes around it.
+ */
 function calculateDegreePositionsFallback(pathFilter, width, height) {
   const positions = {};
   const nodesByDegree = pathFilter.nodesByDegree || new Map();
