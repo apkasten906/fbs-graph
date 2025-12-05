@@ -158,16 +158,12 @@ export function findNodesWithinDegrees(
   // 3) Build filtered adjacency for hop computation
   const filteredAdj = buildFilteredAdjacencyFromEdges(validNodes, scheduleEdges);
 
-  // 4) Compute hop degrees from source
+  // 4) Compute hop degrees from source (for nodesByDegree metadata)
   const nodesByDegree = bfsComputeDegrees(source, filteredAdj, maxDegrees);
-
-  // 5) Restrict edges to hop-adjacent only (layered DAG)
-  const hopEdges = filterHopAdjacentEdges(scheduleEdges, nodesByDegree);
-
-  // 6) Return comparison graph
+  // 5) Return comparison graph
   return {
     nodes: Array.from(validNodes),
-    edges: hopEdges,
+    edges: scheduleEdges, // Return ALL edges from enumerated paths
     nodesByDegree,
     source,
     destination,
@@ -278,26 +274,6 @@ function bfsComputeDegrees(source, adj, maxDegrees) {
   }
 
   return dist;
-}
-
-/**
- * Keep only edges that connect nodes whose hop degrees differ by exactly 1.
- * i.e., edges between adjacent layers in the layered DAG.
- */
-function filterHopAdjacentEdges(scheduleEdges, nodesByDegree) {
-  const hopEdges = [];
-
-  for (const k of scheduleEdges) {
-    const [u, v] = k.split('__');
-    const du = nodesByDegree.get(u);
-    const dv = nodesByDegree.get(v);
-    if (du == null || dv == null) continue;
-    if (Math.abs(du - dv) === 1) {
-      hopEdges.push(k);
-    }
-  }
-
-  return hopEdges;
 }
 
 /**

@@ -117,36 +117,41 @@ describe("Debug: Minnesota → Notre Dame Path Analysis", () => {
   });
 
   it("reproduces the actual browser behavior from user data", () => {
-    // Test 4: Use the actual edges from user's screenshot
-    // Based on visible edges in the graph visualization
+    // Test 4: Based on actual CSV data and screenshot
+    // CSV shows Minnesota->Purdue->Notre Dame is the ONLY 2-hop path
+    // Screenshot shows "Shortest path (3 hops): Minnesota -> Oregon -> USC -> Notre Dame"
+    // This means Purdue edges have lower leverage than the Oregon-USC route
     const actualEdges = [
-      // Minnesota connections (visible in graph)
+      // 2-hop path (low leverage - not chosen)
+      [MINNESOTA, PURDUE, 0.35],
+      [PURDUE, NOTRE_DAME, 0.30],
+      
+      // 3-hop weighted shortest path (high leverage - chosen by algorithm)
+      [MINNESOTA, OREGON, 0.75],
+      [OREGON, USC, 0.85],
+      [USC, NOTRE_DAME, 0.80],
+      
+      // Other Minnesota connections visible in screenshot
       [MINNESOTA, NORTHWESTERN, 0.6],
       [NORTHWESTERN, USC, 0.7],
-      [MINNESOTA, OREGON, 0.65],         // Visible green edge
-      [OREGON, USC, 0.75],               // Visible green edge
-      [MINNESOTA, MICHIGAN_STATE, 0.7],  // Higher leverage than expected!
-      [MICHIGAN_STATE, USC, 0.7],
-      [MINNESOTA, IOWA, 0.6],
+      [MINNESOTA, IOWA, 0.65],
       [IOWA, USC, 0.7],
-      [MINNESOTA, NEBRASKA, 0.6],
+      [MINNESOTA, NEBRASKA, 0.65],
       [NEBRASKA, USC, 0.7],
-      [MINNESOTA, PURDUE, 0.45],         // Lower leverage
-      [PURDUE, USC, 0.75],
-      [MINNESOTA, OHIO_STATE, 0.6],
+      [MINNESOTA, MICHIGAN_STATE, 0.65],
+      [MICHIGAN_STATE, USC, 0.7],
+      [MICHIGAN_STATE, BOSTON_COLLEGE, 0.5],
+      [MINNESOTA, OHIO_STATE, 0.7],
+      [OHIO_STATE, PURDUE, 0.65],
       [MINNESOTA, RUTGERS, 0.5],
+      [RUTGERS, PURDUE, 0.55],
       [MINNESOTA, CALIFORNIA, 0.5],
       [CALIFORNIA, STANFORD, 0.6],
-      [BOSTON_COLLEGE, CALIFORNIA, 0.5],
-      [BOSTON_COLLEGE, MICHIGAN_STATE, 0.5],
       
-      // Notre Dame connections (visible in graph)
-      [NOTRE_DAME, PURDUE, 0.35],        // Lower leverage
-      [USC, NOTRE_DAME, 0.8],            // High leverage yellow edge
-      [CALIFORNIA, STANFORD, 0.6],
-      [STANFORD, NOTRE_DAME, 0.6],       // Visible yellow edge
-      [BOSTON_COLLEGE, NOTRE_DAME, 0.6], // Visible red edge
-      [MICHIGAN_STATE, NOTRE_DAME, 0.75], // HIGHEST LEVERAGE - THIS IS THE KEY!
+      // Notre Dame connections
+      [PURDUE, USC, 0.7],
+      [STANFORD, NOTRE_DAME, 0.6],
+      [BOSTON_COLLEGE, NOTRE_DAME, 0.6],
     ];
 
     const pairGames4 = makePairGames(actualEdges);
@@ -155,12 +160,12 @@ describe("Debug: Minnesota → Notre Dame Path Analysis", () => {
     console.log("\nActual browser data scenario:");
     console.log("  Result:", result4?.nodes);
     console.log("  Path weights (inverse leverage = 1 - leverage):");
-    console.log("    Michigan State: (1-0.7) + (1-0.75) = 0.55");
-    console.log("    Purdue: (1-0.45) + (1-0.35) = 1.2");
-    console.log("    Oregon-USC: (1-0.65) + (1-0.75) + (1-0.8) = 0.8");
-    console.log("  Michigan State path wins because 0.55 < 0.8 < 1.2");
+    console.log("    Oregon-USC: (1-0.75) + (1-0.85) + (1-0.80) = 0.60");
+    console.log("    Purdue (2 hops): (1-0.35) + (1-0.30) = 1.35");
+    console.log("  Oregon-USC path wins because 0.60 < 1.35");
+    console.log("  High-leverage 3-hop path beats low-leverage 2-hop path!");
     
-    // The Michigan State path should be chosen (actual behavior)
-    expect(result4?.nodes).toEqual([MINNESOTA, MICHIGAN_STATE, NOTRE_DAME]);
+    // The Oregon-USC path should be chosen (matches screenshot)
+    expect(result4?.nodes).toEqual([MINNESOTA, OREGON, USC, NOTRE_DAME]);
   });
 });

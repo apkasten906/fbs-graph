@@ -558,6 +558,19 @@
 
         // Rebuild graph to show teams within degrees of separation
         const season = Number(document.getElementById('season').value);
+        
+        // Debug: Log the pathFilter data
+        console.log('[DEBUG] Path filter object:', {
+          nodes: res.nodes,
+          edges: res.edges,
+          source: res.source,
+          destination: res.destination,
+          shortestPathNodes: res.shortestPathNodes,
+          nodesByDegree: res.nodesByDegree instanceof Map 
+            ? Object.fromEntries(res.nodesByDegree) 
+            : res.nodesByDegree,
+        });
+        
         buildGraph(season, typeFilter, minLev, res);
 
         // Highlight the selected teams
