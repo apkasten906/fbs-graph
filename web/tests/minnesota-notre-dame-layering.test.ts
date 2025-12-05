@@ -54,36 +54,49 @@ function makePairGames(edgePairs) {
 
 describe("Minnesota → Notre Dame Layout (3 degrees)", () => {
   // Based on actual 2025 FBS schedule data
+  // The ACTUAL shortest path in production is: Minnesota -> Michigan State -> Notre Dame
+  // This is determined by leverage values in the real data
   const edges = [
-    // SHORTEST PATH: Minnesota -> Purdue -> Notre Dame (2 hops, high leverage)
-    [MINNESOTA, PURDUE, 0.85],
-    [PURDUE, NOTRE_DAME, 0.95], // High leverage - this is the central path
+    // ACTUAL SHORTEST PATH: Minnesota -> Michigan State -> Notre Dame (2 hops)
+    [MINNESOTA, MICHIGAN_STATE, 0.7],     // Moderate-high leverage
+    [MICHIGAN_STATE, NOTRE_DAME, 0.75],   // High leverage - this creates the best path
+    
+    // Alternative 2-hop paths (lower total leverage)
+    [MINNESOTA, PURDUE, 0.45],
+    [PURDUE, NOTRE_DAME, 0.35],           // Lower leverage = higher cost
     
     // Minnesota's other direct opponents (degree 1 from Minnesota)
     [MINNESOTA, NORTHWESTERN, 0.6],
     [MINNESOTA, OHIO_STATE, 0.7],
     [MINNESOTA, OREGON, 0.65],
-    [MINNESOTA, USC, 0.75],
+    [MINNESOTA, IOWA, 0.6],
+    [MINNESOTA, NEBRASKA, 0.6],
     [MINNESOTA, RUTGERS, 0.5],
+    [MINNESOTA, CALIFORNIA, 0.5],
     
-    // Northwestern's connections (creates alternate 3-hop paths)
+    // 3-hop path alternative (higher total cost than Michigan State)
+    [OREGON, USC, 0.75],
+    [USC, NOTRE_DAME, 0.8],               // Good edge but 3 hops total
+    
+    // Other connections for degree-3 graph
+    [NORTHWESTERN, USC, 0.7],
+    [MICHIGAN_STATE, USC, 0.7],
+    [IOWA, USC, 0.7],
+    [NEBRASKA, USC, 0.7],
+    [PURDUE, USC, 0.75],
+    
+    [OHIO_STATE, MICHIGAN_STATE, 0.8],
     [NORTHWESTERN, OHIO_STATE, 0.6],
     [NORTHWESTERN, IOWA, 0.55],
-    
-    // Other teams connecting to Notre Dame (longer or lower leverage paths)
-    [OHIO_STATE, MICHIGAN_STATE, 0.8],
-    [MICHIGAN_STATE, CALIFORNIA, 0.5],
-    [CALIFORNIA, STANFORD, 0.6],
-    [STANFORD, NOTRE_DAME, 0.7],
-    
-    [OREGON, MICHIGAN_STATE, 0.65],
-    
-    [USC, NEBRASKA, 0.6],
     [NEBRASKA, IOWA, 0.55],
-    [IOWA, BOSTON_COLLEGE, 0.5],
+    
+    [CALIFORNIA, STANFORD, 0.6],
+    [STANFORD, NOTRE_DAME, 0.6],
+    [BOSTON_COLLEGE, CALIFORNIA, 0.5],
+    [BOSTON_COLLEGE, MICHIGAN_STATE, 0.5],
     [BOSTON_COLLEGE, NOTRE_DAME, 0.6],
     
-    // Direct but lower leverage than Purdue path
+    // Lower leverage alternate to Notre Dame
     [RUTGERS, NOTRE_DAME, 0.4],
   ];
 
@@ -98,9 +111,9 @@ describe("Minnesota → Notre Dame Layout (3 degrees)", () => {
     expect(model.nodesByDegree.get(MINNESOTA)).toBe(0);
     
     // Degree 1: Direct Minnesota opponents (1-hop from Minnesota)
-    expect(model.nodesByDegree.get(PURDUE)).toBe(1); // On shortest path
+    expect(model.nodesByDegree.get(MICHIGAN_STATE)).toBe(1); // On shortest path
     
-    // Degree 2: Destination via shortest path (Minnesota -> Purdue -> Notre Dame)
+    // Degree 2: Destination via shortest path (Minnesota -> Michigan State -> Notre Dame)
     expect(model.nodesByDegree.get(NOTRE_DAME)).toBe(2);
     
     // Teams are only included if they're within 3 degrees from BOTH endpoints
@@ -114,7 +127,7 @@ describe("Minnesota → Notre Dame Layout (3 degrees)", () => {
     });
   });
 
-  it("shortest path uses Purdue for most direct route (2 hops)", () => {
+  it("shortest path uses Michigan State for most direct route (2 hops)", () => {
     const pairGames = makePairGames(edges);
     
     // Find shortest path from Minnesota to Notre Dame
@@ -123,8 +136,13 @@ describe("Minnesota → Notre Dame Layout (3 degrees)", () => {
     expect(path).not.toBeNull();
     expect(path.nodes).toContain(MINNESOTA);
     expect(path.nodes).toContain(NOTRE_DAME);
-    expect(path.nodes).toContain(PURDUE); // Purdue is the bridge - highest leverage path
-    expect(path.nodes.length).toBe(3); // Minnesota -> Purdue -> Notre Dame
+    expect(path.nodes).toContain(MICHIGAN_STATE); // Michigan State is the bridge - highest leverage path
+    expect(path.nodes.length).toBe(3); // Minnesota -> Michigan State -> Notre Dame
+    
+    // Path weights (inverse leverage):
+    // Michigan State: (1-0.7) + (1-0.75) = 0.55 ✓ BEST
+    // Purdue: (1-0.45) + (1-0.35) = 1.2
+    // Oregon-USC: (1-0.65) + (1-0.75) + (1-0.8) = 0.8
   });
 
   it("positions shortest path nodes vertically centered", () => {
@@ -139,23 +157,23 @@ describe("Minnesota → Notre Dame Layout (3 degrees)", () => {
     const positions = calculateDegreePositions(model, 1200, 800);
     
     // Source should be on the left
-    expect(positions[MINNESOTA].x).toBeLessThan(positions[PURDUE].x);
+    expect(positions[MINNESOTA].x).toBeLessThan(positions[MICHIGAN_STATE].x);
     expect(positions[MINNESOTA].x).toBeLessThan(positions[NOTRE_DAME].x);
     
     // Destination should be on the right
-    expect(positions[NOTRE_DAME].x).toBeGreaterThan(positions[PURDUE].x);
+    expect(positions[NOTRE_DAME].x).toBeGreaterThan(positions[MICHIGAN_STATE].x);
     expect(positions[NOTRE_DAME].x).toBeGreaterThan(positions[MINNESOTA].x);
     
-    // Purdue should be in the middle (degree 1, between source and destination)
-    expect(positions[PURDUE].x).toBeGreaterThan(positions[MINNESOTA].x);
-    expect(positions[PURDUE].x).toBeLessThan(positions[NOTRE_DAME].x);
+    // Michigan State should be in the middle (degree 1, between source and destination)
+    expect(positions[MICHIGAN_STATE].x).toBeGreaterThan(positions[MINNESOTA].x);
+    expect(positions[MICHIGAN_STATE].x).toBeLessThan(positions[NOTRE_DAME].x);
     
     // Shortest path nodes should be vertically centered (closer to y=400)
     const centerY = 400;
     const tolerance = 150; // Allow some variation
     
-    // Purdue is on shortest path, should be near center
-    expect(Math.abs(positions[PURDUE].y - centerY)).toBeLessThan(tolerance);
+    // Michigan State is on shortest path, should be near centerr center
+    expect(Math.abs(positions[MICHIGAN_STATE].y - centerY)).toBeLessThan(tolerance);
   });
 
   it("Rutgers has alternative direct path to Notre Dame", () => {
@@ -165,7 +183,7 @@ describe("Minnesota → Notre Dame Layout (3 degrees)", () => {
     // Rutgers is degree 1 from Minnesota (direct connection)
     expect(model.nodesByDegree.get(RUTGERS)).toBe(1);
     
-    // Rutgers also connects to Notre Dame, but with lower leverage than Purdue path
+    // Rutgers also connects to Notre Dame, but with lower leverage (0.4) than Michigan State path
   });
 
   it("maintains vertical separation between nodes at same degree", () => {

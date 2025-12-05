@@ -14,11 +14,15 @@
 /**
  * Phase 1: Assign nodes to layers based on distance from source
  *
+ * Enhanced to detect "bridge nodes" that connect to multiple layers.
+ * These nodes are assigned fractional degrees (e.g., 1.5) to position
+ * them between layers, ensuring all edges are visible.
+ *
  * @param {Object} pathFilter - Contains nodes, edges, source, destination
  * @returns {Map<number, string[]>} Map of degree -> array of node IDs
  */
 export function assignNodesToLayers(pathFilter) {
-  const { nodes, edges, source } = pathFilter;
+  const { nodes, edges, source, destination } = pathFilter;
 
   // Build adjacency list from edges
   const adjacency = new Map();
@@ -49,7 +53,37 @@ export function assignNodesToLayers(pathFilter) {
     }
   }
 
-  // Group nodes by their distance (layer)
+  // Detect bridge nodes: nodes that have connections spanning multiple layers
+  const bridgeNodes = new Map(); // nodeId -> { minLayer, maxLayer }
+
+  for (const [nodeId, dist] of distances) {
+    const neighbors = adjacency.get(nodeId) || [];
+    const neighborLayers = neighbors.map(n => distances.get(n)).filter(d => d !== undefined);
+
+    if (neighborLayers.length > 1) {
+      const minNeighbor = Math.min(...neighborLayers);
+      const maxNeighbor = Math.max(...neighborLayers);
+
+      // If this node's neighbors span more than 2 layers, it's a significant bridge
+      // Example: node at layer 1 with neighbors at layers 0 and 3 (span of 3)
+      if (maxNeighbor - minNeighbor > 2) {
+        bridgeNodes.set(nodeId, {
+          ownLayer: dist,
+          minNeighbor,
+          maxNeighbor,
+        });
+      }
+    }
+  }
+
+  // Adjust positions for bridge nodes
+  for (const [nodeId, info] of bridgeNodes) {
+    // Position bridge node halfway between its layer and the gap it bridges
+    const fractionalDegree = info.ownLayer + 0.5;
+    distances.set(nodeId, fractionalDegree);
+  }
+
+  // Group nodes by their distance (layer), including fractional layers
   const layers = new Map();
   for (const [nodeId, dist] of distances) {
     if (!layers.has(dist)) {
@@ -239,16 +273,17 @@ export function computeSugiyamaLayout(
   // Convert shortestPathNodes array to Set for faster lookup
   const shortestPathSet = new Set(shortestPathNodes || []);
 
-  // Phase 1: Assign nodes to layers
+  // Phase 1: Assign nodes to layers (including fractional layers for bridges)
   const layers = assignNodesToLayers(pathFilter);
-  const maxDegree = Math.max(...layers.keys());
+  const allDegrees = Array.from(layers.keys()).sort((a, b) => a - b);
+  const maxDegree = allDegrees[allDegrees.length - 1];
 
-  // Process layers left to right
-  for (let degree = 0; degree <= maxDegree; degree++) {
+  // Process layers left to right, including fractional layers
+  for (const degree of allDegrees) {
     const layerNodes = layers.get(degree) || [];
     if (layerNodes.length === 0) continue;
 
-    // Calculate X position for this layer
+    // Calculate X position for this layer (supports fractional degrees)
     const x = 50 + degree * horizontalSpacing;
 
     // Order nodes in this layer to minimize crossings

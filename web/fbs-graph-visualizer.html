@@ -428,9 +428,27 @@
         const savedSrc = localStorage.getItem('fbs-graph-visualizer-team1');
         const savedDst = localStorage.getItem('fbs-graph-visualizer-team2');
         
+        // Convert IDs to names for the buildSelectors function
+        let defaultSrc = 'ohio-state';
+        let defaultDst = 'miami';
+        
+        if (savedSrc && graphData.teams) {
+          const srcTeam = graphData.teams.find(t => t.id === savedSrc);
+          if (srcTeam) {
+            defaultSrc = srcTeam.name.toLowerCase();
+          }
+        }
+        
+        if (savedDst && graphData.teams) {
+          const dstTeam = graphData.teams.find(t => t.id === savedDst);
+          if (dstTeam) {
+            defaultDst = dstTeam.name.toLowerCase();
+          }
+        }
+        
         window.uiBuildSelectors(graphData.teams, 'srcSel', 'dstSel', {
-          defaultSrc: savedSrc || 'ohio-state',
-          defaultDst: savedDst || 'miami',
+          defaultSrc: defaultSrc,
+          defaultDst: defaultDst,
           autoTrigger: true,
           triggerButtonId: 'pathBtn',
         });
