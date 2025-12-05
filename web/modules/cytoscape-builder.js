@@ -6,7 +6,7 @@
  */
 
 import { CONFERENCE_COLORS, getConferenceColor } from './conference-colors.js';
-import { computeSugiyamaDegreeLayout } from './sugiyama-degree-layout.js';
+import { computeSugiyamaLayout, convertPositionsToObject } from './sugiyama-layout.js';
 
 // Backwards-compatible export used by other modules/tests
 export const COLORS = CONFERENCE_COLORS;
@@ -144,8 +144,12 @@ export function buildGraphElements({
     if (pathFilter && pathFilter.nodesByDegree && pathFilter.source && pathFilter.destination) {
       const degreeA = pathFilter.nodesByDegree.get(a) || 0;
       const degreeB = pathFilter.nodesByDegree.get(b) || 0;
+      // Edge degree is the max of the two endpoint degrees
+      // For coloring: degree 1 nodes use DEGREE_COLORS[0], degree 2 use DEGREE_COLORS[1], etc.
       const edgeDegree = Math.max(degreeA, degreeB);
-      edgeColor = DEGREE_COLORS[Math.min(edgeDegree, DEGREE_COLORS.length - 1) - 1]; // -1 for 0-based index
+      if (edgeDegree > 0 && edgeDegree <= DEGREE_COLORS.length) {
+        edgeColor = DEGREE_COLORS[edgeDegree - 1];
+      }
     }
 
     edges.set(k, { a, b, count: list.length, sumLev, avgLev, weight: w, edgeColor });
@@ -237,6 +241,35 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
     });
   }
 
+  // Sugiyama crossing minimization: sort nodes by barycenter of neighbor positions
+  // This minimizes edge crossings between layers
+  function sortByBarycenter(ids, neighborPositions) {
+    return ids.slice().sort((a, b) => {
+      const aNeighbors = neighborPositions.get(a) || [];
+      const bNeighbors = neighborPositions.get(b) || [];
+
+      // Calculate barycenter (average Y position of neighbors)
+      const aBarycenter =
+        aNeighbors.length > 0
+          ? aNeighbors.reduce((sum, pos) => sum + pos.y, 0) / aNeighbors.length
+          : centerY;
+      const bBarycenter =
+        bNeighbors.length > 0
+          ? bNeighbors.reduce((sum, pos) => sum + pos.y, 0) / bNeighbors.length
+          : centerY;
+
+      // Sort by barycenter (nodes with lower average neighbor Y come first/above)
+      if (Math.abs(aBarycenter - bBarycenter) > 1) {
+        return aBarycenter - bBarycenter;
+      }
+
+      // Tie-breaker: alphabetical
+      const A = (nodeLabels[a] || a).toLowerCase();
+      const B = (nodeLabels[b] || b).toLowerCase();
+      return A < B ? -1 : A > B ? 1 : 0;
+    });
+  }
+
   // (direct connection detection removed — layout anchors to shortest-path nodes)
 
   for (let degree = 1; degree <= maxDegree; degree++) {
@@ -245,8 +278,29 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
     );
     if (nodesAtDegree.length === 0) continue;
 
-    // Sort alphabetically for deterministic placement
-    nodesAtDegree = sortByLabel(nodesAtDegree);
+    // Build neighbor position map for crossing minimization
+    // For each node at this degree, find its neighbors at degree-1 (previous layer)
+    const neighborPositions = new Map();
+    const edges = pathFilter.edges || [];
+
+    for (const nodeId of nodesAtDegree) {
+      const neighbors = [];
+      // Check all edges to find connections to already-positioned nodes
+      for (const edgeKey of edges) {
+        const [a, b] = edgeKey.split('__');
+        let neighborId = null;
+        if (a === nodeId && positions[b]) neighborId = b;
+        else if (b === nodeId && positions[a]) neighborId = a;
+
+        if (neighborId && positions[neighborId]) {
+          neighbors.push(positions[neighborId]);
+        }
+      }
+      neighborPositions.set(nodeId, neighbors);
+    }
+
+    // Sort by barycenter to minimize crossings, fallback to alphabetical
+    nodesAtDegree = sortByBarycenter(nodesAtDegree, neighborPositions);
 
     // If degree 1 and we have a shortest-path anchor (first path node after source),
     // place these 1° nodes centered between source and that anchor and split above/below.
@@ -457,10 +511,13 @@ export function createCytoscapeStyle() {
  */
 export function createLayoutConfig(pathFilter = null, width = 800, height = 600) {
   if (pathFilter) {
-    // Preset layout with calculated positions
+    // Preset layout with calculated positions using modular Sugiyama algorithm
+    const positionsMap = computeSugiyamaLayout(pathFilter, width, height);
+    const positions = convertPositionsToObject(positionsMap);
+
     return {
       name: 'preset',
-      positions: computeSugiyamaDegreeLayout(pathFilter, width, height),
+      positions: positions,
       fit: true,
       padding: 50,
       avoidOverlap: true,

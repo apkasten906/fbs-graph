@@ -423,9 +423,14 @@
           console.error('uiBuildSelectors not loaded from module yet');
           return;
         }
+        
+        // Restore last selected teams from localStorage
+        const savedSrc = localStorage.getItem('fbs-graph-visualizer-team1');
+        const savedDst = localStorage.getItem('fbs-graph-visualizer-team2');
+        
         window.uiBuildSelectors(graphData.teams, 'srcSel', 'dstSel', {
-          defaultSrc: 'ohio state',
-          defaultDst: 'miami',
+          defaultSrc: savedSrc || 'ohio-state',
+          defaultDst: savedDst || 'miami',
           autoTrigger: true,
           triggerButtonId: 'pathBtn',
         });
@@ -489,6 +494,10 @@
           box.textContent = 'Please select both teams.';
           return;
         }
+        
+        // Save selected teams to localStorage
+        localStorage.setItem('fbs-graph-visualizer-team1', src);
+        localStorage.setItem('fbs-graph-visualizer-team2', dst);
 
         // First, find the shortest path to determine the minimum degrees needed
         const shortestPath = _shortestPath(src, dst, typeFilter, minLev);
