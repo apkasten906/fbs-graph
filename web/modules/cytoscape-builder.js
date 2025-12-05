@@ -6,6 +6,7 @@
  */
 
 import { CONFERENCE_COLORS, getConferenceColor } from './conference-colors.js';
+import { computeSugiyamaDegreeLayout } from './sugiyama-degree-layout.js';
 
 // Backwards-compatible export used by other modules/tests
 export const COLORS = CONFERENCE_COLORS;
@@ -51,11 +52,10 @@ const MIDPOINT_FRACTION = (() => {
  * Degree-based color scheme for edges in comparison view
  */
 export const DEGREE_COLORS = [
-  '#00FF00', // 0: Bright Green (direct connection)
-  '#FFFF00', // 1: Bright Yellow (1 hop)
-  '#FFA500', // 2: Orange (2 hops)
-  '#FF6B35', // 3: Orange-Red (3 hops)
-  '#FF4500', // 4: Red-Orange (4 hops)
+  '#00FF00', // 1: Bright Green (1 hop)
+  '#FFFF00', // 2: Bright Yellow (2 hops)
+  '#FFA500', // 3: Orange (3 hops)
+  '#FF6B35', // 4: Orange-Red (4 hops)
   '#DC143C', // 5: Crimson (5 hops)
   '#8B0000', // 6: Dark Red (6 hops)
 ];
@@ -145,7 +145,7 @@ export function buildGraphElements({
       const degreeA = pathFilter.nodesByDegree.get(a) || 0;
       const degreeB = pathFilter.nodesByDegree.get(b) || 0;
       const edgeDegree = Math.max(degreeA, degreeB);
-      edgeColor = DEGREE_COLORS[Math.min(edgeDegree, DEGREE_COLORS.length - 1)];
+      edgeColor = DEGREE_COLORS[Math.min(edgeDegree, DEGREE_COLORS.length - 1) - 1]; // -1 for 0-based index
     }
 
     edges.set(k, { a, b, count: list.length, sumLev, avgLev, weight: w, edgeColor });
@@ -460,7 +460,7 @@ export function createLayoutConfig(pathFilter = null, width = 800, height = 600)
     // Preset layout with calculated positions
     return {
       name: 'preset',
-      positions: calculateDegreePositions(pathFilter, width, height),
+      positions: computeSugiyamaDegreeLayout(pathFilter, width, height),
       fit: true,
       padding: 50,
       avoidOverlap: true,
