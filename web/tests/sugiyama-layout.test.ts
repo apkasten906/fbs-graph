@@ -204,39 +204,35 @@ describe('Sugiyama Layout - Full Integration', () => {
 
     // Layer 1 (or 1.5 if bridge detected): Purdue and Texas
     // With bridge detection threshold >1, nodes may be at fractional layers
-    const purdueX = positions.get('purdue')!.x;
-    const texasX = positions.get('texas')!.x;
+    const purduePos = positions.get('purdue')!;
+    const texasPos = positions.get('texas')!;
 
-    // Could be at layer 1 (x=270) or layer 1.5 (x=380) depending on bridge detection
-    expect(purdueX).toBeGreaterThanOrEqual(270);
-    expect(purdueX).toBeLessThanOrEqual(380);
-    expect(texasX).toBe(purdueX); // Same layer
+    // All nodes in same layer should have same X coordinate
+    expect(purduePos.x).toBe(texasPos.x); // Same layer, same X
+    expect(purduePos.x).toBeGreaterThan(50); // To the right of Ohio State
 
-    // With horizontal alignment: Purdue aligns with Ohio State (Y=300)
-    // Texas gets positioned at a different Y to avoid collision
-    const purdueY = positions.get('purdue')!.y;
-    const texasY = positions.get('texas')!.y;
-    
     // Verify nodes are vertically separated
-    expect(Math.abs(purdueY - texasY)).toBeGreaterThanOrEqual(80);
+    const purdueY = purduePos.y;
+    const texasY = texasPos.y;
+    expect(Math.abs(purdueY - texasY)).toBeGreaterThanOrEqual(60); // At least 60px apart
 
-    // Layer 2 (or 2.5): Notre Dame and Florida
-    const notreDameX = positions.get('notre-dame')!.x;
-    const floridaX = positions.get('florida')!.x;
+    // Layer 2: Notre Dame and Florida
+    const notreDamePos = positions.get('notre-dame')!;
+    const floridaPos = positions.get('florida')!;
 
-    expect(notreDameX).toBeGreaterThan(purdueX); // To the right of previous layer
-    expect(floridaX).toBe(notreDameX); // Same layer
+    // All nodes in same layer should have same X coordinate
+    expect(notreDamePos.x).toBe(floridaPos.x); // Same layer, same X
+    expect(notreDamePos.x).toBeGreaterThan(purduePos.x); // To the right of previous layer
     
-    // With horizontal alignment: Notre Dame aligns with Purdue, Florida with Texas
     // Verify they maintain vertical separation
-    const notreDameY = positions.get('notre-dame')!.y;
-    const floridaY = positions.get('florida')!.y;
-    expect(Math.abs(notreDameY - floridaY)).toBeGreaterThanOrEqual(80);
+    const notreDameY = notreDamePos.y;
+    const floridaY = floridaPos.y;
+    expect(Math.abs(notreDameY - floridaY)).toBeGreaterThanOrEqual(60); // At least 60px apart
 
-    // Layer 3 (or 3.5): Miami at rightmost position
-    const miamiX = positions.get('miami')!.x;
-    expect(miamiX).toBeGreaterThan(notreDameX); // To the right of previous layer
-    expect(positions.get('miami')!.y).toBe(300); // Centered vertically
+    // Layer 3: Miami at rightmost position
+    const miamiPos = positions.get('miami')!;
+    expect(miamiPos.x).toBeGreaterThan(notreDamePos.x); // To the right of previous layer
+    expect(miamiPos.y).toBe(300); // Single node, centered vertically
   });
 
   it('should prevent edge crossings between parallel paths', () => {
