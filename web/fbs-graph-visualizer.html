@@ -194,9 +194,11 @@
           <option value="NON_CONFERENCE">Non-Conference</option>
           <option value="CONFERENCE">Conference</option>
         </select>
-        <label>Min leverage:</label>
-        <input id="lev" type="range" min="0" max="1.2" step="0.01" value="0" />
-        <span id="levVal" class="muted small">0</span>
+        <span style="display:none">
+          <label>Min leverage:</label>
+          <input id="lev" type="range" min="0" max="1.2" step="0.01" value="0" />
+          <span id="levVal" class="muted small">0</span>
+        </span>
         <button id="loadBtn">Reload</button>
         <button id="fitBtn">Fit</button>
       </div>
@@ -214,7 +216,7 @@
             <select id="srcSel"></select>
             <select id="dstSel"></select>
           </div>
-          <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center">
+          <div style="display: none; gap: 8px; margin-top: 8px; align-items: center">
             <label style="font-size: 11px">Degrees:</label>
             <input
               id="degrees"
