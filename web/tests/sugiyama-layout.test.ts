@@ -12,7 +12,7 @@ import {
   assignYCoordinates,
   computeSugiyamaLayout,
   convertPositionsToObject,
-} from '../modules/sugiyama-layout.js';
+} from '../modules/layout/sugiyama-layout.js';
 
 // Test data: Ohio State vs Miami with 2 parallel 3-hop paths
 const testPathFilter = {

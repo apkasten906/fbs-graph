@@ -6,7 +6,7 @@
  */
 
 import { CONFERENCE_COLORS, getConferenceColor } from './conference-colors.js';
-import { computeSugiyamaLayout, convertPositionsToObject } from './sugiyama-layout.js';
+import { computeSugiyamaLayout, convertPositionsToObject } from './layout/sugiyama-layout.js';
 
 // Backwards-compatible export used by other modules/tests
 export const COLORS = CONFERENCE_COLORS;
@@ -230,16 +230,7 @@ export function calculateDegreePositions(pathFilter, width = 800, height = 600) 
     }
   }
 
-  // Helper to build alphabetically-sorted array of node ids
-  function sortByLabel(ids) {
-    return ids.slice().sort((a, b) => {
-      const A = (nodeLabels[a] || a).toLowerCase();
-      const B = (nodeLabels[b] || b).toLowerCase();
-      if (A < B) return -1;
-      if (A > B) return 1;
-      return 0;
-    });
-  }
+  // (removed unused sortByLabel helper)
 
   // Sugiyama crossing minimization: sort nodes by barycenter of neighbor positions
   // This minimizes edge crossings between layers
