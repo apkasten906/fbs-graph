@@ -651,7 +651,6 @@ export function computeSugiyamaLayout(
 ) {
   const { edges, nodeLabels, shortestPathNodes } = pathFilter;
   // reference width to satisfy lint (not used in current layout logic)
-  void width;
   const centerY = height / 2;
   const positions = new Map();
 
