@@ -427,8 +427,15 @@
         }
         
         // Restore last selected teams from localStorage
-        const savedSrc = localStorage.getItem('fbs-graph-visualizer-team1');
-        const savedDst = localStorage.getItem('fbs-graph-visualizer-team2');
+        let savedSrc = null;
+        let savedDst = null;
+        try {
+          savedSrc = localStorage.getItem('fbs-graph-visualizer-team1');
+          savedDst = localStorage.getItem('fbs-graph-visualizer-team2');
+        } catch (e) {
+          // localStorage may be unavailable in private browsing or disabled
+          console.warn('Could not access localStorage:', e);
+        }
         
         // Convert IDs to names for the buildSelectors function
         let defaultSrc = 'ohio-state';
@@ -516,8 +523,13 @@
         }
         
         // Save selected teams to localStorage
-        localStorage.setItem('fbs-graph-visualizer-team1', src);
-        localStorage.setItem('fbs-graph-visualizer-team2', dst);
+        try {
+          localStorage.setItem('fbs-graph-visualizer-team1', src);
+          localStorage.setItem('fbs-graph-visualizer-team2', dst);
+        } catch (e) {
+          // localStorage may be unavailable or quota exceeded
+          console.warn('Could not save to localStorage:', e);
+        }
 
         // First, find the shortest path to determine the minimum degrees needed
         const shortestPath = _shortestPath(src, dst, typeFilter, minLev);
