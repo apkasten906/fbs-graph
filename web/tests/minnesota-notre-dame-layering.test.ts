@@ -1,6 +1,6 @@
 // @ts-nocheck - JS module imports without type definitions
 import { describe, it, expect } from 'vitest';
-import { calculateDegreePositions, MIN_Y, X_THRESHOLD, SIDE_MARGIN } from '../modules/cytoscape-builder.js';
+import { calculateDegreePositions, MIN_Y, X_THRESHOLD } from '../modules/cytoscape-builder.js';
 import { findNodesWithinDegrees, edgeKey, shortestPathByInverseLeverage } from '../modules/graph-path-finder.js';
 
 // Team IDs from actual 2025 data

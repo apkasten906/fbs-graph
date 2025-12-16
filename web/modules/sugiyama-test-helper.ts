@@ -206,9 +206,6 @@ export function detectType1Conflicts(
     // Only consider "long" edges
     if (lv - lu <= 1) continue;
 
-    const upper = layerMap.get(lu)!;
-    const lower = layerMap.get(lv)!;
-
     const uPos = order.get(e.source)!;
     const vPos = order.get(e.target)!;
 
