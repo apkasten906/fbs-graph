@@ -181,8 +181,15 @@ function buildSelectors() {
     dstSel.appendChild(o2);
   }
   // Restore last selection from localStorage if available, else use OSU/Georgia
-  const lastSrc = localStorage.getItem('fbsgraph_srcSel');
-  const lastDst = localStorage.getItem('fbsgraph_dstSel');
+  let lastSrc = null;
+  let lastDst = null;
+  try {
+    lastSrc = localStorage.getItem('fbsgraph_srcSel');
+    lastDst = localStorage.getItem('fbsgraph_dstSel');
+  } catch (e) {
+    // localStorage may be unavailable in private browsing or disabled
+    console.warn('Could not access localStorage:', e);
+  }
   const osuId = opts.find(t => t.name.toLowerCase().includes('ohio state'))?.id || opts[0]?.id;
   const ugaId =
     opts.find(t => t.name.toLowerCase().includes('georgia'))?.id || opts[1]?.id || opts[0]?.id;
@@ -700,8 +707,13 @@ document.getElementById('typeFilter').addEventListener('change', () => applyFilt
 function persistSelection() {
   const src = document.getElementById('srcSel').value;
   const dst = document.getElementById('dstSel').value;
-  localStorage.setItem('fbsgraph_srcSel', src);
-  localStorage.setItem('fbsgraph_dstSel', dst);
+  try {
+    localStorage.setItem('fbsgraph_srcSel', src);
+    localStorage.setItem('fbsgraph_dstSel', dst);
+  } catch (e) {
+    // localStorage may be unavailable or quota exceeded
+    console.warn('Could not save to localStorage:', e);
+  }
 }
 
 document.getElementById('srcSel').addEventListener('change', persistSelection);
