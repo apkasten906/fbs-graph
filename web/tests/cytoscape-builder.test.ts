@@ -89,10 +89,14 @@ describe('cytoscape-builder', () => {
   });
 
   describe('DEGREE_COLORS constant', () => {
-    it('should have 7 degree colors', () => {
-      expect(DEGREE_COLORS.length).toBe(7);
-      expect(DEGREE_COLORS[0]).toBe('#00FF00'); // Direct connection - green
-      expect(DEGREE_COLORS[1]).toBe('#FFFF00'); // 1 hop - yellow
+    it('should have 6 degree colors for hops 1-6', () => {
+      expect(DEGREE_COLORS.length).toBe(6);
+      expect(DEGREE_COLORS[0]).toBe('#00FF00'); // 1 hop - green
+      expect(DEGREE_COLORS[1]).toBe('#FFFF00'); // 2 hops - yellow
+      expect(DEGREE_COLORS[2]).toBe('#FFA500'); // 3 hops - orange
+      expect(DEGREE_COLORS[3]).toBe('#FF6B35'); // 4 hops - orange-red
+      expect(DEGREE_COLORS[4]).toBe('#DC143C'); // 5 hops - crimson
+      expect(DEGREE_COLORS[5]).toBe('#8B0000'); // 6 hops - dark red
     });
   });
 
@@ -266,8 +270,8 @@ describe('cytoscape-builder', () => {
       });
 
       const edges = elements.filter((e: any) => e.group === 'edges');
-      // Direct connection (degree 0) should be green
-      expect(edges[0].data.edgeColor).toBe(DEGREE_COLORS[0]);
+      // Edge between degree 0 nodes (source-destination direct) uses default blue (no intermediate hops)
+      expect(edges[0].data.edgeColor).toBe('#4562aa');
     });
 
     it('should populate pairGames Map correctly', () => {
@@ -423,12 +427,17 @@ describe('cytoscape-builder', () => {
       const pathFilter = {
         nodesByDegree: new Map([
           ['ohio-state', 0],
-          ['michigan', 0],
+          ['michigan', 3],
         ]),
         source: 'ohio-state',
         destination: 'michigan',
-        nodes: [],
-        edges: [],
+        nodes: ['ohio-state', 'michigan'],
+        edges: ['michigan__ohio-state'], // Need edge for Sugiyama to compute layout
+        shortestPathNodes: ['ohio-state', 'michigan'],
+        nodeLabels: {
+          'ohio-state': 'Ohio State',
+          michigan: 'Michigan',
+        },
       };
 
       const config = createLayoutConfig(pathFilter, 1200, 900);
@@ -436,8 +445,20 @@ describe('cytoscape-builder', () => {
       expect(config.positions).toBeDefined();
       expect(typeof config.positions).toBe('object');
       const positions = config.positions as { [nodeId: string]: { x: number; y: number } };
+      
+      // Verify both nodes are positioned
+      expect(positions['ohio-state']).toBeDefined();
+      expect(positions['michigan']).toBeDefined();
+      
+      // Source should be at left edge
       expect(positions['ohio-state'].x).toBe(50);
-      expect(positions['michigan'].x).toBe(1150); // 1200 - 50
+      
+      // Michigan should be to the right of ohio-state (1 hop = 1 layer * 220 spacing)
+      expect(positions['michigan'].x).toBeGreaterThan(positions['ohio-state'].x);
+      
+      // Both should be vertically centered (since they're the only nodes in their layers)
+      expect(positions['ohio-state'].y).toBe(450); // height/2 = 900/2
+      expect(positions['michigan'].y).toBe(450);
     });
   });
 });

@@ -19,7 +19,7 @@
     "teamId": "air-force",
     "season": 2025,
     "coach": null,
-    "spPlus": -5.8,
+    "spPlus": -3.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -34,7 +34,7 @@
     "teamId": "akron",
     "season": 2025,
     "coach": null,
-    "spPlus": -13.7,
+    "spPlus": -13,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -49,7 +49,7 @@
     "teamId": "alabama",
     "season": 2025,
     "coach": null,
-    "spPlus": 21,
+    "spPlus": 20.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -124,7 +124,7 @@
     "teamId": "arizona",
     "season": 2025,
     "coach": null,
-    "spPlus": 13,
+    "spPlus": 13.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -139,7 +139,7 @@
     "teamId": "arizona-state",
     "season": 2025,
     "coach": null,
-    "spPlus": 6.5,
+    "spPlus": 4.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -154,7 +154,7 @@
     "teamId": "arkansas",
     "season": 2025,
     "coach": null,
-    "spPlus": 6.7,
+    "spPlus": 4.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -184,7 +184,7 @@
     "teamId": "arkansas-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -9.9,
+    "spPlus": -9.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -199,7 +199,7 @@
     "teamId": "army",
     "season": 2025,
     "coach": null,
-    "spPlus": -2.5,
+    "spPlus": -1.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -214,7 +214,7 @@
     "teamId": "auburn",
     "season": 2025,
     "coach": null,
-    "spPlus": 12.5,
+    "spPlus": 11.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -244,7 +244,7 @@
     "teamId": "ball-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -20.7,
+    "spPlus": -21.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -259,7 +259,7 @@
     "teamId": "baylor",
     "season": 2025,
     "coach": null,
-    "spPlus": 1.4,
+    "spPlus": 0.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -289,7 +289,7 @@
     "teamId": "boise-state",
     "season": 2025,
     "coach": null,
-    "spPlus": 5.3,
+    "spPlus": 4.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -304,7 +304,7 @@
     "teamId": "boston-college",
     "season": 2025,
     "coach": null,
-    "spPlus": -11.8,
+    "spPlus": -9.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -319,7 +319,7 @@
     "teamId": "bowling-green",
     "season": 2025,
     "coach": null,
-    "spPlus": -15.7,
+    "spPlus": -13.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -379,7 +379,7 @@
     "teamId": "buffalo",
     "season": 2025,
     "coach": null,
-    "spPlus": -8,
+    "spPlus": -8.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -409,7 +409,7 @@
     "teamId": "byu",
     "season": 2025,
     "coach": null,
-    "spPlus": 17.3,
+    "spPlus": 18.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -424,7 +424,7 @@
     "teamId": "california",
     "season": 2025,
     "coach": null,
-    "spPlus": -4.1,
+    "spPlus": -3.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -499,7 +499,7 @@
     "teamId": "central-michigan",
     "season": 2025,
     "coach": null,
-    "spPlus": -4.4,
+    "spPlus": -5.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -529,7 +529,7 @@
     "teamId": "charlotte",
     "season": 2025,
     "coach": null,
-    "spPlus": -25.5,
+    "spPlus": -26.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -559,7 +559,7 @@
     "teamId": "cincinnati",
     "season": 2025,
     "coach": null,
-    "spPlus": 8.3,
+    "spPlus": 6.3,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -574,7 +574,7 @@
     "teamId": "clemson",
     "season": 2025,
     "coach": null,
-    "spPlus": 9.2,
+    "spPlus": 9.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -589,7 +589,7 @@
     "teamId": "coastal-carolina",
     "season": 2025,
     "coach": null,
-    "spPlus": -11.5,
+    "spPlus": -14,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -619,7 +619,7 @@
     "teamId": "colorado",
     "season": 2025,
     "coach": null,
-    "spPlus": -6.8,
+    "spPlus": -7.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -634,7 +634,7 @@
     "teamId": "colorado-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -14.5,
+    "spPlus": -15.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -724,7 +724,7 @@
     "teamId": "delaware",
     "season": 2025,
     "coach": null,
-    "spPlus": -12.6,
+    "spPlus": -10.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -769,7 +769,7 @@
     "teamId": "duke",
     "season": 2025,
     "coach": null,
-    "spPlus": 3.7,
+    "spPlus": 4.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -799,7 +799,7 @@
     "teamId": "east-carolina",
     "season": 2025,
     "coach": null,
-    "spPlus": 6,
+    "spPlus": 8.1,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -844,7 +844,7 @@
     "teamId": "eastern-michigan",
     "season": 2025,
     "coach": null,
-    "spPlus": -14.3,
+    "spPlus": -15.1,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -919,7 +919,7 @@
     "teamId": "florida",
     "season": 2025,
     "coach": null,
-    "spPlus": 0.5,
+    "spPlus": 2.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -949,7 +949,7 @@
     "teamId": "florida-atlantic",
     "season": 2025,
     "coach": null,
-    "spPlus": -7.7,
+    "spPlus": -9.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -964,7 +964,7 @@
     "teamId": "florida-international",
     "season": 2025,
     "coach": null,
-    "spPlus": -9.7,
+    "spPlus": -7.3,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -979,7 +979,7 @@
     "teamId": "florida-state",
     "season": 2025,
     "coach": null,
-    "spPlus": 10.1,
+    "spPlus": 7.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1009,7 +1009,7 @@
     "teamId": "fresno-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -1.2,
+    "spPlus": 1.1,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1069,7 +1069,7 @@
     "teamId": "georgia",
     "season": 2025,
     "coach": null,
-    "spPlus": 24.3,
+    "spPlus": 23.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1084,7 +1084,7 @@
     "teamId": "georgia-southern",
     "season": 2025,
     "coach": null,
-    "spPlus": -12.1,
+    "spPlus": -11.3,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1099,7 +1099,7 @@
     "teamId": "georgia-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -23.6,
+    "spPlus": -23.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1114,7 +1114,7 @@
     "teamId": "georgia-tech",
     "season": 2025,
     "coach": null,
-    "spPlus": 8.8,
+    "spPlus": 8.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1174,7 +1174,7 @@
     "teamId": "hawai'i",
     "season": 2025,
     "coach": null,
-    "spPlus": -1.1,
+    "spPlus": 0.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1204,7 +1204,7 @@
     "teamId": "houston",
     "season": 2025,
     "coach": null,
-    "spPlus": 7.3,
+    "spPlus": 7.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1279,7 +1279,7 @@
     "teamId": "illinois",
     "season": 2025,
     "coach": null,
-    "spPlus": 10.7,
+    "spPlus": 10.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1324,7 +1324,7 @@
     "teamId": "indiana",
     "season": 2025,
     "coach": null,
-    "spPlus": 29.9,
+    "spPlus": 31.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1354,7 +1354,7 @@
     "teamId": "iowa",
     "season": 2025,
     "coach": null,
-    "spPlus": 15.4,
+    "spPlus": 17.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1369,7 +1369,7 @@
     "teamId": "iowa-state",
     "season": 2025,
     "coach": null,
-    "spPlus": 9.5,
+    "spPlus": 9.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1399,7 +1399,7 @@
     "teamId": "jacksonville-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -5.2,
+    "spPlus": -5.1,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1414,7 +1414,7 @@
     "teamId": "james-madison",
     "season": 2025,
     "coach": null,
-    "spPlus": 12.5,
+    "spPlus": 14.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1429,7 +1429,7 @@
     "teamId": "kansas",
     "season": 2025,
     "coach": null,
-    "spPlus": 3.8,
+    "spPlus": 3.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1444,7 +1444,7 @@
     "teamId": "kansas-state",
     "season": 2025,
     "coach": null,
-    "spPlus": 6.1,
+    "spPlus": 6.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1459,7 +1459,7 @@
     "teamId": "kennesaw-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -1.5,
+    "spPlus": -1.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1474,7 +1474,7 @@
     "teamId": "kent-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -19.6,
+    "spPlus": -18.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1489,7 +1489,7 @@
     "teamId": "kentucky",
     "season": 2025,
     "coach": null,
-    "spPlus": 4.6,
+    "spPlus": 1.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1549,7 +1549,7 @@
     "teamId": "liberty",
     "season": 2025,
     "coach": null,
-    "spPlus": -8,
+    "spPlus": -8.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1594,7 +1594,7 @@
     "teamId": "louisiana",
     "season": 2025,
     "coach": null,
-    "spPlus": -8.6,
+    "spPlus": -8.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1609,7 +1609,7 @@
     "teamId": "louisiana-tech",
     "season": 2025,
     "coach": null,
-    "spPlus": -1.5,
+    "spPlus": -0.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1624,7 +1624,7 @@
     "teamId": "louisville",
     "season": 2025,
     "coach": null,
-    "spPlus": 9.1,
+    "spPlus": 11.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1639,7 +1639,7 @@
     "teamId": "lsu",
     "season": 2025,
     "coach": null,
-    "spPlus": 10.2,
+    "spPlus": 9.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1684,7 +1684,7 @@
     "teamId": "marshall",
     "season": 2025,
     "coach": null,
-    "spPlus": -4.4,
+    "spPlus": -5.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1699,7 +1699,7 @@
     "teamId": "maryland",
     "season": 2025,
     "coach": null,
-    "spPlus": 0.6,
+    "spPlus": -0.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1714,7 +1714,7 @@
     "teamId": "massachusetts",
     "season": 2025,
     "coach": null,
-    "spPlus": -34.9,
+    "spPlus": -36.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1744,7 +1744,7 @@
     "teamId": "memphis",
     "season": 2025,
     "coach": null,
-    "spPlus": 11.3,
+    "spPlus": 9.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1804,7 +1804,7 @@
     "teamId": "miami",
     "season": 2025,
     "coach": null,
-    "spPlus": 20.2,
+    "spPlus": 21.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1819,7 +1819,7 @@
     "teamId": "miami-oh",
     "season": 2025,
     "coach": null,
-    "spPlus": -3,
+    "spPlus": -1.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1834,7 +1834,7 @@
     "teamId": "michigan",
     "season": 2025,
     "coach": null,
-    "spPlus": 15.2,
+    "spPlus": 13.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1849,7 +1849,7 @@
     "teamId": "michigan-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -5.2,
+    "spPlus": -3.3,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1864,7 +1864,7 @@
     "teamId": "middle-tennessee",
     "season": 2025,
     "coach": null,
-    "spPlus": -18,
+    "spPlus": -16.3,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1879,7 +1879,7 @@
     "teamId": "minnesota",
     "season": 2025,
     "coach": null,
-    "spPlus": -0.2,
+    "spPlus": 0.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1894,7 +1894,7 @@
     "teamId": "mississippi-state",
     "season": 2025,
     "coach": null,
-    "spPlus": 5.1,
+    "spPlus": 3.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1924,7 +1924,7 @@
     "teamId": "missouri",
     "season": 2025,
     "coach": null,
-    "spPlus": 15.4,
+    "spPlus": 16.1,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -1939,7 +1939,7 @@
     "teamId": "missouri-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -7.8,
+    "spPlus": -8.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2044,7 +2044,7 @@
     "teamId": "navy",
     "season": 2025,
     "coach": null,
-    "spPlus": 2.3,
+    "spPlus": 4.1,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2059,7 +2059,7 @@
     "teamId": "nc-state",
     "season": 2025,
     "coach": null,
-    "spPlus": 0.7,
+    "spPlus": 2.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2074,7 +2074,7 @@
     "teamId": "nebraska",
     "season": 2025,
     "coach": null,
-    "spPlus": 8.8,
+    "spPlus": 6.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2089,7 +2089,7 @@
     "teamId": "nevada",
     "season": 2025,
     "coach": null,
-    "spPlus": -12.6,
+    "spPlus": -14.1,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2134,7 +2134,7 @@
     "teamId": "new-mexico",
     "season": 2025,
     "coach": null,
-    "spPlus": 0,
+    "spPlus": 1.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2149,7 +2149,7 @@
     "teamId": "new-mexico-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -14.1,
+    "spPlus": -15.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2209,7 +2209,7 @@
     "teamId": "north-carolina",
     "season": 2025,
     "coach": null,
-    "spPlus": -6.1,
+    "spPlus": -8.1,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2314,7 +2314,7 @@
     "teamId": "northern-illinois",
     "season": 2025,
     "coach": null,
-    "spPlus": -15.8,
+    "spPlus": -16.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2344,7 +2344,7 @@
     "teamId": "north-texas",
     "season": 2025,
     "coach": null,
-    "spPlus": 16.4,
+    "spPlus": 17.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2359,7 +2359,7 @@
     "teamId": "northwestern",
     "season": 2025,
     "coach": null,
-    "spPlus": 1.9,
+    "spPlus": 1.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2404,7 +2404,7 @@
     "teamId": "ohio",
     "season": 2025,
     "coach": null,
-    "spPlus": -2.7,
+    "spPlus": -2.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2434,7 +2434,7 @@
     "teamId": "oklahoma",
     "season": 2025,
     "coach": null,
-    "spPlus": 19.5,
+    "spPlus": 19.3,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2449,7 +2449,7 @@
     "teamId": "oklahoma-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -16.4,
+    "spPlus": -15.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2464,7 +2464,7 @@
     "teamId": "old-dominion",
     "season": 2025,
     "coach": null,
-    "spPlus": 6.2,
+    "spPlus": 6.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2479,7 +2479,7 @@
     "teamId": "ole-miss",
     "season": 2025,
     "coach": null,
-    "spPlus": 21.9,
+    "spPlus": 22.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2494,7 +2494,7 @@
     "teamId": "oregon",
     "season": 2025,
     "coach": null,
-    "spPlus": 26.6,
+    "spPlus": 27.1,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2509,7 +2509,7 @@
     "teamId": "oregon-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -13.3,
+    "spPlus": -14.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2524,7 +2524,7 @@
     "teamId": "penn-state",
     "season": 2025,
     "coach": null,
-    "spPlus": 16.4,
+    "spPlus": 15.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2554,7 +2554,7 @@
     "teamId": "pittsburgh",
     "season": 2025,
     "coach": null,
-    "spPlus": 11.7,
+    "spPlus": 9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2629,7 +2629,7 @@
     "teamId": "purdue",
     "season": 2025,
     "coach": null,
-    "spPlus": -6.5,
+    "spPlus": -7.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2659,7 +2659,7 @@
     "teamId": "rice",
     "season": 2025,
     "coach": null,
-    "spPlus": -12.5,
+    "spPlus": -14.3,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2704,7 +2704,7 @@
     "teamId": "rutgers",
     "season": 2025,
     "coach": null,
-    "spPlus": -0.5,
+    "spPlus": 0,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2764,7 +2764,7 @@
     "teamId": "sam-houston",
     "season": 2025,
     "coach": null,
-    "spPlus": -25.4,
+    "spPlus": -27.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2794,7 +2794,7 @@
     "teamId": "san-diego-state",
     "season": 2025,
     "coach": null,
-    "spPlus": 7.2,
+    "spPlus": 6.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2809,7 +2809,7 @@
     "teamId": "san-josé-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -11.4,
+    "spPlus": -13.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2839,7 +2839,7 @@
     "teamId": "smu",
     "season": 2025,
     "coach": null,
-    "spPlus": 14.8,
+    "spPlus": 13.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2854,7 +2854,7 @@
     "teamId": "south-alabama",
     "season": 2025,
     "coach": null,
-    "spPlus": -10.4,
+    "spPlus": -11.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2869,7 +2869,7 @@
     "teamId": "south-carolina",
     "season": 2025,
     "coach": null,
-    "spPlus": 6.1,
+    "spPlus": 5.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -2974,7 +2974,7 @@
     "teamId": "southern-miss",
     "season": 2025,
     "coach": null,
-    "spPlus": -4.2,
+    "spPlus": -5.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3004,7 +3004,7 @@
     "teamId": "south-florida",
     "season": 2025,
     "coach": null,
-    "spPlus": 12.4,
+    "spPlus": 14.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3019,7 +3019,7 @@
     "teamId": "stanford",
     "season": 2025,
     "coach": null,
-    "spPlus": -9.9,
+    "spPlus": -11.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3124,7 +3124,7 @@
     "teamId": "syracuse",
     "season": 2025,
     "coach": null,
-    "spPlus": -12.9,
+    "spPlus": -14.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3154,7 +3154,7 @@
     "teamId": "tcu",
     "season": 2025,
     "coach": null,
-    "spPlus": 6.7,
+    "spPlus": 8.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3169,7 +3169,7 @@
     "teamId": "temple",
     "season": 2025,
     "coach": null,
-    "spPlus": -5.1,
+    "spPlus": -5.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3184,7 +3184,7 @@
     "teamId": "tennessee",
     "season": 2025,
     "coach": null,
-    "spPlus": 17.5,
+    "spPlus": 15.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3229,7 +3229,7 @@
     "teamId": "texas",
     "season": 2025,
     "coach": null,
-    "spPlus": 14.9,
+    "spPlus": 14.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3244,7 +3244,7 @@
     "teamId": "texas-am",
     "season": 2025,
     "coach": null,
-    "spPlus": 22.6,
+    "spPlus": 21.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3274,7 +3274,7 @@
     "teamId": "texas-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -1.5,
+    "spPlus": 0.3,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3289,7 +3289,7 @@
     "teamId": "texas-tech",
     "season": 2025,
     "coach": null,
-    "spPlus": 28.7,
+    "spPlus": 29.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3349,7 +3349,7 @@
     "teamId": "troy",
     "season": 2025,
     "coach": null,
-    "spPlus": -4.2,
+    "spPlus": -3.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3364,7 +3364,7 @@
     "teamId": "tulane",
     "season": 2025,
     "coach": null,
-    "spPlus": 5.8,
+    "spPlus": 6.8,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3379,7 +3379,7 @@
     "teamId": "tulsa",
     "season": 2025,
     "coach": null,
-    "spPlus": -10.7,
+    "spPlus": -11.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3394,7 +3394,7 @@
     "teamId": "uab",
     "season": 2025,
     "coach": null,
-    "spPlus": -16.8,
+    "spPlus": -15.1,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3439,7 +3439,7 @@
     "teamId": "ucf",
     "season": 2025,
     "coach": null,
-    "spPlus": 0.7,
+    "spPlus": -0.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3454,7 +3454,7 @@
     "teamId": "ucla",
     "season": 2025,
     "coach": null,
-    "spPlus": -8.5,
+    "spPlus": -9.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3469,7 +3469,7 @@
     "teamId": "uconn",
     "season": 2025,
     "coach": null,
-    "spPlus": 6.3,
+    "spPlus": 6.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3484,7 +3484,7 @@
     "teamId": "ul-monroe",
     "season": 2025,
     "coach": null,
-    "spPlus": -21.6,
+    "spPlus": -20.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3499,7 +3499,7 @@
     "teamId": "unlv",
     "season": 2025,
     "coach": null,
-    "spPlus": 5.7,
+    "spPlus": 7.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3514,7 +3514,7 @@
     "teamId": "usc",
     "season": 2025,
     "coach": null,
-    "spPlus": 16.3,
+    "spPlus": 17.3,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3544,7 +3544,7 @@
     "teamId": "utah-state",
     "season": 2025,
     "coach": null,
-    "spPlus": -0.7,
+    "spPlus": -0.3,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3574,7 +3574,7 @@
     "teamId": "utep",
     "season": 2025,
     "coach": null,
-    "spPlus": -15,
+    "spPlus": -16.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3619,7 +3619,7 @@
     "teamId": "utsa",
     "season": 2025,
     "coach": null,
-    "spPlus": 2.3,
+    "spPlus": 1.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3649,7 +3649,7 @@
     "teamId": "vanderbilt",
     "season": 2025,
     "coach": null,
-    "spPlus": 19.3,
+    "spPlus": 20.9,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3679,7 +3679,7 @@
     "teamId": "virginia",
     "season": 2025,
     "coach": null,
-    "spPlus": 11,
+    "spPlus": 12.1,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3694,7 +3694,7 @@
     "teamId": "virginia-tech",
     "season": 2025,
     "coach": null,
-    "spPlus": -8.6,
+    "spPlus": -10.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3739,7 +3739,7 @@
     "teamId": "wake-forest",
     "season": 2025,
     "coach": null,
-    "spPlus": 5.8,
+    "spPlus": 4.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3754,7 +3754,7 @@
     "teamId": "washington",
     "season": 2025,
     "coach": null,
-    "spPlus": 17.5,
+    "spPlus": 16.3,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3769,7 +3769,7 @@
     "teamId": "washington-state",
     "season": 2025,
     "coach": null,
-    "spPlus": 0.8,
+    "spPlus": 3.1,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3829,7 +3829,7 @@
     "teamId": "western-kentucky",
     "season": 2025,
     "coach": null,
-    "spPlus": 1.1,
+    "spPlus": 0.4,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3844,7 +3844,7 @@
     "teamId": "western-michigan",
     "season": 2025,
     "coach": null,
-    "spPlus": -3.2,
+    "spPlus": -2.7,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3874,7 +3874,7 @@
     "teamId": "west-virginia",
     "season": 2025,
     "coach": null,
-    "spPlus": -5.3,
+    "spPlus": -7.2,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3904,7 +3904,7 @@
     "teamId": "wisconsin",
     "season": 2025,
     "coach": null,
-    "spPlus": -4.7,
+    "spPlus": -4.6,
     "returningProduction": 0,
     "record": {
       "wins": 0,
@@ -3934,7 +3934,7 @@
     "teamId": "wyoming",
     "season": 2025,
     "coach": null,
-    "spPlus": -9.2,
+    "spPlus": -10.5,
     "returningProduction": 0,
     "record": {
       "wins": 0,
