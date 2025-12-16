@@ -1,29 +1,26 @@
 /**
  * Path Finding Algorithms for Graph Visualization
  *
- * This module provides reusable graph algorithms for finding paths
- * between teams based on game connections and leverage scores.
- *
- * Note: This is separate from path-finder.js which is used by the timeline explorer.
- * This module uses inverse-leverage weighting for Cytoscape visualization.
+ * Refactored + corrected version (no nested functions):
+ * - Proper A→B comparison-graph construction (“Option A”)
+ * - Hop-adjacent edge filtering to ensure a layered DAG
+ * - All helpers are top-level (no functions defined inside other functions)
+ * - Compatible with Sugiyama layered layout and existing imports
  */
 
-/**
- * Create a consistent edge key from two team IDs
- * @param {string} a - First team ID
- * @param {string} b - Second team ID
- * @returns {string} Consistent key regardless of order (alphabetically sorted)
- */
+/* ------------------------------------------------------------------------- */
+/*  UTIL: canonical edge key                                                 */
+/* ------------------------------------------------------------------------- */
 export function edgeKey(a, b) {
   return a < b ? `${a}__${b}` : `${b}__${a}`;
 }
 
+/* ------------------------------------------------------------------------- */
+/*  BUILD ADJACENCY LIST (FOR SHORTEST PATH / DFS ENUMERATION)               */
+/* ------------------------------------------------------------------------- */
 /**
- * Build an adjacency list from game pair data
- * @param {Map<string, Array>} pairGames - Map of edge keys to game arrays
- * @param {string} typeFilter - 'ALL', 'CONFERENCE', or 'NON_CONFERENCE'
- * @param {number} minLev - Minimum leverage threshold
- * @returns {Map<string, Array>} Adjacency list with weighted edges
+ * Build an adjacency list from pairGames, filtered by type and leverage.
+ * Each entry: id -> [{ to, k, w, avg, games }, ...]
  */
 export function buildAdjacencyList(pairGames, typeFilter, minLev) {
   const adj = new Map();
@@ -35,48 +32,39 @@ export function buildAdjacencyList(pairGames, typeFilter, minLev) {
     const filtered = list.filter(
       g => (typeFilter === 'ALL' || g.type === typeFilter) && (g.leverage || 0) >= minLev
     );
-
     if (!filtered.length) continue;
 
-    const avg = filtered.reduce((s, x) => s + (x.leverage || 0), 0) / filtered.length;
-    const w = 1 / Math.max(1e-6, avg); // Weight = inverse of average leverage
+    const avgLev = filtered.reduce((s, x) => s + (x.leverage || 0), 0) / filtered.length;
+    const w = 1 / Math.max(1e-6, avgLev); // inverse leverage weight
 
     if (!adj.has(a)) adj.set(a, []);
     if (!adj.has(b)) adj.set(b, []);
 
-    adj.get(a).push({ to: b, k, w, avg, games: filtered });
-    adj.get(b).push({ to: a, k, w, avg, games: filtered });
+    adj.get(a).push({ to: b, k, w, avg: avgLev, games: filtered });
+    adj.get(b).push({ to: a, k, w, avg: avgLev, games: filtered });
   }
 
   return adj;
 }
 
+/* ------------------------------------------------------------------------- */
+/*  DIJKSTRA SHORTEST PATH                                                   */
+/* ------------------------------------------------------------------------- */
 /**
- * Find shortest path between two teams using Dijkstra's algorithm
- * Path weight is based on inverse leverage (higher leverage = shorter distance)
- *
- * @param {string} srcId - Source team ID
- * @param {string} dstId - Destination team ID
- * @param {Map<string, Array>} pairGames - Map of edge keys to game arrays
- * @param {Array} teams - Array of all team objects
- * @param {string} typeFilter - 'ALL', 'CONFERENCE', or 'NON_CONFERENCE'
- * @param {number} minLev - Minimum leverage threshold
- * @returns {{nodes: string[], edges: string[]} | null} Path or null if none exists
+ * Find shortest path by inverse leverage (higher leverage = shorter distance).
+ * Returns { nodes: string[], edges: string[] } or null.
  */
 export function shortestPathByInverseLeverage(srcId, dstId, pairGames, teams, typeFilter, minLev) {
   const adj = buildAdjacencyList(pairGames, typeFilter, minLev);
 
-  // Dijkstra's algorithm
   const dist = new Map();
   const prev = new Map();
   const prevEdge = new Map();
 
-  const allIds = Array.from(teams, t => t.id);
+  const allIds = teams.map(t => t.id);
   const Q = new Set(allIds);
 
-  for (const id of allIds) {
-    dist.set(id, Infinity);
-  }
+  for (const id of allIds) dist.set(id, Infinity);
   dist.set(srcId, 0);
 
   while (Q.size) {
@@ -91,15 +79,13 @@ export function shortestPathByInverseLeverage(srcId, dstId, pairGames, teams, ty
       }
     }
 
-    if (u === null || best === Infinity) break;
+    if (!u || best === Infinity) break;
     Q.delete(u);
-
     if (u === dstId) break;
 
-    const nbrs = adj.get(u) || [];
-    for (const e of nbrs) {
+    const neighbors = adj.get(u) || [];
+    for (const e of neighbors) {
       if (!Q.has(e.to)) continue;
-
       const alt = dist.get(u) + e.w;
       if (alt < dist.get(e.to)) {
         dist.set(e.to, alt);
@@ -111,7 +97,6 @@ export function shortestPathByInverseLeverage(srcId, dstId, pairGames, teams, ty
 
   if (!prev.has(dstId)) return null;
 
-  // Rebuild path
   const pathIds = [];
   const edges = [];
   let cur = dstId;
@@ -122,23 +107,19 @@ export function shortestPathByInverseLeverage(srcId, dstId, pairGames, teams, ty
     cur = prev.get(cur);
   }
   pathIds.push(srcId);
-  pathIds.reverse();
-  edges.reverse();
 
-  return { nodes: pathIds, edges };
+  return {
+    nodes: pathIds.reverse(),
+    edges: edges.reverse(),
+  };
 }
 
+/* ------------------------------------------------------------------------- */
+/*  PUBLIC: FIND NODES WITHIN DEGREES (“OPTION A” COMPARISON GRAPH)          */
+/* ------------------------------------------------------------------------- */
 /**
- * Find all nodes within N degrees of separation from two teams
- *
- * @param {string[]} startNodes - Array of exactly 2 team IDs [source, destination]
- * @param {number} maxDegrees - Maximum degrees of separation to include
- * @param {Map<string, Array>} pairGames - Map of edge keys to game arrays
- * @param {Array} teams - Array of all team objects
- * @param {string} typeFilter - 'ALL', 'CONFERENCE', or 'NON_CONFERENCE'
- * @param {number} minLev - Minimum leverage threshold
- * @param {{nodes: string[], edges: string[]} | null} shortestPath - Optional shortest path to ensure inclusion
- * @returns {{nodes: string[], edges: string[], nodesByDegree: Map, source: string, destination: string}}
+ * Build comparison graph: all nodes/edges on ANY A→B path of length <= maxDegrees,
+ * with edges restricted to hop-adjacent layers (layered DAG).
  */
 export function findNodesWithinDegrees(
   startNodes,
@@ -150,121 +131,162 @@ export function findNodesWithinDegrees(
   shortestPath = null
 ) {
   const source = startNodes[0];
-  const dest = startNodes[1];
+  const destination = startNodes[1];
 
+  const nodeLabels = buildNodeLabelsFromTeams(teams);
   const adj = buildAdjacencyList(pairGames, typeFilter, minLev);
 
-  // Special case: degree 0 means direct matchup only
-  if (maxDegrees === 0) {
-    const directKey = edgeKey(source, dest);
-    if (pairGames.has(directKey)) {
-      return {
-        nodes: [source, dest],
-        edges: [directKey],
-        nodesByDegree: new Map([
-          [source, 0],
-          [dest, 0],
-        ]),
-        source,
-        destination: dest,
-        // Provide shortestPathNodes and nodeLabels so layout code can render a straight line
-        shortestPathNodes: [source, dest],
-        nodeLabels: Object.fromEntries(teams.map(t => [t.id, t.name])),
-      };
-    }
-    return {
-      nodes: [],
-      edges: [],
-      nodesByDegree: new Map(),
-      source,
-      destination: dest,
-      shortestPathNodes: [],
-      nodeLabels: Object.fromEntries(teams.map(t => [t.id, t.name])),
-    };
+  if (!adj.has(source) || !adj.has(destination)) {
+    return emptyResult(source, destination, nodeLabels);
   }
 
-  // Build valid paths layer by layer
-  const nodesByDegree = new Map();
+  // 1) Enumerate all simple A→B paths up to maxDegrees
+  const { validNodes, validEdges } = enumeratePathsWithinDegrees(
+    adj,
+    source,
+    destination,
+    maxDegrees
+  );
+
+  if (!validNodes.size) {
+    return emptyResult(source, destination, nodeLabels);
+  }
+
+  // 2) Keep only schedule edges that exist in pairGames
+  const scheduleEdges = Array.from(validEdges).filter(k => pairGames.has(k));
+
+  // 3) Build filtered adjacency for hop computation
+  const filteredAdj = buildFilteredAdjacencyFromEdges(validNodes, scheduleEdges);
+
+  // 4) Compute hop degrees from source (for nodesByDegree metadata)
+  const nodesByDegree = bfsComputeDegrees(source, filteredAdj, maxDegrees);
+  // 5) Return comparison graph
+  return {
+    nodes: Array.from(validNodes),
+    edges: scheduleEdges, // Return ALL edges from enumerated paths
+    nodesByDegree,
+    source,
+    destination,
+    shortestPathNodes: shortestPath?.nodes || [],
+    nodeLabels,
+  };
+}
+
+/* ------------------------------------------------------------------------- */
+/*  HELPERS (TOP-LEVEL, NO NESTING)                                          */
+/* ------------------------------------------------------------------------- */
+
+/**
+ * Build a map from team.id to team.name.
+ */
+function buildNodeLabelsFromTeams(teams) {
+  return Object.fromEntries(teams.map(t => [t.id, t.name]));
+}
+
+/**
+ * Enumerate all simple paths from source to destination with length <= maxDegrees.
+ * Returns { validNodes: Set<string>, validEdges: Set<string> }.
+ * Implemented iteratively (no nested dfs function).
+ */
+function enumeratePathsWithinDegrees(adj, source, destination, maxDegrees) {
+  const validNodes = new Set();
   const validEdges = new Set();
-  const validNodes = new Set([source, dest]);
 
-  nodesByDegree.set(source, 0);
-  nodesByDegree.set(dest, 0);
+  // Stack entries: { current, depth, path }
+  const stack = [{ current: source, depth: 0, path: [source] }];
 
-  // If we have a shortest path, ensure all its nodes and edges are included
-  if (shortestPath && shortestPath.nodes && shortestPath.edges) {
-    for (let i = 0; i < shortestPath.nodes.length; i++) {
-      const nodeId = shortestPath.nodes[i];
-      validNodes.add(nodeId);
+  while (stack.length > 0) {
+    const frame = stack.pop();
+    const { current, depth, path } = frame;
 
-      // Assign degree based on distance from source
-      if (!nodesByDegree.has(nodeId)) {
-        nodesByDegree.set(nodeId, i);
+    if (depth > maxDegrees) continue;
+
+    if (current === destination) {
+      // Mark all nodes and edges on this path
+      for (let i = 0; i < path.length; i++) {
+        validNodes.add(path[i]);
       }
+      for (let i = 0; i < path.length - 1; i++) {
+        const a = path[i];
+        const b = path[i + 1];
+        validEdges.add(`${a}__${b}`);
+        validEdges.add(`${b}__${a}`);
+      }
+      continue;
     }
 
-    for (const edgeKey of shortestPath.edges) {
-      validEdges.add(edgeKey);
-    }
-  }
-
-  // Find direct connection if it exists
-  const directKey = edgeKey(source, dest);
-  if (pairGames.has(directKey)) {
-    validEdges.add(directKey);
-  }
-
-  // Layer 1: Find common opponents (teams that played both source and dest)
-  const sourceNeighbors = new Set((adj.get(source) || []).map(e => e.to));
-  const destNeighbors = new Set((adj.get(dest) || []).map(e => e.to));
-
-  for (const node of sourceNeighbors) {
-    if (destNeighbors.has(node)) {
-      // This is a common opponent
-      validNodes.add(node);
-      nodesByDegree.set(node, 1);
-      validEdges.add(edgeKey(source, node));
-      validEdges.add(edgeKey(dest, node));
+    const neighbors = adj.get(current) || [];
+    for (const e of neighbors) {
+      const n = e.to;
+      if (path.includes(n)) continue; // avoid cycles
+      const nextPath = path.concat(n);
+      stack.push({
+        current: n,
+        depth: depth + 1,
+        path: nextPath,
+      });
     }
   }
 
-  // Layer 2 and beyond: Find teams that bridge between layer 1 teams and source/dest
-  if (maxDegrees >= 2) {
-    const degree1Teams = Array.from(validNodes).filter(n => nodesByDegree.get(n) === 1);
+  return { validNodes, validEdges };
+}
 
-    for (const team1 of degree1Teams) {
-      const neighbors = (adj.get(team1) || []).map(e => e.to);
+/**
+ * Build adjacency from a set of nodes and a list of edges (keys "a__b").
+ */
+function buildFilteredAdjacencyFromEdges(validNodes, edges) {
+  const filteredAdj = new Map();
+  for (const id of validNodes) filteredAdj.set(id, []);
 
-      for (const neighbor of neighbors) {
-        if (validNodes.has(neighbor)) continue; // Already included
+  for (const k of edges) {
+    const [a, b] = k.split('__');
+    if (filteredAdj.has(a)) filteredAdj.get(a).push(b);
+    if (filteredAdj.has(b)) filteredAdj.get(b).push(a);
+  }
 
-        const neighborNeighbors = new Set((adj.get(neighbor) || []).map(e => e.to));
+  return filteredAdj;
+}
 
-        if (neighborNeighbors.has(source) || neighborNeighbors.has(dest)) {
-          validNodes.add(neighbor);
-          nodesByDegree.set(neighbor, 2);
-          validEdges.add(edgeKey(team1, neighbor));
+/**
+ * BFS to compute hop-based degrees (distance from source) in the filtered subgraph.
+ */
+function bfsComputeDegrees(source, adj, maxDegrees) {
+  const dist = new Map();
+  if (!adj.has(source)) return dist;
 
-          if (neighborNeighbors.has(source)) {
-            validEdges.add(edgeKey(neighbor, source));
-          }
-          if (neighborNeighbors.has(dest)) {
-            validEdges.add(edgeKey(neighbor, dest));
-          }
+  dist.set(source, 0);
+  const queue = [source];
+
+  while (queue.length > 0) {
+    const cur = queue.shift();
+    const d = dist.get(cur);
+
+    const neighbors = adj.get(cur) || [];
+    for (const nxt of neighbors) {
+      if (!dist.has(nxt)) {
+        const nd = d + 1;
+        if (nd <= maxDegrees + 1) {
+          dist.set(nxt, nd);
+          queue.push(nxt);
         }
       }
     }
   }
 
+  return dist;
+}
+
+/**
+ * Build an empty comparison result object.
+ */
+function emptyResult(source, destination, nodeLabels) {
   return {
-    nodes: Array.from(validNodes),
-    edges: Array.from(validEdges),
-    nodesByDegree,
+    nodes: [],
+    edges: [],
+    nodesByDegree: new Map(),
     source,
-    destination: dest,
-    // expose which nodes came from the provided shortestPath (if any)
-    shortestPathNodes: shortestPath && shortestPath.nodes ? shortestPath.nodes : [],
-    // provide id->name lookup so layout can sort alphabetically
-    nodeLabels: Object.fromEntries(teams.map(t => [t.id, t.name])),
+    destination,
+    shortestPathNodes: [],
+    nodeLabels,
   };
 }

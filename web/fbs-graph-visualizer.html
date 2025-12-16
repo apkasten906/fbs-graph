@@ -194,9 +194,11 @@
           <option value="NON_CONFERENCE">Non-Conference</option>
           <option value="CONFERENCE">Conference</option>
         </select>
-        <label>Min leverage:</label>
-        <input id="lev" type="range" min="0" max="1.2" step="0.01" value="0" />
-        <span id="levVal" class="muted small">0</span>
+        <span style="display:none">
+          <label>Min leverage:</label>
+          <input id="lev" type="range" min="0" max="1.2" step="0.01" value="0" />
+          <span id="levVal" class="muted small">0</span>
+        </span>
         <button id="loadBtn">Reload</button>
         <button id="fitBtn">Fit</button>
       </div>
@@ -214,7 +216,7 @@
             <select id="srcSel"></select>
             <select id="dstSel"></select>
           </div>
-          <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center">
+          <div style="display: none; gap: 8px; margin-top: 8px; align-items: center">
             <label style="font-size: 11px">Degrees:</label>
             <input
               id="degrees"
@@ -423,9 +425,39 @@
           console.error('uiBuildSelectors not loaded from module yet');
           return;
         }
+        
+        // Restore last selected teams from localStorage
+        let savedSrc = null;
+        let savedDst = null;
+        try {
+          savedSrc = localStorage.getItem('fbs-graph-visualizer-team1');
+          savedDst = localStorage.getItem('fbs-graph-visualizer-team2');
+        } catch (e) {
+          // localStorage may be unavailable in private browsing or disabled
+          console.warn('Could not access localStorage:', e);
+        }
+        
+        // Convert IDs to names for the buildSelectors function
+        let defaultSrc = 'ohio-state';
+        let defaultDst = 'miami';
+        
+        if (savedSrc && graphData.teams) {
+          const srcTeam = graphData.teams.find(t => t.id === savedSrc);
+          if (srcTeam) {
+            defaultSrc = srcTeam.name.toLowerCase();
+          }
+        }
+        
+        if (savedDst && graphData.teams) {
+          const dstTeam = graphData.teams.find(t => t.id === savedDst);
+          if (dstTeam) {
+            defaultDst = dstTeam.name.toLowerCase();
+          }
+        }
+        
         window.uiBuildSelectors(graphData.teams, 'srcSel', 'dstSel', {
-          defaultSrc: 'ohio state',
-          defaultDst: 'miami',
+          defaultSrc: defaultSrc,
+          defaultDst: defaultDst,
           autoTrigger: true,
           triggerButtonId: 'pathBtn',
         });
@@ -489,6 +521,15 @@
           box.textContent = 'Please select both teams.';
           return;
         }
+        
+        // Save selected teams to localStorage
+        try {
+          localStorage.setItem('fbs-graph-visualizer-team1', src);
+          localStorage.setItem('fbs-graph-visualizer-team2', dst);
+        } catch (e) {
+          // localStorage may be unavailable or quota exceeded
+          console.warn('Could not save to localStorage:', e);
+        }
 
         // First, find the shortest path to determine the minimum degrees needed
         const shortestPath = _shortestPath(src, dst, typeFilter, minLev);
@@ -531,6 +572,25 @@
 
         // Rebuild graph to show teams within degrees of separation
         const season = Number(document.getElementById('season').value);
+        
+        // Debug: Log the pathFilter data (only in development)
+        if (
+          window.location.hostname === 'localhost' ||
+          window.location.hostname === '127.0.0.1' ||
+          window.DEBUG === true
+        ) {
+          console.log('[DEBUG] Path filter object:', {
+            nodes: res.nodes,
+            edges: res.edges,
+            source: res.source,
+            destination: res.destination,
+            shortestPathNodes: res.shortestPathNodes,
+            nodesByDegree: res.nodesByDegree instanceof Map 
+              ? Object.fromEntries(res.nodesByDegree) 
+              : res.nodesByDegree,
+          });
+        }
+        
         buildGraph(season, typeFilter, minLev, res);
 
         // Highlight the selected teams
