@@ -1,0 +1,27 @@
+# Dependencies — reinstalled inside the container
+node_modules/
+
+# Build output
+dist/
+build/
+coverage/
+
+# Git history — not needed in the image
+.git/
+
+# Secrets — never copy into image layers
+.env
+.env.*
+.devcontainer/.env
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Test output
+test-results.json

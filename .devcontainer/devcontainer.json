@@ -1,0 +1,106 @@
+{
+  "name": "fbs-graph",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+
+  // Forward the GraphQL server and the static web server ports
+  "forwardPorts": [4100, 4173],
+  "portsAttributes": {
+    "4100": {
+      "label": "GraphQL Server",
+      "onAutoForward": "notify"
+    },
+    "4173": {
+      "label": "Web Server",
+      "onAutoForward": "notify"
+    },
+    "1455": {
+      "label": "Codex auth callback",
+      "onAutoForward": "notify",
+      "requireLocalPort": true
+    }
+  },
+
+  // NOTE: .env is part of the workspace folder and is mounted automatically by VS Code.
+  // Create a .env file in the project root with CFBD_KEY=<your key> before opening
+  // the devcontainer, or create it inside the container after it starts.
+
+  // Run the post-create setup script after the container is created
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "editorconfig.editorconfig",
+
+        // TypeScript / JavaScript
+        "ms-vscode.vscode-typescript-next",        
+
+        // Linting & formatting
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "streetsidesoftware.code-spell-checker",
+
+        // TypeScript / Node        
+        "christian-kohler.path-intellisense",
+        "christian-kohler.npm-intellisense",
+
+        // Testing
+        "vitest.explorer",
+
+        // GraphQL
+        "GraphQL.vscode-graphql",
+        "GraphQL.vscode-graphql-syntax",
+
+        // PowerShell (scripts/*.ps1)
+        "ms-vscode.powershell",
+
+        // Docker / devcontainer
+        "ms-azuretools.vscode-docker",
+
+        // Environment files (.env, dotenv)
+        "mikestead.dotenv",
+
+        // CSV data files
+        "mechatroner.rainbow-csv",
+
+        // YAML (GitHub Actions workflows)
+        "redhat.vscode-yaml",
+
+        // Markdown documentation
+        "yzhang.markdown-all-in-one",
+        "DavidAnson.vscode-markdownlint",
+
+        // Git
+        "eamodio.gitlens",
+        "github.vscode-pull-request-github",
+        "github.vscode-github-actions",
+
+        // Inline error/warning display
+        "usernamehw.errorlens",
+
+        // AI
+        "openai.chatgpt"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "typescript.preferences.importModuleSpecifier": "relative",
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+
+  // Run as the non-root 'node' user provided by the base image
+  "remoteUser": "node",
+  "remoteEnv": {
+    "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}",
+    "GIT_AUTHOR_NAME": "${localEnv:GIT_AUTHOR_NAME}",
+    "GIT_AUTHOR_EMAIL": "${localEnv:GIT_AUTHOR_EMAIL}"
+  }
+}
